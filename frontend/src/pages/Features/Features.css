@@ -1,0 +1,232 @@
+/* ==========================================
+   FEATURES SECTION
+========================================== */
+
+.features {
+  padding: 100px 0;
+  background: var(--background);
+  color: var(--text);
+}
+
+/* ==========================================
+   SECTION HEADER
+========================================== */
+
+.section-header {
+  width: 90%;
+  max-width: 800px;
+  margin: 0 auto 70px;
+  text-align: center;
+}
+
+.section-header span {
+  display: inline-block;
+  padding: 8px 20px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.12);
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  font-size: 42px;
+  margin-bottom: 18px;
+}
+
+.section-header p {
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 17px;
+}
+
+/* ==========================================
+   GRID
+========================================== */
+
+.features-grid {
+  width: 90%;
+  max-width: 1300px;
+  margin: auto;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 30px;
+}
+
+/* ==========================================
+   CARD
+========================================== */
+
+.feature-card {
+  background: var(--surface);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  border-radius: var(--radius);
+
+  padding: 35px 30px;
+
+  transition: var(--transition);
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+/* Glow Effect */
+
+.feature-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: -80px;
+
+  right: -80px;
+
+  width: 160px;
+
+  height: 160px;
+
+  background: rgba(37, 99, 235, 0.15);
+
+  border-radius: 50%;
+
+  transition: .4s ease;
+}
+
+.feature-card:hover::before {
+  transform: scale(1.5);
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+
+  border-color: var(--primary);
+
+  box-shadow: 0 20px 45px rgba(37, 99, 235, 0.18);
+}
+
+/* ==========================================
+   ICON
+========================================== */
+
+.feature-icon {
+  width: 70px;
+
+  height: 70px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 18px;
+
+  background: rgba(37, 99, 235, 0.12);
+
+  margin-bottom: 25px;
+
+  transition: .35s ease;
+}
+
+.feature-card:hover .feature-icon {
+  background: var(--primary);
+
+  transform: rotate(8deg) scale(1.08);
+}
+
+.feature-icon svg {
+  font-size: 30px;
+
+  color: var(--primary);
+
+  transition: .35s ease;
+}
+
+.feature-card:hover .feature-icon svg {
+  color: #ffffff;
+}
+
+/* ==========================================
+   TEXT
+========================================== */
+
+.feature-card h3 {
+  font-size: 24px;
+  margin-bottom: 15px;
+}
+
+.feature-card p {
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 15px;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 1100px) {
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .section-header h2 {
+    font-size: 36px;
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .features {
+    padding: 80px 0;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header {
+    margin-bottom: 50px;
+  }
+
+  .section-header h2 {
+    font-size: 30px;
+  }
+
+  .section-header p {
+    font-size: 15px;
+  }
+
+  .feature-card {
+    padding: 28px;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .feature-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .feature-icon svg {
+    font-size: 26px;
+  }
+
+  .feature-card h3 {
+    font-size: 20px;
+  }
+
+}
