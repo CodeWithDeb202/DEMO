@@ -3,6 +3,7 @@ import Hero from "../Hero";
 import About from "../About/About";
 import Features from "../Features/Features";
 import Programs from '../Programs/Programs';
+import Testimonials from '../Testimonials/Testimonials';
 
 function Landing(){
 
@@ -13,6 +14,7 @@ function Landing(){
       <About />
       <Features />
       <Programs />
+      <Testimonials />
 
       <section>
         Contact
