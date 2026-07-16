@@ -5,6 +5,8 @@ import './styles/global.css';
 import { AuthProvider } from './context/Auth';
 import App from './App.jsx';
 
+import { Toaster } from "react-hot-toast";
+
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
 
@@ -12,7 +14,32 @@ createRoot(document.getElementById('root')).render(
 
       <App />
 
+      <Toaster
+        position="bottom-left"
+        reverseOrder={false}
+        toastOptions={{
+          duration: 3000,
+          style: {
+            borderRadius: "12px",
+            background: "#1f2937",
+            color: "#fff"
+          },
+          success: {
+            iconTheme: {
+              primary: "#22c55e",
+              secondary: "#fff"
+            }
+          },
+          error: {
+            iconTheme: {
+              primary: "#ef4444",
+              secondary: "#fff"
+            }
+          }
+        }}
+      />
+
     </AuthProvider>
-    
+
   </BrowserRouter>,
 )

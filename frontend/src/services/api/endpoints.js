@@ -14,6 +14,8 @@ export const API = {
 
     VERIFY_OTP: "/auth/verify-otp",
 
+    RESEND_OTP: "/auth/resend-otp",
+
     COMPLETE_PROFILE: "/auth/profile",
 
   },

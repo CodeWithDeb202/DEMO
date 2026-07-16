@@ -17,8 +17,12 @@ export const forgotPassword = (email) => {
   return api.post(API.AUTH.FORGOT_PASSWORD, { email });
 };
 
-export const verifyOTP = (data) => {
+export const verifyOtp = (data) => {
   return api.post(API.AUTH.VERIFY_OTP, data);
+};
+
+export const resendOtp = async (data) => {
+  return api.post(API.AUTH.RESEND_OTP, data);
 };
 
 export const resetPassword = (data) => {
