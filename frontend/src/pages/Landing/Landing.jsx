@@ -6,6 +6,7 @@ import Programs from '../Programs/Programs';
 import Testimonials from '../Testimonials/Testimonials';
 import Mentors from '../Mentors/Mentors';
 import FAQ from '../FAQ/FAQ';
+import Contact from "../Contact/Contact";
 
 function Landing(){
 
@@ -19,6 +20,8 @@ function Landing(){
       <Testimonials />
       <Mentors />
       <FAQ />
+      <Contact />
+
       
     </>
   )

@@ -6,36 +6,30 @@ import { FaPlus, FaMinus } from "react-icons/fa";
 
 function Accordion({ question, answer }) {
 
-  const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false);
 
-  return (
+    return (
 
-    <div className={`accordion ${open ? "active" : ""}`}>
+        <div className={`accordion ${open ? "active" : ""}`}>
 
-      <button
-        className="accordion-header"
-        onClick={() => setOpen(!open)}
-      >
+            <button
+                className="accordion-header"
+                onClick={() => setOpen(!open)}
+            >
 
-        <span>{question}</span>
+                <span>{question}</span>
 
-        {open ? <FaMinus /> : <FaPlus />}
+                {open ? <FaMinus /> : <FaPlus />}
 
-      </button>
+            </button>
 
-      {open && (
-
-        <div className="accordion-body">
-
-          <p>{answer}</p>
+            <div className={`accordion-body ${open ? "open" : ""}`}>
+                <p>{answer}</p>
+            </div>
 
         </div>
 
-      )}
-
-    </div>
-
-  );
+    );
 
 }
 
