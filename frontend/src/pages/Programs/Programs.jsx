@@ -102,7 +102,7 @@ function Programs() {
 
                                 </div>
 
-                                <Button variant='apply' icon={<FaArrowRight/>}>
+                                <Button variant='apply' icon={<FaArrowRight/>} fullWidth>
                                     Apply Now
                                 </Button>
 
