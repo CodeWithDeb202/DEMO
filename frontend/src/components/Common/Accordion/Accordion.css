@@ -1,0 +1,121 @@
+/* ==========================================
+   ACCORDION
+========================================== */
+
+.accordion {
+  width: 100%;
+
+  background: var(--surface);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  border-radius: var(--radius);
+
+  overflow: hidden;
+
+  transition: var(--transition);
+}
+
+.accordion:hover {
+  border-color: var(--primary);
+
+  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.15);
+}
+
+.accordion.active {
+  border-color: var(--primary);
+}
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.accordion-header {
+  width: 100%;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 20px;
+
+  padding: 22px 28px;
+
+  border: none;
+
+  background: transparent;
+
+  color: var(--text);
+
+  cursor: pointer;
+
+  font-size: 18px;
+
+  font-weight: 600;
+
+  text-align: left;
+
+  transition: var(--transition);
+}
+
+.accordion-header:hover {
+  color: var(--primary);
+}
+
+.accordion-header svg {
+  color: var(--primary);
+
+  font-size: 18px;
+
+  flex-shrink: 0;
+
+  transition: transform 0.3s ease;
+}
+
+.accordion.active .accordion-header svg {
+  transform: rotate(180deg);
+}
+
+/* ==========================================
+   BODY
+========================================== */
+
+.accordion-body {
+  padding: 0 28px 24px;
+}
+
+.accordion-body p {
+  color: var(--muted);
+
+  line-height: 1.8;
+
+  font-size: 15px;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 768px) {
+
+  .accordion-header {
+    padding: 18px 20px;
+
+    font-size: 16px;
+  }
+
+  .accordion-body {
+    padding: 0 20px 20px;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .accordion-header {
+    font-size: 15px;
+  }
+
+}
