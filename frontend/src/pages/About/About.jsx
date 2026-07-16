@@ -1,17 +1,18 @@
 import './About.css';
 import { aboutData } from './AboutData';
-import {motion} from 'framer-motion';
+import { motion } from 'framer-motion';
 import AboutImage from '../../assets/illustrations/about.svg';
 import {
-    FaBullseye,
-    FaLightbulb,
-    FaBookOpen,
-    FaUsers,
-    FaShieldAlt
+  FaBullseye,
+  FaLightbulb,
+  FaBookOpen,
+  FaUsers,
+  FaShieldAlt
 } from "react-icons/fa";
+import Card from '../../components/Common/Card/Card';
 
 
-function About(){
+function About() {
 
   return (
     <>
@@ -46,14 +47,17 @@ function About(){
 
         <div className="values">
           {aboutData.values.map((value) => (
-            <motion.div key={value.id} className="value-card" initial={{opacity:0,y:40}} whileInView={{opacity:1,y:0}} viewport={{once:true}} transition={{delay:value*.2}}>
-              {value.title === "Innovation" && <FaLightbulb />}
-              {value.title==="Learning" && <FaBookOpen/>}
-              {value.title==="Team Work" && <FaUsers/>}
-              {value.title==="Integrity" && <FaShieldAlt/>}
+            <motion.div key={value.id} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: value * .2 }}>
+              <Card className="value-card">
 
-              <h3>{value.title}</h3>
-              <p>{value.description}</p>
+                {value.title === "Innovation" && <FaLightbulb />}
+                {value.title === "Learning" && <FaBookOpen />}
+                {value.title === "Team Work" && <FaUsers />}
+                {value.title === "Integrity" && <FaShieldAlt />}
+
+                <h3>{value.title}</h3>
+                <p>{value.description}</p>
+              </Card>
             </motion.div>
           ))}
         </div>

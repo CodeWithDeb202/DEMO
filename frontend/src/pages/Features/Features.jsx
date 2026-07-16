@@ -11,6 +11,7 @@ import {
     FaUsers,
 } from 'react-icons/fa';
 import SectionHeader from '../../components/Common/SectionHeader/SectionHeader';
+import Card from '../../components/Common/Card/Card';
 
 const iconMap = {
     project: FaLaptopCode,
@@ -37,9 +38,8 @@ function Features() {
                         const Icon = iconMap[feature.icon];
 
                         return (
-                            <motion.div 
+                            <motion.div
                                 key={feature.id}
-                                className="feature-card"
                                 initial={{ opacity: 0, y: 40 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
@@ -48,14 +48,17 @@ function Features() {
                                     delay: index * 0.1
                                 }}
                             >
-                                <div className="features-icon">
-                                    <Icon />
-                                </div>
+                                <Card className="feature-card">
 
-                                <h3>{feature.title}</h3>
+                                    <div className="features-icon">
+                                        <Icon />
+                                    </div>
 
-                                <p>{feature.description}</p>
-                                
+                                    <h3>{feature.title}</h3>
+
+                                    <p>{feature.description}</p>
+
+                                </Card>
                             </motion.div>
                         )
                     })}

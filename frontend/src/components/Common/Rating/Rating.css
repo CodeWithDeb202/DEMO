@@ -1,0 +1,47 @@
+.rating {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+    margin-bottom: 18px;
+
+}
+
+.rating svg {
+    color: #facc15;
+    font-size: 18px;
+}
+
+.star {
+
+    font-size: 18px;
+
+    transition: .3s;
+
+}
+
+.filled {
+
+    color: #facc15;
+
+}
+
+.half {
+
+    color: #facc15;
+
+}
+
+.empty {
+
+    color: #475569;
+
+}
+
+@media (max-width: 576px) {
+    .rating {
+        justify-content: center;
+    }
+}

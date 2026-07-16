@@ -2,11 +2,11 @@ import "./Testimonials.css";
 
 import { motion } from "framer-motion";
 
-import { FaStar } from "react-icons/fa";
-
 import SectionHeader from "../../components/Common/SectionHeader/SectionHeader";
 
 import { testimonialsData } from "./TestimonialsData";
+import Rating from "../../components/Common/Rating";
+import Card from "../../components/Common/Card/Card";
 
 function Testimonials() {
 
@@ -25,60 +25,43 @@ function Testimonials() {
         {testimonialsData.map((item, index) => (
 
           <motion.div
-
             key={item.id}
-
-            className="testimonial-card"
-
             initial={{ opacity: 0, y: 40 }}
-
             whileInView={{ opacity: 1, y: 0 }}
-
             viewport={{ once: true }}
-
             transition={{
               delay: index * 0.15
             }}
-
           >
+            <Card className="testimonial-card">
 
-            <div className="testimonial-header">
 
-              <img
-                src={item.image}
-                alt={item.name}
-              />
+              <div className="testimonial-header">
 
-              <div>
+                <img
+                  src={item.image}
+                  alt={item.name}
+                />
 
-                <h3>{item.name}</h3>
+                <div>
 
-                <span>
+                  <h3>{item.name}</h3>
 
-                  {item.role}
+                  <span>
 
-                </span>
+                    {item.role}
+
+                  </span>
+
+                </div>
 
               </div>
 
-            </div>
+              <Rating rating={item.rating} />
 
-            <div className="rating">
+              <p>"{item.review}"</p>
 
-              {
-
-                [...Array(item.rating)].map((_, i) => (
-
-                  <FaStar key={i} />
-
-                ))
-
-              }
-
-            </div>
-
-            <p>"{item.review}"</p>
-
+            </Card>
           </motion.div>
 
         ))}

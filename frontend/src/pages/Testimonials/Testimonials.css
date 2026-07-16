@@ -107,22 +107,7 @@
   font-size: 14px;
 }
 
-/* ==========================================
-   RATING
-========================================== */
 
-.rating {
-  display: flex;
-
-  gap: 6px;
-
-  margin-bottom: 18px;
-}
-
-.rating svg {
-  color: #facc15;
-  font-size: 18px;
-}
 
 /* ==========================================
    REVIEW
@@ -169,10 +154,6 @@
   .testimonial-header {
     flex-direction: column;
     text-align: center;
-  }
-
-  .rating {
-    justify-content: center;
   }
 
   .testimonial-card p {

@@ -3,7 +3,10 @@ import { motion } from 'framer-motion';
 import { FaArrowRight, FaPlayCircle } from 'react-icons/fa';
 import { heroContent } from './HeroData';
 import HeroImage from '../../assets/illustrations/hero.svg';
+
 import Button from '../../components/Common/Button/Button';
+import Card from '../../components/Common/Card/Card';
+
 
 const fadeUp = {
     hidden: {
@@ -44,10 +47,10 @@ function Hero() {
 
                         <motion.div className='hero-stats' variants={fadeUp} initial='hidden' animate='show' custom={0.8}>
                             {heroContent.stats.map((stat) => (
-                                <div className='stat-card' key={stat.id}>
+                                <Card className='stat-card' key={stat.id}>
                                     <h2>{stat.value}</h2>
                                     <p>{stat.label}</p>
-                                </div>
+                                </Card>
                             ))}
                         </motion.div>
                     </div>

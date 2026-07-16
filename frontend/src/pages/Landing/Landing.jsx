@@ -4,6 +4,7 @@ import About from "../About/About";
 import Features from "../Features/Features";
 import Programs from '../Programs/Programs';
 import Testimonials from '../Testimonials/Testimonials';
+import Mentors from '../Mentors/Mentors';
 
 function Landing(){
 
@@ -15,10 +16,7 @@ function Landing(){
       <Features />
       <Programs />
       <Testimonials />
-
-      <section>
-        Contact
-      </section>
+      <Mentors />
       
     </>
   )
