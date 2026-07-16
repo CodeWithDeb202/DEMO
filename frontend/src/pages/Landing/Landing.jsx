@@ -1,15 +1,14 @@
 import Navbar from "../../components/Navbar/Navbar";
+import Hero from "../Hero";
 
 function Landing(){
 
   return (
     <>
       <Navbar />
-      
-      <section>
-        Hero Section
-      </section>
+      <Hero />
 
+      
       <section>
         About Company
       </section>
