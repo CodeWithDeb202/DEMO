@@ -1,105 +1,217 @@
-:root{
-    --primary: #2563eb;
-    --dark: #0f172a;
-    --light: #ffffff;
-    --gray: #64748b;
-}
+/* GOOGLE FONT */
+@import url("http://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
 
+
+/* NAVBAR */
 .navbar{
     position: sticky;
     top: 0;
-    z-index: 0;
+    z-index: 1000;
+    width: 100%;
+    height: 80px;
     background: rgba(15, 23, 42, 0.85);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+    transition: 0.3s ease;
 }
 
-.container{
-    width: min(1200px, 90%);
+
+/* CONTAINER */
+.navbar-container{
+    width: 90%;
+    max-width: 1300px;
+    height: 100%;
     margin: auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 72px;
 }
 
+
+/* LOGO */
 .logo{
     display: flex;
     align-items: center;
-    gap: 12px;
-    color: #fff;
+    gap: 0.8rem;
     text-decoration: none;
 }
 
 .logo img{
-    width: 45px;
+    width: 50px;
 }
 
 .logo h2{
-    font-size: 22px;
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 700;
 }
 
 .logo span{
-    font-size: 12px;
+    font-size: 0.75rem;
     color: #94a3b8;
 }
 
-.nav{
+
+/* MENU */
+.nav-menu{
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 2rem;
 }
 
-.nav a{
+
+/* NAV LINK */
+.nav-link{
+    position: relative;
     color: #fff;
     text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
     transition: 0.3s;
 }
 
-.nav a:hover,
-.nav a.active{
-    color: var(--primary);
+.nav-link:hover{
+    color: var(#3b82f6);
 }
 
+
+/* UNDERLINE ANIMATION */
+.nav-link::after{
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 0;
+    height: 2px;
+    background-color: #3b82f6;
+    transition: 0.3s;
+}
+
+.nav-link:hover::after{
+    width: 100%;
+}
+
+.active-link{
+    color: #3b82f6;
+}
+
+.active-link::after{
+    width: 100%;
+}
+
+/* AUTH BUTTONS */
+
+.auth-buttons{
+    display: flex;
+    gap: 1rem;
+    margin-left: 1.25rem;
+}
+
+/* LOG IN */
+.login-btn{
+    text-decoration: none;
+    color: white;
+    padding: 0.65rem 1.15rem;
+    border: 2px solid #3b82f6;
+    border-radius: 0.5rem;
+    transition: 0.3s;
+}
+
+.login-btn:hover{
+    background-color: #3b82f6;
+    color: white;
+}
+
+/* SIGN UP */
 .signup-btn{
-    background: var(--primary);
-    padding: 10px 20px;
-    border-radius: 8px;
+    text-decoration: none;
+    background-color: #2563eb;
+    color: white;
+    padding: 0.65rem 1.15rem;
+    border-radius: 0.5rem;
+    transition: 0.3s;
 }
 
 .signup-btn:hover{
+    transform: translateY(-2px);
     background: #1d4ed8;
-    color: #fff !important;
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
 }
 
+
+/* MOBILE MENU BUTTON */
 .menu-btn{
     display: none;
     background: none;
     border: none;
     color: #fff;
-    font-size: 24px;
+    font-size: 1.75rem;
     cursor: pointer;
 }
 
+/* RESPONSIVE */
+
 @media(max-width: 768px){
-    .nav{
+
+    .logo-text h2{
+        font-size: 1.25rem;
+    }
+
+    .logo img{
+        width: 42px;
+    }
+
+    .navbar{
+        height: 72px;
+    }
+
+    .nav-menu{
         position: fixed;
         top: 72px;
         right: -100%;
-        width: 260px;
-        height: 100vh;
+        width: 300px;
+        height: calc(100vh - 72px);
         background: #0f172a;
+        display: flex;
         flex-direction: column;
-        padding: 40px 20px;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 2.2rem;
+        padding-top: 3rem;
         transition: 0.3s;
     }
-
-    .nav .active{
+    
+    .nav-menu .active{
         right: 0;
     }
 
+    .auth-buttons{
+        display: flex;
+        flex-direction: column;
+        width: 80%;
+    }
+    
+    .login-btn,
+    .signup-btn{
+        text-align: center;
+    }
+    
     .menu-btn{
         display: block;
+    }
+
+}
+
+@media(max-width: 480px){
+    .navbar-container{
+        width: 94%;
+    }
+
+    .logo-text span{
+        display: none;
+    }
+    .nav-menu{
+        width: 100%;
     }
 }
 

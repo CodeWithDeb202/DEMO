@@ -3,48 +3,64 @@ import './Navbar.css';
 import { Link, NavLink } from 'react-router-dom';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { navLinks } from './Navbardata';
 
 function Navbar(){
 
-    const [menuOpen, setMenuOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
-    const closeMenu = () => setMenuOpen(false);
+    const toggleMenu = () => {
+        setIsOpen(!isOpen);
+    }
+
+    const closeMenu = () => {
+        setIsOpen(false);
+    }
 
 
   return (
     <>
-      <header className='navbar'>
-        <div className="container">
+      <motion.header className='navbar' initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
+        <div className="navbar-container">
 
             <Link to={'/'} className='logo'>
                 {/* Add Logo */}
                 <img src="/logo.png" alt="Tech monster Logo" />
 
-                <div>
+                <div className='logo-text'>
                     <h2>Tech Monster</h2>
                     <span>Pvt. Ltd.</span>
                 </div>
             </Link>
 
-            <nav className={menuOpen ? 'nav active' : 'nav'}>
+            <nav className={isOpen ? 'nav-menu active' : 'nav-menu'}>
 
-                <NavLink to={'/'} onClick={closeMenu}>Home</NavLink>
-                <NavLink to={'/about'} onClick={closeMenu}>About</NavLink>
-                <NavLink to={'/contact'} onClick={closeMenu}>Contact</NavLink>
-                <NavLink to={'/login'} onClick={closeMenu}>Login</NavLink>
-                
-                <Link to={'/signup'} className='signup-btn' onClick={closeMenu}>
-                    Sign Up
-                </Link>
+                {navLinks.map((item) => {
+                    <NavLink key={item.id} to={item.path} onClick={closeMenu} className={({ isActive }) =>
+                        isActive ? "nav-link active-link" : "nav-link"
+                    }>
+                        {item.title}
+                    </NavLink>
+                })}
+
+                <div className="auth-buttons">
+
+                    <Link to={'/login'} className='login-btn' onClick={closeMenu}>Login</Link>
+
+                    <Link to={'/signup'} className='signup-btn' onClick={closeMenu}>Sign Up</Link>
+
+                </div>
+
             </nav>
 
-            <button className='menu-btn' onClick={() => setMenuOpen(!menuOpen)}>
-                {menuOpen ? <FaTimes /> : <FaBars />}
+            <button className='menu-btn' onClick={toggleMenu}>
+                {isOpen ? <FaTimes /> : <FaBars />}
             </button>
 
 
         </div>
-      </header>
+      </motion.header>
     </>
   )
 
