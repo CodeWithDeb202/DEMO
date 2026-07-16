@@ -10,6 +10,7 @@ import {
     FaTasks,
     FaUsers,
 } from 'react-icons/fa';
+import SectionHeader from '../../components/Common/SectionHeader/SectionHeader';
 
 const iconMap = {
     project: FaLaptopCode,
@@ -24,15 +25,11 @@ function Features() {
     return (
         <>
             <section className="features">
-                <div className="section-header">
-                    <span>WHY CHOOSE US</span>
-
-                    <h2>Why Choose Tech Monster?</h2>
-                    <p>
-                        Everything you need to become an industry-ready developer in one
-                        platform.
-                    </p>
-                </div>
+                <SectionHeader
+                    badge={"WHY CHOOSE US"}
+                    title={"Why Choose Tech Monster?"}
+                    description={"Everything you need to become an industry-ready developer in one platform."}
+                />
 
                 <div className="features-grid">
                     {featuresData.map((feature, index) => {

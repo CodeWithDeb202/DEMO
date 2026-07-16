@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { FaArrowRight, FaPlayCircle } from 'react-icons/fa';
 import { heroContent } from './HeroData';
 import HeroImage from '../../assets/illustrations/hero.svg';
+import Button from '../../components/Common/Button/Button';
 
 const fadeUp = {
     hidden: {
@@ -20,8 +21,8 @@ const fadeUp = {
     }),
 };
 
-function Hero(){
-    return(
+function Hero() {
+    return (
         <>
             <section className='hero'>
 
@@ -32,15 +33,13 @@ function Hero(){
                         <motion.h1 className='hero-title' variants={fadeUp} initial='hidden' animate='show' custom={0.2}>{heroContent.title} {" "} <span>{heroContent.highlight}</span></motion.h1>
                         <motion.p className='hero-description' variants={fadeUp} initial='hidden' animate='show' custom={0.4}>{heroContent.description}</motion.p>
                         <motion.div className='hero-buttons' variants={fadeUp} initial='hidden' animate='show' custom={0.6}>
-                            <button className='primary-btn'>
-                                {heroContent.primaryButton}
-                                <FaArrowRight />
-                            </button>
+                            <Button variant="primary" icon={<FaArrowRight />}>
+                                Apply Internship
+                            </Button>
 
-                            <button className='secondary-btn'>
-                                <FaPlayCircle />
+                            <Button variant='secondary' icon={<FaPlayCircle />}>
                                 {heroContent.secondaryButton}
-                            </button>
+                            </Button>
                         </motion.div>
 
                         <motion.div className='hero-stats' variants={fadeUp} initial='hidden' animate='show' custom={0.8}>
@@ -54,8 +53,8 @@ function Hero(){
                     </div>
 
                     {/* RIGHT */}
-                    <motion.div className='hero-right' initial={{opacity: 0, x: 80}} animate={{opacity: 1, x: 0}} transition={{duration: 0.8}}>
-                        <motion.img src={HeroImage} alt='Hero illustration' animate={{y: [0, -15, 0]}} transition={{duration: 4, repeat: Infinity, ease:'easeInOut'}} />
+                    <motion.div className='hero-right' initial={{ opacity: 0, x: 80 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
+                        <motion.img src={HeroImage} alt='Hero illustration' animate={{ y: [0, -15, 0] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }} />
                     </motion.div>
                 </div>
             </section>

@@ -8,40 +8,6 @@
   color: var(--text);
 }
 
-/* ==========================================
-   SECTION HEADER
-========================================== */
-
-.section-header {
-  width: 90%;
-  max-width: 800px;
-  margin: 0 auto 70px;
-  text-align: center;
-}
-
-.section-header span {
-  display: inline-block;
-  padding: 8px 20px;
-  border-radius: 999px;
-  background: rgba(37, 99, 235, 0.12);
-  border: 1px solid rgba(37, 99, 235, 0.25);
-  color: var(--primary);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  margin-bottom: 20px;
-}
-
-.section-header h2 {
-  font-size: 42px;
-  margin-bottom: 18px;
-}
-
-.section-header p {
-  color: var(--muted);
-  line-height: 1.8;
-  font-size: 17px;
-}
 
 /* ==========================================
    GRID
@@ -180,9 +146,7 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .section-header h2 {
-    font-size: 36px;
-  }
+  
 
 }
 
@@ -194,18 +158,6 @@
 
   .features-grid {
     grid-template-columns: 1fr;
-  }
-
-  .section-header {
-    margin-bottom: 50px;
-  }
-
-  .section-header h2 {
-    font-size: 30px;
-  }
-
-  .section-header p {
-    font-size: 15px;
   }
 
   .feature-card {
