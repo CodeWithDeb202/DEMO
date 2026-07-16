@@ -13,7 +13,7 @@ import Button from "../../../components/common/Button/Button";
 import { FaEnvelope } from "react-icons/fa";
 
 import { login as loginService } from "../../../services/api/authService";
-import { useAuth } from "../../../context/Auth";
+import { useAuth } from "../../../hooks";
 
 function Login() {
 
@@ -66,15 +66,18 @@ function Login() {
 
       const response = await loginService(formData);
 
-      login(response.data.user);
-
+      login({
+        token: response.data.token,
+        user: response.data.user,
+      });
+      
       navigate("/dashboard");
 
     }
 
     catch (err) {
 
-      setError( err.response?.data?.message || "Login failed." );
+      setError(err.response?.data?.message || "Login failed.");
 
     }
 

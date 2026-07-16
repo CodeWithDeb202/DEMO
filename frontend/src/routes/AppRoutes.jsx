@@ -1,21 +1,27 @@
-import { Routes, Route} from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 
 import Landing from '../pages/Landing/Landing';
 import About from '../pages/About';
 import Contact from '../pages/Contact';
+
+
 import Login from '../pages/Auth/Login';
 import Signup from '../pages/Auth/Signup';
 import ForgotPassword from '../pages/Auth/ForgotPassword';
 import VerifyOTP from '../pages/Auth/VerifyOTP';
 import ResetPassword from '../pages/Auth/ResetPassword';
 
+import ProtectedRoute from './ProtectedRoute';
+import Dashboard from '../pages/Dashboard/Dashboard';
 
 
-function AppRoutes(){
-    return(
+
+
+function AppRoutes() {
+    return (
         <>
             <Routes>
-                
+
                 <Route path='/' element={<Landing />} />
 
                 <Route path='/about' element={<About />} />
@@ -31,7 +37,16 @@ function AppRoutes(){
                 <Route path='/verify-otp' element={<VerifyOTP />} />
 
                 <Route path='/reset-password' element={<ResetPassword />} />
-                
+
+                <Route
+                    path="/dashboard"
+                    element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    }
+                />
+
 
             </Routes>
         </>
