@@ -1,0 +1,138 @@
+/* ==========================================
+   LOGIN PAGE
+========================================== */
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+/* ==========================================
+   ERROR MESSAGE
+========================================== */
+
+.login-error {
+    padding: 14px 16px;
+
+    border-radius: 10px;
+
+    background: rgba(239, 68, 68, 0.12);
+
+    border: 1px solid rgba(239, 68, 68, 0.25);
+
+    color: #ef4444;
+
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* ==========================================
+   OPTIONS
+========================================== */
+
+.login-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    color: var(--muted);
+
+    user-select: none;
+}
+
+.remember-me input {
+    width: 16px;
+    height: 16px;
+
+    accent-color: var(--primary);
+
+    cursor: pointer;
+}
+
+.forgot-link {
+    color: var(--primary);
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: var(--transition);
+}
+
+.forgot-link:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================
+   SIGNUP LINK
+========================================== */
+
+.signup-text {
+    margin-top: 10px;
+
+    text-align: center;
+
+    color: var(--muted);
+
+    font-size: 15px;
+}
+
+.signup-text a {
+    margin-left: 6px;
+
+    color: var(--primary);
+
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: var(--transition);
+}
+
+.signup-text a:hover {
+    text-decoration: underline;
+}
+
+/* ==========================================
+   BUTTON
+========================================== */
+
+.login-form button {
+    margin-top: 10px;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 576px) {
+
+    .login-form {
+        gap: 18px;
+    }
+
+    .login-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .signup-text {
+        font-size: 14px;
+    }
+
+}
