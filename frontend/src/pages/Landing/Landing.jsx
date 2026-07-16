@@ -1,5 +1,6 @@
 import Navbar from "../../components/Navbar/Navbar";
 import Hero from "../Hero";
+import About from "../About/About";
 
 function Landing(){
 
@@ -7,11 +8,7 @@ function Landing(){
     <>
       <Navbar />
       <Hero />
-
-      
-      <section>
-        About Company
-      </section>
+      <About />
 
       <section>
         Internship Programs
