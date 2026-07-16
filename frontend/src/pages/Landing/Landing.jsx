@@ -5,6 +5,7 @@ function Landing(){
   return (
     <>
       <Navbar />
+      
       <section>
         Hero Section
       </section>

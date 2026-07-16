@@ -1,0 +1,105 @@
+:root{
+    --primary: #2563eb;
+    --dark: #0f172a;
+    --light: #ffffff;
+    --gray: #64748b;
+}
+
+.navbar{
+    position: sticky;
+    top: 0;
+    z-index: 0;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.container{
+    width: min(1200px, 90%);
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 72px;
+}
+
+.logo{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.logo img{
+    width: 45px;
+}
+
+.logo h2{
+    font-size: 22px;
+}
+
+.logo span{
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.nav{
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.nav a{
+    color: #fff;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.nav a:hover,
+.nav a.active{
+    color: var(--primary);
+}
+
+.signup-btn{
+    background: var(--primary);
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+
+.signup-btn:hover{
+    background: #1d4ed8;
+    color: #fff !important;
+}
+
+.menu-btn{
+    display: none;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+@media(max-width: 768px){
+    .nav{
+        position: fixed;
+        top: 72px;
+        right: -100%;
+        width: 260px;
+        height: 100vh;
+        background: #0f172a;
+        flex-direction: column;
+        padding: 40px 20px;
+        transition: 0.3s;
+    }
+
+    .nav .active{
+        right: 0;
+    }
+
+    .menu-btn{
+        display: block;
+    }
+}
+
