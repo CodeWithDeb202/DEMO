@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 
 import SectionHeader from "../../components/Common/SectionHeader/SectionHeader";
 import Button from "../../components/Common/Button/Button";
+import Input from '../../components/Common/Input/Input';
+import Textarea from '../../components/Common/TextArea/Textarea';
 
 import { contactInfo } from "./ContactData";
 
@@ -64,14 +66,22 @@ function Contact() {
           viewport={{ once: true }}
         >
 
-          <input
+          <Input
+            label="Name"
             type="text"
-            placeholder="Your Name"
+            placeholder="Enter Your name"
           />
 
-          <input
+          <Input
+            label="Email"
             type="email"
-            placeholder="Email Address"
+            placeholder="Enter Your Email"
+          />
+
+          <Input
+            label="Subject"
+            type="text"
+            placeholder="Subject"
           />
 
           <input
@@ -79,10 +89,12 @@ function Contact() {
             placeholder="Subject"
           />
 
-          <textarea
-            rows="6"
+          <Textarea
+            label="Message"
+            name="message"
+            rows={6}
             placeholder="Write your message..."
-          ></textarea>
+          />
 
           <Button
             variant="primary"
