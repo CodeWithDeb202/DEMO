@@ -78,6 +78,26 @@ const internshipSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+
+    category: {
+      type: String,
+      default: "Software Development"
+    },
+
+    isFeatured: {
+      type: Boolean,
+      default: false
+    },
+
+    views: {
+      type: Number,
+      default: 0
+    },
+
+    applicationsCount: {
+      type: Number,
+      default: 0
+    }
   },
   {
     timestamps: true,

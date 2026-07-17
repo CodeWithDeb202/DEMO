@@ -1,8 +1,13 @@
+import jwt from "jsonwebtoken";
+
 import User from "../models/User.js";
 import generateToken from "../utils/generateToken.js";
 import OTP from "../models/OTP.js";
 import generateOTP from "../utils/generateOTP.js";
 import { sendOTPEmail, sendResetPasswordOTP } from "../services/email.service.js";
+import logActivity from "../utils/logActivity.js";
+import RefreshToken from "../models/RefreshToken.js";
+import generateRefreshToken from "../utils/generateRefreshToken.js";
 
 
 
@@ -37,6 +42,21 @@ export const signup = async (req, res) => {
             password,
             role
         });
+
+
+        await logActivity(
+
+            req,
+
+            user._id,
+
+            "SIGNUP",
+
+            "Auth",
+
+            "User account created"
+
+        );
 
         // ==============================
         // OTP Generate
@@ -116,7 +136,54 @@ export const login = async (req, res) => {
                 message: "Please verify your email first."
             });
         }
-        const token = generateToken(user._id);
+
+        if (user.isBlocked) {
+
+            return res.status(403).json({
+
+                success: false,
+
+                message: "Your account has been blocked. Please contact support."
+
+            });
+
+        }
+        const accessToken = generateToken(user._id);
+
+        const refreshToken = generateRefreshToken(user._id);
+        await RefreshToken.deleteMany({
+
+            user: user._id
+
+        });
+
+        await RefreshToken.create({
+
+            user: user._id,
+
+            token: refreshToken,
+
+            expiresAt: new Date(
+
+                Date.now() + 7 * 24 * 60 * 60 * 1000
+
+            )
+
+        });
+
+        await logActivity(
+
+            req,
+
+            user._id,
+
+            "LOGIN",
+
+            "Auth",
+
+            "User logged in successfully"
+
+        );
 
         return res.status(200).json({
             success: true,
@@ -611,6 +678,26 @@ export const logoutUser = async (req, res) => {
 
     try {
 
+        await logActivity(
+
+            req,
+
+            req.user._id,
+
+            "LOGOUT",
+
+            "Auth",
+
+            "User logged out"
+
+        );
+
+        await RefreshToken.deleteMany({
+
+            user: req.user._id
+
+        });
+
         return res.status(200).json({
             success: true,
             message: "Logout successful"
@@ -623,6 +710,81 @@ export const logoutUser = async (req, res) => {
             success: false,
             message: "Logout failed",
             error: error.message
+        });
+
+    }
+
+};
+
+
+export const refreshAccessToken = async (req, res) => {
+
+    try {
+
+        const { refreshToken } = req.body;
+
+        if (!refreshToken) {
+
+            return res.status(401).json({
+
+                success: false,
+
+                message: "Refresh token required"
+
+            });
+
+        }
+
+        const savedToken = await RefreshToken.findOne({
+
+            token: refreshToken
+
+        });
+
+        if (!savedToken) {
+
+            return res.status(401).json({
+
+                success: false,
+
+                message: "Invalid refresh token"
+
+            });
+
+        }
+
+        const decoded = jwt.verify(
+
+            refreshToken,
+
+            process.env.JWT_REFRESH_SECRET
+
+        );
+
+        const accessToken = generateToken(
+
+            decoded.id
+
+        );
+
+        return res.status(200).json({
+
+            success: true,
+
+            accessToken
+
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        return res.status(401).json({
+
+            success: false,
+
+            message: "Refresh token expired"
+
         });
 
     }

@@ -2,6 +2,8 @@ import Application from "../models/Application.js";
 import Internship from "../models/Internship.js";
 import Notification from "../models/Notification.js";
 import { sendApplicationStatusEmail } from "../services/email.service.js";
+import logActivity from "../utils/logActivity.js";
+
 
 export const applyInternship = async (req, res) => {
 
@@ -75,13 +77,33 @@ export const applyInternship = async (req, res) => {
 
         });
 
+        internship.applicationsCount += 1;
+
+        await internship.save();
+
+        await logActivity(
+
+            req,
+
+            req.user._id,
+
+            "APPLY_INTERNSHIP",
+
+            "Application",
+
+            `Applied for ${internship.title}`
+
+        );
+
         await Notification.create({
 
-            receiver: internshipExists.createdBy,
+            user: internship.createdBy,
 
-            title: "New Internship Application",
+            title: "New Application",
 
-            message: `${req.user.firstName} applied for ${internshipExists.title}`
+            message: `${req.user.firstName} applied for your internship.`,
+
+            type: "application"
 
         });
 
@@ -253,11 +275,13 @@ export const updateApplicationStatus = async (req, res) => {
 
         await Notification.create({
 
-            receiver: application.applicant,
+            user: application.applicant,
 
             title: "Application Updated",
 
-            message: `Your application has been ${status}`
+            message: `Your application has been ${status}.`,
+
+            type: "application"
 
         });
 

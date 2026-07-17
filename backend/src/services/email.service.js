@@ -251,3 +251,94 @@ export const sendOfferEmail = async (email, offer) => {
   }
 
 };
+
+
+export const sendCertificateEmail = async (
+
+  email,
+
+  pdfPath
+
+) => {
+
+  try {
+
+    await transporter.sendMail({
+
+      from: `"Tech Monster" <${process.env.EMAIL_USER}>`,
+
+      to: email,
+
+      subject: "🎉 Internship Completion Certificate",
+
+      html: `
+
+                <div style="font-family:Arial,sans-serif">
+
+                    <h2>Congratulations 🎉</h2>
+
+                    <p>
+
+                        Your internship has been successfully completed.
+
+                    </p>
+
+                    <p>
+
+                        Your Internship Completion Certificate is attached with this email.
+
+                    </p>
+
+                    <br>
+
+                    <p>
+
+                        Best Wishes,
+
+                    </p>
+
+                    <strong>
+
+                        Tech Monster Pvt. Ltd.
+
+                    </strong>
+
+                </div>
+
+            `,
+
+      attachments: [
+
+        {
+
+          filename: "Internship-Certificate.pdf",
+
+          path: pdfPath
+
+        }
+
+      ]
+
+    });
+
+    console.log(
+
+      "✅ Certificate Email Sent"
+
+    );
+
+  } catch (error) {
+
+    console.log(
+
+      "❌ Certificate Email Error:",
+
+      error.message
+
+    );
+
+    throw error;
+
+  }
+
+};

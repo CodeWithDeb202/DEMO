@@ -1,6 +1,7 @@
 import express from "express";
 
 import authMiddleware from "../middleware/auth.middleware.js";
+import authorizeRoles from "../middleware/role.middleware.js";
 
 import {
 
@@ -12,7 +13,11 @@ getInternshipById,
 
 updateInternship,
 
-deleteInternship
+deleteInternship,
+
+getPopularInternships,
+
+getRecommendedInternships
 
 } from "../controllers/internship.controller.js";
 
@@ -44,6 +49,26 @@ router.delete(
     "/:id",
     authMiddleware,
     deleteInternship
+);
+
+router.get(
+
+    "/popular",
+
+    getPopularInternships
+
+);
+
+router.get(
+
+    "/recommended",
+
+    authMiddleware,
+
+    authorizeRoles("student"),
+
+    getRecommendedInternships
+
 );
 
 export default router;

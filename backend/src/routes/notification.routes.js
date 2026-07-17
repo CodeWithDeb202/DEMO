@@ -4,9 +4,11 @@ import authMiddleware from "../middleware/auth.middleware.js";
 
 import {
 
-    getNotifications,
+    getMyNotifications,
 
     markAsRead,
+
+    markAllAsRead,
 
     deleteNotification
 
@@ -20,17 +22,27 @@ router.get(
 
     authMiddleware,
 
-    getNotifications
+    getMyNotifications
 
 );
 
-router.put(
+router.patch(
 
     "/:id/read",
 
     authMiddleware,
 
     markAsRead
+
+);
+
+router.patch(
+
+    "/read-all",
+
+    authMiddleware,
+
+    markAllAsRead
 
 );
 

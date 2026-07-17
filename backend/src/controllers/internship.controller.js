@@ -1,5 +1,6 @@
 import Internship from "../models/Internship.js";
 import Company from "../models/Company.js";
+import logActivity from "../utils/logActivity.js";
 
 export const createInternship = async (req, res) => {
 
@@ -8,7 +9,6 @@ export const createInternship = async (req, res) => {
         const {
 
             title,
-            company,
             description,
             location,
             workMode,
@@ -16,9 +16,10 @@ export const createInternship = async (req, res) => {
             stipend,
             duration,
             skills,
+            category,
             openings,
             experience,
-            lastDate
+            lastDate,
 
         } = req.body;
 
@@ -78,6 +79,32 @@ export const createInternship = async (req, res) => {
 
         }
 
+
+
+        if (!company) {
+
+            return res.status(404).json({
+
+                success: false,
+
+                message: "Company not found"
+
+            });
+
+        }
+
+        if (!company.isVerified) {
+
+            return res.status(403).json({
+
+                success: false,
+
+                message: "Company is not verified. You cannot post internships."
+
+            });
+
+        }
+
         const internship = await Internship.create({
 
             title,
@@ -98,6 +125,8 @@ export const createInternship = async (req, res) => {
 
             skills,
 
+            category,
+
             openings,
 
             experience,
@@ -107,6 +136,20 @@ export const createInternship = async (req, res) => {
             createdBy: req.user._id
 
         });
+
+        await logActivity(
+
+            req,
+
+            req.user._id,
+
+            "CREATE_INTERNSHIP",
+
+            "Internship",
+
+            `Created internship: ${internship.title}`
+
+        );
 
         return res.status(201).json({
 
@@ -227,6 +270,9 @@ export const getInternshipById = async (req, res) => {
             .populate("company")
 
             .populate("createdBy", "firstName lastName email");
+
+        internship.views += 1;
+        await internship.save();
 
         if (!internship) {
 
@@ -373,6 +419,100 @@ export const deleteInternship = async (req, res) => {
             success: true,
 
             message: "Internship deleted successfully"
+
+        });
+
+    } catch (error) {
+
+        console.log(error);
+
+        return res.status(500).json({
+
+            success: false,
+
+            message: "Internal Server Error"
+
+        });
+
+    }
+
+};
+
+
+export const getPopularInternships = async(req,res)=>{
+
+    const internships=await Internship.find()
+
+    .sort({
+
+        applicationsCount:-1,
+
+        views:-1
+
+    })
+
+    .limit(10);
+
+    res.json({
+
+        success:true,
+
+        internships
+
+    });
+
+}
+
+
+export const getRecommendedInternships = async (req, res) => {
+
+    try {
+
+        const user = req.user;
+
+        const internships = await Internship.find({
+
+            status: "Open",
+
+            skills: {
+
+                $in: user.skills || []
+
+            },
+
+            lastDate: {
+
+                $gte: new Date()
+
+            }
+
+        })
+
+        .populate(
+
+            "company",
+
+            "companyName companyLogo"
+
+        )
+
+        .sort({
+
+            isFeatured: -1,
+
+            applicationsCount: -1,
+
+            views: -1
+
+        })
+
+        .limit(10);
+
+        return res.status(200).json({
+
+            success: true,
+
+            internships
 
         });
 

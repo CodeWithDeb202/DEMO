@@ -6,21 +6,33 @@ import authorizeRoles from "../middleware/role.middleware.js";
 
 import {
 
-    downloadOfferLetter
+    getMyActivities,
 
-} from "../controllers/download.controller.js";
+    getAllActivities
+
+} from "../controllers/activity.controller.js";
 
 const router = express.Router();
 
 router.get(
 
-    "/offer-letter",
+    "/me",
 
     authMiddleware,
 
-    authorizeRoles("student"),
+    getMyActivities
 
-    downloadOfferLetter
+);
+
+router.get(
+
+    "/all",
+
+    authMiddleware,
+
+    authorizeRoles("admin"),
+
+    getAllActivities
 
 );
 

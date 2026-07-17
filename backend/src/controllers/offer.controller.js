@@ -1,9 +1,11 @@
 import Offer from "../models/Offer.js";
 import Application from "../models/Application.js";
 import User from "../models/User.js";
+import Notification from "../models/Notification.js";
 import { sendOfferEmail } from "../services/email.service.js";
 import { generateOfferPDF } from "../utils/generateOfferPDF.js";
 import { sendOfferLetter } from "../services/offerPdf.service.js";
+import logActivity from "../utils/logActivity.js";
 
 
 export const createOffer = async (req, res) => {
@@ -51,6 +53,33 @@ export const createOffer = async (req, res) => {
             duration,
 
             message
+
+        });
+
+        await logActivity(
+
+            req,
+
+            req.user._id,
+
+            "CREATE_OFFER",
+
+            "Offer",
+
+            "Offer letter generated"
+
+        );
+
+
+        await Notification.create({
+
+            user: student._id,
+
+            title: "Offer Letter Received",
+
+            message: "Congratulations! You have received an offer letter.",
+
+            type: "offer"
 
         });
 

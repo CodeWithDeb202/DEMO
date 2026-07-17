@@ -1,5 +1,6 @@
 import Company from "../models/Company.js";
 import uploadToCloudinary from "../utils/uploadCloudinary.js";
+import logActivity from "../utils/logActivity.js";
 
 export const createCompany = async (req, res) => {
 
@@ -48,7 +49,7 @@ export const createCompany = async (req, res) => {
 
         }
 
-        
+
         let companyLogo = "";
         if (req.file) {
             companyLogo = await uploadToCloudinary(
@@ -73,6 +74,20 @@ export const createCompany = async (req, res) => {
             createdBy: req.user._id
 
         });
+
+        await logActivity(
+
+            req,
+
+            req.user._id,
+
+            "CREATE_COMPANY",
+
+            "Company",
+
+            `Created company: ${company.companyName}`
+
+        );
 
         return res.status(201).json({
 
