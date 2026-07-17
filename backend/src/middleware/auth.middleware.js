@@ -17,16 +17,22 @@ const authMiddleware = async (req, res, next) => {
         }
 
         const token = authHeader.split(" ")[1];
+        if (!token) {
+            return res.status(401).json({
+                success: false,
+                message: "Token missing"
+            });
+        }
 
         const decoded = jwt.verify(
             token,
             process.env.JWT_SECRET
         );
 
-        if(!decoded.id){
+        if (!decoded.id) {
             return res.status(401).json({
-                success:false,
-                message:"Invalid token"
+                success: false,
+                message: "Invalid token"
             });
         }
 
@@ -44,6 +50,8 @@ const authMiddleware = async (req, res, next) => {
         next();
 
     } catch (error) {
+
+        console.error(error);
 
         return res.status(401).json({
             success: false,
