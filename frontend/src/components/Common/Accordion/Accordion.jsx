@@ -16,11 +16,8 @@ function Accordion({ question, answer }) {
                 className="accordion-header"
                 onClick={() => setOpen(!open)}
             >
-
                 <span>{question}</span>
-
                 {open ? <FaMinus /> : <FaPlus />}
-
             </button>
 
             <div className={`accordion-body ${open ? "open" : ""}`}>

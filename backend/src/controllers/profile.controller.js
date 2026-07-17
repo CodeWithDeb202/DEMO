@@ -7,19 +7,22 @@ export const uploadProfileImage = async (req, res) => {
     try {
 
 
-        if(!req.file){
+        if (!req.file) {
 
             return res.status(400).json({
 
-                success:false,
-                message:"Please upload an image"
+                success: false,
+                message: "Please upload an image"
 
             });
 
         }
 
 
-        const imageUrl = await uploadToCloudinary(req.file);
+        const imageUrl = await uploadToCloudinary(
+            req.file,
+            "tech-monster/profile"
+        );
 
 
 
@@ -28,11 +31,11 @@ export const uploadProfileImage = async (req, res) => {
             req.user.id,
 
             {
-                profileImage:imageUrl
+                profileImage: imageUrl
             },
 
             {
-                new:true
+                new: true
             }
 
         );
@@ -41,9 +44,9 @@ export const uploadProfileImage = async (req, res) => {
 
         res.status(200).json({
 
-            success:true,
+            success: true,
 
-            message:"Profile image uploaded successfully",
+            message: "Profile image uploaded successfully",
 
             user
 
@@ -51,14 +54,14 @@ export const uploadProfileImage = async (req, res) => {
 
 
 
-    } catch(error){
+    } catch (error) {
 
 
         res.status(500).json({
 
-            success:false,
+            success: false,
 
-            message:error.message
+            message: error.message
 
         });
 

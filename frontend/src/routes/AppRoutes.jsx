@@ -1,8 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
 
-import Landing from '../pages/Landing/Landing';
-import About from '../pages/About';
-import Contact from '../pages/Contact';
+import Landing from "../pages/LandingPages/Landing";
+import About from '../pages/LandingPages/About';
+import Contact from '../pages/LandingPages/Contact';
 
 
 import Login from '../pages/Auth/Login';
@@ -12,7 +12,6 @@ import VerifyOTP from '../pages/Auth/VerifyOTP';
 import ResetPassword from '../pages/Auth/ResetPassword';
 
 import ProtectedRoute from './ProtectedRoute';
-import Dashboard from '../pages/Dashboard/Dashboard';
 
 
 
@@ -42,7 +41,7 @@ function AppRoutes() {
                     path="/dashboard"
                     element={
                         <ProtectedRoute>
-                            <Dashboard />
+                            
                         </ProtectedRoute>
                     }
                 />

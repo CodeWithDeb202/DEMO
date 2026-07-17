@@ -1,6 +1,7 @@
 import express from "express";
 
 import { uploadProfileImage } from "../controllers/profile.controller.js";
+import { uploadResume } from "../controllers/resume.controller.js";
 
 import authMiddleware from "../middleware/auth.middleware.js";
 
@@ -16,6 +17,13 @@ router.put(
     authMiddleware,
     upload.single("image"),
     uploadProfileImage
+);
+
+router.put(
+    "/resume",
+    authMiddleware,
+    upload.single("resume"), 
+    uploadResume
 );
 
 

@@ -1,24 +1,15 @@
 import "./VerifyOTP.css";
 
 import { useEffect, useState } from "react";
-
 import { motion } from "framer-motion";
-
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import AuthLayout from "../../../layouts/AuthLayout";
 
-import OTPInput from "../../../components/common/OTPInput";
+import OTPInput from "../../../components/common/Form/OTPInput";
+import Button from "../../../components/common/Form/Button";
 
-import Button from "../../../components/common/Button";
-
-import {
-
-    verifyOtp,
-
-    resendOtp
-
-} from "../../../services/api/authService";
+import { verifyOtp, resendOtp } from "../../../services/api/authService";
 
 function VerifyOTP() {
 

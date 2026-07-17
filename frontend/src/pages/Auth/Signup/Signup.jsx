@@ -10,15 +10,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import AuthLayout from "../../../layouts/AuthLayout";
 
-import Input from "../../../components/Common/Input";
-
-import PasswordInput from "../../../components/Common/PasswordInput";
-
-import Select from "../../../components/Common/Select";
-
-import Button from "../../../components/common/Button";
-
-import PasswordStrength from "../../../components/common/PasswordStrength";
+import Input from "../../../components/Common/Form/Input";
+import PasswordInput from "../../../components/Common/Form/PasswordInput";
+import Select from "../../../components/Common/Form/Select";
+import Button from "../../../components/common/Form/Button";
+import PasswordStrength from "../../../components/common/Form/PasswordStrength";
 
 import { signupSchema } from "../../../validations/auth/signupSchema";
 

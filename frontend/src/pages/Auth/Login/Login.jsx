@@ -6,9 +6,9 @@ import { motion } from "framer-motion";
 
 import AuthLayout from "../../../layouts/AuthLayout/AuthLayout";
 
-import Input from "../../../components/common/Input/Input";
-import PasswordInput from "../../../components/common/PasswordInput/PasswordInput";
-import Button from "../../../components/common/Button/Button";
+import Input from "../../../components/common/Form/Input";
+import PasswordInput from "../../../components/common/Form/PasswordInput";
+import Button from "../../../components/common/Form/Button";
 
 import { FaEnvelope } from "react-icons/fa";
 
