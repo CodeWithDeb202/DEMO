@@ -1,6 +1,6 @@
 import { createContext, useMemo, useState } from "react";
 
-import { tokenStorage } from "../services/auth/tokenStorage";
+import { tokenStorage } from "../../services/auth/tokenStorage";
 
 const AuthContext = createContext();
 

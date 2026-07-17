@@ -13,7 +13,7 @@ import Button from "../../../components/common/Button/Button";
 import { FaEnvelope } from "react-icons/fa";
 
 import { login as loginService } from "../../../services/api/authService";
-import { useAuth } from "../../../hooks";
+import useAuth from "../../../hooks/useAuth";
 
 function Login() {
 
