@@ -1,20 +1,19 @@
 import User from "../models/User.js";
 import uploadToCloudinary from "../utils/uploadCloudinary.js";
 
+import asyncHandler from "../utils/asyncHandler.js";
+import AppError from "../utils/AppError.js";
 
-export const uploadProfileImage = async (req, res) => {
 
-    try {
+export const uploadProfileImage = asyncHandler( async (req, res) => {
 
 
         if (!req.file) {
 
-            return res.status(400).json({
-
-                success: false,
-                message: "Please upload an image"
-
-            });
+            throw new AppError(
+                "Please upload an image",
+                400
+            )
 
         }
 
@@ -54,9 +53,6 @@ export const uploadProfileImage = async (req, res) => {
 
 
 
-    } catch (error) {
-
-
         res.status(500).json({
 
             success: false,
@@ -65,7 +61,4 @@ export const uploadProfileImage = async (req, res) => {
 
         });
 
-
-    }
-
-};
+});

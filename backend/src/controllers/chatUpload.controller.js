@@ -1,50 +1,72 @@
 import uploadToCloudinary from "../utils/uploadCloudinary.js";
 
+import asyncHandler from "../utils/asyncHandler.js";
+import AppError from "../utils/AppError.js";
 
-export const uploadChatFile = async (req, res) => {
 
-    try {
+export const uploadChatFile = asyncHandler(async (req, res) => {
 
-        if (!req.file) {
+    if (!req.file) {
 
-            return res.status(400).json({
+        throw new AppError(
 
-                success: false,
+            "No file uploaded",
 
-                message: "No file uploaded"
-
-            });
-
-        }
-
-        const fileUrl = await uploadToCloudinary(
-
-            req.file,
-
-            "tech-monster/chat"
+            400
 
         );
 
-        return res.status(200).json({
+    }
+    
+    const allowedMimeTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ];
 
-            success: true,
+    if (!allowedMimeTypes.includes(req.file.mimetype)) {
 
-            fileUrl
+        throw new AppError(
 
-        });
+            "Unsupported file type",
 
-    } catch (error) {
+            400
 
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
+        );
 
     }
 
-};
+    if (req.file.size > 10 * 1024 * 1024) {
+
+        throw new AppError(
+
+            "File size must not exceed 10 MB",
+
+            400
+
+        );
+
+    }
+
+    const fileUrl = await uploadToCloudinary(
+
+        req.file,
+
+        "tech-monster/chat"
+
+    );
+
+    return res.status(200).json({
+
+        success: true,
+
+        message: "File uploaded successfully",
+
+        fileUrl
+
+    });
+
+});

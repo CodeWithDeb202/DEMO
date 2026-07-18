@@ -3,9 +3,10 @@ import Company from "../models/Company.js";
 import User from "../models/User.js";
 
 
-export const searchInternships = async (req, res) => {
+import asyncHandler from "../utils/asyncHandler.js";
 
-    try {
+
+export const searchInternships = asyncHandler( async (req, res) => {
 
         const {
 
@@ -214,10 +215,6 @@ export const searchInternships = async (req, res) => {
 
         });
 
-    } catch (error) {
-
-        console.log(error);
-
         return res.status(500).json({
 
             success: false,
@@ -226,6 +223,4 @@ export const searchInternships = async (req, res) => {
 
         });
 
-    }
-
-};
+});

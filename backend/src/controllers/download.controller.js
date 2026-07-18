@@ -1,50 +1,50 @@
-import path from "path";
-import fs from "fs";
+import Offer from "../models/Offer.js";
 
-export const downloadOfferLetter = async (req, res) => {
+import asyncHandler from "../utils/asyncHandler.js";
+import AppError from "../utils/AppError.js";
 
-    try {
+export const downloadOfferLetter = asyncHandler(
 
-        const filePath = path.join(
+    async (req, res) => {
 
-            process.cwd(),
+        const offer = await Offer.findById(
 
-            "src",
-
-            "uploads",
-
-            "offers",
-
-            `Offer-${req.user._id}.pdf`
+            req.params.id
 
         );
 
-        if (!fs.existsSync(filePath)) {
+        if (!offer) {
 
-            return res.status(404).json({
+            throw new AppError(
 
-                success: false,
+                "Offer not found",
 
-                message: "Offer letter not found"
+                404
 
-            });
+            );
 
         }
 
-        return res.download(filePath);
+        if (!offer.offerLetterUrl) {
 
-    } catch (error) {
+            throw new AppError(
 
-        console.log(error);
+                "Offer letter not found",
 
-        return res.status(500).json({
+                404
 
-            success: false,
+            );
 
-            message: "Internal Server Error"
+        }
+
+        return res.status(200).json({
+
+            success: true,
+
+            offerLetter: offer.offerLetterUrl
 
         });
 
     }
 
-};
+);

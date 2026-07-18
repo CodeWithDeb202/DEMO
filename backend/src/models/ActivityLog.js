@@ -78,7 +78,14 @@ const activityLogSchema = new mongoose.Schema(
 
             default: ""
 
-        }
+        },
+        target: {
+
+            type: mongoose.Schema.Types.ObjectId,
+
+            refPath: "targetModel"
+
+        },
 
     },
 

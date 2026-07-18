@@ -1,10 +1,10 @@
 import User from "../models/User.js";
 import uploadToCloudinary from "../utils/uploadCloudinary.js";
 
-export const uploadResume = async (req, res) => {
 
-    try {
+import asyncHandler from "../utils/asyncHandler.js";
 
+export const uploadResume = asyncHandler(  async (req, res) => {
         const resumeUrl = await uploadToCloudinary(
 
             req.file,
@@ -41,10 +41,4 @@ export const uploadResume = async (req, res) => {
 
         });
 
-    } catch (error) {
-
-        console.log(error);
-
-    }
-
-};
+});

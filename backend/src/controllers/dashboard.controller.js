@@ -3,103 +3,119 @@ import Company from "../models/Company.js";
 import Internship from "../models/Internship.js";
 import Application from "../models/Application.js";
 
-export const studentDashboard = async (req, res) => {
+import asyncHandler from "../utils/asyncHandler.js";
 
-    try {
+export const studentDashboard = asyncHandler(async (req, res) => {
 
-        const totalApplications = await Application.countDocuments({
+    const [
+
+        totalApplications,
+
+        pendingApplications,
+
+        acceptedApplications,
+
+        rejectedApplications
+
+    ] = await Promise.all([
+
+        Application.countDocuments({
 
             applicant: req.user._id
 
-        });
+        }),
 
-        const pendingApplications = await Application.countDocuments({
+        Application.countDocuments({
 
             applicant: req.user._id,
 
             status: "Pending"
 
-        });
+        }),
 
-        const acceptedApplications = await Application.countDocuments({
+        Application.countDocuments({
 
             applicant: req.user._id,
 
             status: "Accepted"
 
-        });
+        }),
 
-        const rejectedApplications = await Application.countDocuments({
+        Application.countDocuments({
 
             applicant: req.user._id,
 
             status: "Rejected"
 
-        });
+        })
 
-        return res.status(200).json({
+    ]);
 
-            success: true,
+    return res.status(200).json({
 
-            dashboard: {
+        success: true,
 
-                totalApplications,
+        dashboard: {
 
-                pendingApplications,
+            totalApplications,
 
-                acceptedApplications,
+            pendingApplications,
 
-                rejectedApplications
+            acceptedApplications,
 
-            }
+            rejectedApplications
 
-        });
+        }
 
-    } catch (error) {
+    });
 
-        console.log(error);
+});
 
-        return res.status(500).json({
+export const employerDashboard = asyncHandler(async (req, res) => {
 
-            success: false,
+    const companies = await Company.find({
 
-            message: "Internal Server Error"
+        createdBy: req.user._id
 
-        });
+    }).select("_id");
 
-    }
+    const companyIds = companies.map(
 
-};
+        company => company._id
 
-export const employerDashboard = async (req, res) => {
+    );
 
-    try {
+    const internships = await Internship.find({
 
-        const totalCompanies = await Company.countDocuments({
+        company: {
+
+            $in: companyIds
+
+        }
+
+    }).select("_id");
+
+    const internshipIds = internships.map(
+
+        internship => internship._id
+
+    );
+
+    const [
+
+        totalCompanies,
+
+        totalApplications
+
+    ] = await Promise.all([
+
+        Company.countDocuments({
 
             createdBy: req.user._id
 
-        });
+        }),
 
-        const companyIds = await Company.find({
-
-            createdBy: req.user._id
-
-        }).select("_id");
-
-        const internshipIds = await Internship.find({
-
-            company: {
-
-                $in: companyIds
-
-            }
-
-        }).select("_id");
-
-        const totalInternships = internshipIds.length;
-
-        const totalApplications = await Application.countDocuments({
+        Application.countDocuments({
 
             internship: {
 
@@ -107,82 +123,68 @@ export const employerDashboard = async (req, res) => {
 
             }
 
-        });
+        })
 
-        return res.status(200).json({
+    ]);
 
-            success: true,
+    return res.status(200).json({
 
-            dashboard: {
+        success: true,
 
-                totalCompanies,
+        dashboard: {
 
-                totalInternships,
+            totalCompanies,
 
-                totalApplications
+            totalInternships: internshipIds.length,
 
-            }
+            totalApplications
 
-        });
+        }
 
-    } catch (error) {
+    });
 
-        console.log(error);
+});
 
-        return res.status(500).json({
+export const adminDashboard = asyncHandler(async (req, res) => {
 
-            success: false,
+    const [
 
-            message: "Internal Server Error"
+        totalUsers,
 
-        });
+        totalCompanies,
 
-    }
+        totalInternships,
 
-};
+        totalApplications
 
-export const adminDashboard = async (req, res) => {
+    ] = await Promise.all([
 
-    try {
+        User.countDocuments(),
 
-        const totalUsers = await User.countDocuments();
+        Company.countDocuments(),
 
-        const totalCompanies = await Company.countDocuments();
+        Internship.countDocuments(),
 
-        const totalInternships = await Internship.countDocuments();
+        Application.countDocuments()
 
-        const totalApplications = await Application.countDocuments();
+    ]);
 
-        return res.status(200).json({
+    return res.status(200).json({
 
-            success: true,
+        success: true,
 
-            dashboard: {
+        dashboard: {
 
-                totalUsers,
+            totalUsers,
 
-                totalCompanies,
+            totalCompanies,
 
-                totalInternships,
+            totalInternships,
 
-                totalApplications
+            totalApplications
 
-            }
+        }
 
-        });
+    });
 
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
-    }
-
-};
+});

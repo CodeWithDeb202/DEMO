@@ -1,140 +1,196 @@
 import Attendance from "../models/Attendance.js";
 
-export const checkIn = async (req, res) => {
+import asyncHandler from "../utils/asyncHandler.js";
+import AppError from "../utils/AppError.js";
+import logActivity from "../utils/logActivity.js";
 
-    try {
+export const checkIn = asyncHandler(async (req, res) => {
 
-        const { internship } = req.body;
+    const { internship } = req.body;
 
-        const today = new Date();
+    if (!internship) {
 
-        today.setHours(0, 0, 0, 0);
+        throw new AppError(
 
-        const alreadyCheckedIn = await Attendance.findOne({
+            "Internship is required",
 
-            student: req.user._id,
-
-            internship,
-
-            createdAt: {
-
-                $gte: today
-
-            }
-
-        });
-
-        if (alreadyCheckedIn) {
-
-            return res.status(400).json({
-
-                success: false,
-
-                message: "Already checked in today"
-
-            });
-
-        }
-
-        const attendance = await Attendance.create({
-
-            student: req.user._id,
-
-            internship,
-
-            checkIn: new Date()
-
-        });
-
-        return res.status(201).json({
-
-            success: true,
-
-            message: "Check-in successful",
-
-            attendance
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
-    }
-
-};
-
-export const checkOut = async (req, res) => {
-
-    try {
-
-        const attendance = await Attendance.findById(
-
-            req.params.id
+            400
 
         );
 
-        if (!attendance) {
+    }
 
-            return res.status(404).json({
+    const today = new Date();
 
-                success: false,
+    today.setHours(0, 0, 0, 0);
 
-                message: "Attendance not found"
+    const alreadyCheckedIn = await Attendance.findOne({
 
-            });
+        student: req.user._id,
+
+        internship,
+
+        createdAt: {
+
+            $gte: today
 
         }
 
-        attendance.checkOut = new Date();
+    });
 
-        await attendance.save();
+    if (alreadyCheckedIn) {
 
-        return res.status(200).json({
+        throw new AppError(
 
-            success: true,
+            "Already checked in today",
 
-            message: "Check-out successful",
+            400
 
-            attendance
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
+        );
 
     }
 
-};
+    const attendance = await Attendance.create({
 
-export const getMyAttendance = async (req, res) => {
+        student: req.user._id,
 
-    try {
+        internship,
 
-        const attendance = await Attendance.find({
+        checkIn: new Date()
 
-            student: req.user._id
+    });
 
-        })
+    await logActivity(
 
-        .populate("internship", "title")
+        req,
+
+        req.user._id,
+
+        "CHECK_IN",
+
+        "Attendance",
+
+        "Checked in successfully"
+
+    );
+
+    return res.status(201).json({
+
+        success: true,
+
+        message: "Check-in successful",
+
+        attendance
+
+    });
+
+});
+
+export const checkOut = asyncHandler(async (req, res) => {
+
+    const attendance = await Attendance.findById(
+
+        req.params.id
+
+    );
+
+    if (!attendance) {
+
+        throw new AppError(
+
+            "Attendance not found",
+
+            404
+
+        );
+
+    }
+
+    if (
+
+        attendance.student.toString() !==
+
+        req.user._id.toString()
+
+    ) {
+
+        throw new AppError(
+
+            "Unauthorized",
+
+            403
+
+        );
+
+    }
+
+    if (attendance.checkOut) {
+
+        throw new AppError(
+
+            "Already checked out",
+
+            400
+
+        );
+
+    }
+
+    attendance.checkOut = new Date();
+
+    const workedMilliseconds = attendance.checkOut - attendance.checkIn;
+
+    const workedMinutes = Math.floor(workedMilliseconds / (1000 * 60));
+
+    attendance.workingMinutes = workedMinutes;
+
+    attendance.workingHours = Number((workedMinutes / 60).toFixed(2));
+
+
+
+    await attendance.save();
+
+    await logActivity(
+
+        req,
+
+        req.user._id,
+
+        "CHECK_OUT",
+
+        "Attendance",
+
+        "Checked out successfully"
+
+    );
+
+    return res.status(200).json({
+
+        success: true,
+
+        message: "Check-out successful",
+
+        attendance
+
+    });
+
+});
+
+export const getMyAttendance = asyncHandler(async (req, res) => {
+
+    const attendance = await Attendance.find({
+
+        student: req.user._id
+
+    })
+
+        .populate(
+
+            "internship",
+
+            "title"
+
+        )
 
         .sort({
 
@@ -142,39 +198,23 @@ export const getMyAttendance = async (req, res) => {
 
         });
 
-        return res.status(200).json({
+    return res.status(200).json({
 
-            success: true,
+        success: true,
 
-            attendance
+        attendance
 
-        });
+    });
 
-    } catch (error) {
+});
 
-        console.log(error);
+export const getInternAttendance = asyncHandler(async (req, res) => {
 
-        return res.status(500).json({
+    const attendance = await Attendance.find({
 
-            success: false,
+        internship: req.params.id
 
-            message: "Internal Server Error"
-
-        });
-
-    }
-
-};
-
-export const getInternAttendance = async (req, res) => {
-
-    try {
-
-        const attendance = await Attendance.find({
-
-            internship: req.params.id
-
-        })
+    })
 
         .populate(
 
@@ -190,26 +230,12 @@ export const getInternAttendance = async (req, res) => {
 
         });
 
-        return res.status(200).json({
+    return res.status(200).json({
 
-            success: true,
+        success: true,
 
-            attendance
+        attendance
 
-        });
+    });
 
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
-    }
-
-};
+});

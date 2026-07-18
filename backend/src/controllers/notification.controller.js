@@ -1,14 +1,15 @@
 import Notification from "../models/Notification.js";
 
-export const getMyNotifications = async (req, res) => {
+import asyncHandler from "../utils/asyncHandler.js";
+import AppError from "../utils/AppError.js";
 
-    try {
+export const getMyNotifications = asyncHandler(async (req, res) => {
 
-        const notifications = await Notification.find({
+    const notifications = await Notification.find({
 
-            user: req.user._id
+        user: req.user._id
 
-        })
+    })
 
         .sort({
 
@@ -16,112 +17,98 @@ export const getMyNotifications = async (req, res) => {
 
         });
 
-        const unreadCount = await Notification.countDocuments({
+    const unreadCount = await Notification.countDocuments({
 
-            user: req.user._id,
+        user: req.user._id,
 
-            isRead: false
+        isRead: false
 
-        });
+    });
 
-        return res.status(200).json({
+    return res.status(200).json({
 
-            success: true,
+        success: true,
 
-            unreadCount,
+        unreadCount,
 
-            notifications
+        notifications
 
-        });
+    });
 
-    } catch (error) {
+    console.log(error);
 
-        console.log(error);
+    return res.status(500).json({
 
-        return res.status(500).json({
+        success: false,
 
-            success: false,
+        message: "Internal Server Error"
 
-            message: "Internal Server Error"
+    });
 
-        });
+});
 
+export const markAsRead = asyncHandler(async (req, res) => {
+
+
+    const notification = await Notification.findById(
+
+        req.params.id
+
+    );
+
+    if (!notification) {
+
+        throw new AppError(
+
+            "Notification not found",
+
+            404
+
+        );
     }
 
-};
+    if (
 
-export const markAsRead = async (req, res) => {
+        notification.user.toString() !== req.user._id.toString()
 
-    try {
+    ) {
 
-        const notification = await Notification.findById(
+        throw new AppError(
 
-            req.params.id
+            "Access denied",
+
+            403
 
         );
 
-        if (!notification) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Notification not found"
-
-            });
-
-        }
-
-        if (
-
-            notification.user.toString() !== req.user._id.toString()
-
-        ) {
-
-            return res.status(403).json({
-
-                success: false,
-
-                message: "Access denied"
-
-            });
-
-        }
-
-        notification.isRead = true;
-
-        await notification.save();
-
-        return res.status(200).json({
-
-            success: true,
-
-            message: "Notification marked as read",
-
-            notification
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
     }
 
-};
+    notification.isRead = true;
+
+    await notification.save();
+
+    return res.status(200).json({
+
+        success: true,
+
+        message: "Notification marked as read",
+
+        notification
+
+    });
+
+    return res.status(500).json({
+
+        success: false,
+
+        message: "Internal Server Error"
+
+    });
+
+});
 
 
-export const markAllAsRead = async (req, res) => {
-
-    try {
+export const markAllAsRead = asyncHandler( async (req, res) => {
 
         await Notification.updateMany(
 
@@ -153,10 +140,6 @@ export const markAllAsRead = async (req, res) => {
 
         });
 
-    } catch (error) {
-
-        console.log(error);
-
         return res.status(500).json({
 
             success: false,
@@ -165,14 +148,10 @@ export const markAllAsRead = async (req, res) => {
 
         });
 
-    }
-
-};
+});
 
 
-export const deleteNotification = async (req, res) => {
-
-    try {
+export const deleteNotification = asyncHandler( async (req, res) => {
 
         const notification = await Notification.findById(
 
@@ -182,14 +161,10 @@ export const deleteNotification = async (req, res) => {
 
         if (!notification) {
 
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Notification not found"
-
-            });
-
+            throw new AppError(
+                "Notification not found",
+                404
+            )
         }
 
         if (
@@ -198,13 +173,10 @@ export const deleteNotification = async (req, res) => {
 
         ) {
 
-            return res.status(403).json({
-
-                success: false,
-
-                message: "Access denied"
-
-            });
+            throw new AppError(
+                "Access denied",
+                403
+            )
 
         }
 
@@ -222,10 +194,6 @@ export const deleteNotification = async (req, res) => {
 
         });
 
-    } catch (error) {
-
-        console.log(error);
-
         return res.status(500).json({
 
             success: false,
@@ -234,6 +202,4 @@ export const deleteNotification = async (req, res) => {
 
         });
 
-    }
-
-};
+});

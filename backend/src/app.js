@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
+app.use(morganMiddleware);
+
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import profileRoutes from "./routes/profile.routes.js";
@@ -23,6 +25,12 @@ import bookmarkRoutes from "./routes/bookmark.routes.js";
 import activityRoutes from "./routes/activity.routes.js";
 import analyticsRoutes from "./routes/analytics.routes.js";
 import searchRoutes from "./routes/search.routes.js";
+
+import errorMiddleware from "./middleware/error.middleware.js";
+import morganMiddleware from "./middleware/logger.middleware.js";
+import errorHandler from "./middleware/errorHandlre.js";
+
+import { swaggerUi, swaggerSpec } from "./config/swagger.js";
 
 
 
@@ -63,6 +71,57 @@ app.use("/api/bookmarks", bookmarkRoutes);
 app.use("/api/activities", activityRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/search", searchRoutes);
+
+
+app.use(
+
+  "/api/docs",
+
+  swaggerUi.serve,
+
+  swaggerUi.setup(
+
+    swaggerSpec,
+
+    {
+
+      explorer: true
+
+    }
+
+  )
+
+);
+
+app.use(errorMiddleware);
+
+// ==========================================
+// 404 Handler
+// ==========================================
+
+app.use(
+
+  "*",
+
+  (req, res) => {
+
+    res.status(404).json({
+
+      success: false,
+
+      message: "Route not found"
+
+    });
+
+  }
+
+);
+
+// ==========================================
+// Global Error Handler
+// ==========================================
+
+app.use(errorHandler);
 
 
 

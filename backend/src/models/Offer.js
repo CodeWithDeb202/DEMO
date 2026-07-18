@@ -92,7 +92,17 @@ const offerSchema = new mongoose.Schema(
 
             default: "Pending"
 
-        }
+        },
+
+        offerLetterUrl: {
+            type: String,
+            default: ""
+        },
+
+        offerLetterPublicId: {
+            type: String,
+            default: ""
+        },
 
     },
 

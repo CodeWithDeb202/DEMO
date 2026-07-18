@@ -1,484 +1,1074 @@
 import Internship from "../models/Internship.js";
 import Company from "../models/Company.js";
+import InternshipView from "../models/InternshipView.js";
+import Notification from "../models/Notification.js";
+import Bookmark from "../models/Bookmark.js";
+import ActivityLog from "../models/ActivityLog.js";
+
 import logActivity from "../utils/logActivity.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import AppError from "../utils/AppError.js";
 
-export const createInternship = async (req, res) => {
+export const createInternship = asyncHandler(async (req, res) => {
 
-    try {
+    const {
 
-        const {
+        title,
 
-            title,
-            description,
-            location,
-            workMode,
-            internshipType,
-            stipend,
-            duration,
-            skills,
-            category,
-            openings,
-            experience,
-            lastDate,
+        company,
 
-        } = req.body;
+        description,
 
-        // Validation
+        location,
 
-        if (
-            !title ||
-            !company ||
-            !description ||
-            !location ||
-            !workMode ||
-            !internshipType ||
-            !duration ||
-            !lastDate
-        ) {
+        workMode,
 
-            return res.status(400).json({
+        internshipType,
 
-                success: false,
+        stipend,
 
-                message: "Please fill all required fields"
+        duration,
 
-            });
+        skills,
 
-        }
+        category,
 
-        // Check Company
+        openings,
 
-        const existingCompany = await Company.findById(company);
+        experience,
 
-        if (!existingCompany) {
+        lastDate
 
-            return res.status(404).json({
+    } = req.body;
 
-                success: false,
+    if (
 
-                message: "Company not found"
+        !title ||
 
-            });
+        !company ||
 
-        }
+        !description ||
 
-        // Owner Check
+        !location ||
 
-        if (
-            existingCompany.createdBy.toString() !==
-            req.user._id.toString()
-        ) {
+        !workMode ||
 
-            return res.status(403).json({
+        !internshipType ||
 
-                success: false,
+        !duration ||
 
-                message: "You are not authorized"
+        !lastDate
 
-            });
+    ) {
 
-        }
+        throw new AppError(
 
+            "Please fill all required fields",
 
-
-        if (!company) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Company not found"
-
-            });
-
-        }
-
-        if (!company.isVerified) {
-
-            return res.status(403).json({
-
-                success: false,
-
-                message: "Company is not verified. You cannot post internships."
-
-            });
-
-        }
-
-        const internship = await Internship.create({
-
-            title,
-
-            company,
-
-            description,
-
-            location,
-
-            workMode,
-
-            internshipType,
-
-            stipend,
-
-            duration,
-
-            skills,
-
-            category,
-
-            openings,
-
-            experience,
-
-            lastDate,
-
-            createdBy: req.user._id
-
-        });
-
-        await logActivity(
-
-            req,
-
-            req.user._id,
-
-            "CREATE_INTERNSHIP",
-
-            "Internship",
-
-            `Created internship: ${internship.title}`
+            400
 
         );
 
-        return res.status(201).json({
+    }
 
-            success: true,
+    const existingCompany = await Company.findById(company);
 
-            message: "Internship created successfully",
+    if (!existingCompany) {
 
-            internship
+        throw new AppError(
 
-        });
+            "Company not found",
 
-    } catch (error) {
+            404
 
-        console.error(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
+        );
 
     }
 
-};
+    if (
+
+        existingCompany.createdBy.toString() !==
+
+        req.user._id.toString()
+
+    ) {
+
+        throw new AppError(
+
+            "You are not authorized to create internships for this company",
+
+            403
+
+        );
+
+    }
+
+    if (!existingCompany.isVerified) {
+
+        throw new AppError(
+
+            "Company is not verified. You cannot post internships.",
+
+            403
+
+        );
+
+    }
+
+    const today = new Date();
+
+    today.setHours(
+
+        0,
+
+        0,
+
+        0,
+
+        0
+
+    );
+
+    if (
+
+        new Date(lastDate) < today
+
+    ) {
+
+        throw new AppError(
+
+            "Last application date cannot be in the past",
+
+            400
+
+        );
+
+    }
+
+    let internshipSkills = [];
+
+    if (skills) {
+
+        internshipSkills =
+
+            Array.isArray(skills)
+
+                ? skills
+
+                : skills
+
+                    .split(",")
+
+                    .map(
+
+                        skill => skill.trim()
+
+                    );
+
+    }
+
+    const internship = await Internship.create({
+
+        title,
+
+        company,
+
+        description,
+
+        location,
+
+        workMode,
+
+        internshipType,
+
+        stipend,
+
+        duration,
+
+        skills: internshipSkills,
+
+        category,
+
+        openings,
+
+        experience,
+
+        lastDate,
+
+        createdBy: req.user._id
+
+    });
+
+    await logActivity(
+
+        req,
+
+        req.user._id,
+
+        "CREATE_INTERNSHIP",
+
+        "Internship",
+
+        `Created internship: ${internship.title}`
+
+    );
+
+    return res.status(201).json({
+
+        success: true,
+
+        message: "Internship created successfully",
+
+        internship
+
+    });
+
+});
 
 
-export const getInternships = async (req, res) => {
+export const getInternships = asyncHandler(async (req, res) => {
 
-    try {
+    const page = Number(req.query.page) || 1;
 
-        const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
 
-        const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
-        const search = req.query.search || "";
+    const {
 
-        const location = req.query.location || "";
+        search,
 
-        const workMode = req.query.workMode || "";
+        location,
 
-        const skip = (page - 1) * limit;
+        workMode,
 
-        const query = {};
+        internshipType,
 
-        if (search) {
+        experience,
 
-            query.title = {
-                $regex: search,
-                $options: "i"
+        category,
+
+        minStipend,
+
+        maxStipend,
+
+        duration,
+
+        skills,
+
+        status,
+
+        featured,
+
+        sort
+
+    } = req.query;
+
+    const query = {
+
+        isDeleted: false
+
+    };
+
+    // Search
+
+    if (search) {
+
+        query.$or = [
+
+            {
+
+                title: {
+
+                    $regex: search,
+
+                    $options: "i"
+
+                }
+
+            },
+
+            {
+
+                description: {
+
+                    $regex: search,
+
+                    $options: "i"
+
+                }
+
+            }
+
+        ];
+
+    }
+
+    // Filters
+
+    if (location)
+
+        query.location = {
+
+            $regex: location,
+
+            $options: "i"
+
+        };
+
+    if (workMode)
+
+        query.workMode = workMode;
+
+    if (internshipType)
+
+        query.internshipType = internshipType;
+
+    if (experience)
+
+        query.experience = experience;
+
+    if (category)
+
+        query.category = category;
+
+    if (duration)
+
+        query.duration = duration;
+
+    if (status)
+
+        query.status = status;
+
+    if (featured === "true")
+
+        query.isFeatured = true;
+
+    // Skills
+
+    if (skills) {
+
+        query.skills = {
+
+            $in: skills.split(",")
+
+        };
+
+    }
+
+    // Stipend
+
+    if (minStipend || maxStipend) {
+
+        query.stipend = {};
+
+        if (minStipend)
+
+            query.stipend.$gte = Number(minStipend);
+
+        if (maxStipend)
+
+            query.stipend.$lte = Number(maxStipend);
+
+    }
+
+    let sortOption = {
+
+        createdAt: -1
+
+    };
+
+    switch (sort) {
+
+        case "stipend_high":
+
+            sortOption = {
+
+                stipend: -1
+
             };
 
-        }
+            break;
 
-        if (location) {
+        case "stipend_low":
 
-            query.location = location;
+            sortOption = {
 
-        }
+                stipend: 1
 
-        if (workMode) {
+            };
 
-            query.workMode = workMode;
+            break;
 
-        }
+        case "popular":
 
-        const totalInternships = await Internship.countDocuments(query);
+            sortOption = {
 
-        const internships = await Internship.find(query)
+                applicationsCount: -1,
 
-            .populate("company", "companyName companyLogo")
+                views: -1
 
-            .populate("createdBy", "firstName lastName")
+            };
 
-            .sort({ createdAt: -1 })
+            break;
+
+        case "deadline":
+
+            sortOption = {
+
+                lastDate: 1
+
+            };
+
+            break;
+
+        case "latest":
+
+            sortOption = {
+
+                createdAt: -1
+
+            };
+
+            break;
+
+    }
+
+    const [
+
+        totalInternships,
+
+        internships
+
+    ] = await Promise.all([
+
+        Internship.countDocuments(query),
+
+        Internship.find(query)
+
+            .populate(
+
+                "company",
+
+                "companyName companyLogo"
+
+            )
+
+            .populate(
+
+                "createdBy",
+
+                "firstName lastName"
+
+            )
+
+            .sort(sortOption)
 
             .skip(skip)
 
-            .limit(limit);
+            .limit(limit)
 
-        return res.status(200).json({
+    ]);
 
-            success: true,
+    const internship = await Internship.findById(req.params.id);
 
-            totalInternships,
+    if (!internship) {
 
-            currentPage: page,
-
-            totalPages: Math.ceil(totalInternships / limit),
-
-            internships
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
-    }
-
-};
-
-export const getInternshipById = async (req, res) => {
-
-    try {
-
-        const internship = await Internship.findById(req.params.id)
-
-            .populate("company")
-
-            .populate("createdBy", "firstName lastName email");
-
-        internship.views += 1;
-        await internship.save();
-
-        if (!internship) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Internship not found"
-
-            });
-
-        }
-
-        return res.status(200).json({
-
-            success: true,
-
-            internship
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
-    }
-
-};
-
-export const updateInternship = async (req, res) => {
-
-    try {
-
-        const internship = await Internship.findById(req.params.id);
-
-        if (!internship) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Internship not found"
-
-            });
-
-        }
-
-        if (
-            internship.createdBy.toString() !==
-            req.user._id.toString()
-        ) {
-
-            return res.status(403).json({
-
-                success: false,
-
-                message: "Unauthorized"
-
-            });
-
-        }
-
-        Object.assign(
-
-            internship,
-
-            req.body
-
+        throw new AppError(
+            "Internship not found",
+            404
         );
 
+    }
+
+    if (
+        internship.status === "Open" &&
+        internship.lastDate < new Date()
+    ) {
+
+        internship.status = "Closed";
+
         await internship.save();
 
-        return res.status(200).json({
-
-            success: true,
-
-            message: "Internship updated successfully",
-
-            internship
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
     }
 
-};
+    query.isDeleted = false;
 
-export const deleteInternship = async (req, res) => {
+    return res.status(200).json({
 
-    try {
+        success: true,
 
-        const internship = await Internship.findById(req.params.id);
+        totalInternships,
 
-        if (!internship) {
+        currentPage: page,
 
-            return res.status(404).json({
+        totalPages: Math.ceil(
 
-                success: false,
+            totalInternships / limit
 
-                message: "Internship not found"
-
-            });
-
-        }
-
-        if (
-            internship.createdBy.toString() !==
-            req.user._id.toString()
-        ) {
-
-            return res.status(403).json({
-
-                success: false,
-
-                message: "Unauthorized"
-
-            });
-
-        }
-
-        await Internship.findByIdAndDelete(req.params.id);
-
-        return res.status(200).json({
-
-            success: true,
-
-            message: "Internship deleted successfully"
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
-    }
-
-};
-
-
-export const getPopularInternships = async(req,res)=>{
-
-    const internships=await Internship.find()
-
-    .sort({
-
-        applicationsCount:-1,
-
-        views:-1
-
-    })
-
-    .limit(10);
-
-    res.json({
-
-        success:true,
+        ),
 
         internships
 
     });
 
-}
+});
+
+export const getInternshipById = asyncHandler(async (req, res) => {
+
+    const internship = await Internship.findById(req.params.id).populate("company").populate("createdBy", "firstName lastName email");
+    if (
+
+        internship.isDeleted
+
+    ) {
+
+        throw new AppError(
+
+            "Internship not found",
+
+            404
+
+        );
+
+    }
+
+    if (!internship) {
+
+        throw new AppError(
+
+            "Internship not found",
+
+            404
+
+        );
+
+    }
+
+    if (req.user) {
+
+        const alreadyViewed = await InternshipView.findOne({
+
+            internship: internship._id,
+
+            user: req.user._id
+
+        });
+
+        if (!alreadyViewed) {
+
+            internship.views += 1;
+
+            await internship.save();
+
+            await InternshipView.create({
+
+                internship: internship._id,
+
+                user: req.user._id
+
+            });
+
+        }
+
+    } else {
+
+        internship.views += 1;
+
+        await internship.save();
+
+    }
+
+    if (
+        internship.status === "Open" &&
+        internship.lastDate < new Date()
+    ) {
+        throw new AppError("Application deadline has passed", 400);
+        internship.status = "Closed";
+        await internship.save();
+    }
+
+    internship.views += 1;
+
+    await internship.save();
+
+    const relatedInternships = await Internship.find({
+
+        _id: {
+
+            $ne: internship._id
+
+        },
+
+        category: internship.category,
+
+        status: "Open"
+
+    })
+
+        .populate(
+
+            "company",
+
+            "companyName companyLogo"
+
+        )
+
+        .limit(5);
+
+    return res.status(200).json({
+
+        success: true,
+
+        internship,
+
+        relatedInternships
+
+    });
+
+});
+
+export const updateInternship = asyncHandler(async (req, res) => {
+
+    const internship = await Internship.findById(
+
+        req.params.id
+
+    );
+
+    if (!internship) {
+
+        throw new AppError(
+
+            "Internship not found",
+
+            404
+
+        );
+
+    }
+
+    // Only owner can update
+    if (
+
+        internship.createdBy.toString() !==
+
+        req.user._id.toString()
+
+    ) {
+
+        throw new AppError(
+
+            "You are not authorized to update this internship",
+
+            403
+
+        );
+
+    }
+
+    const company = await Company.findById(
+
+        internship.company
+
+    );
+
+    if (
+
+        !company ||
+
+        !company.isVerified
+
+    ) {
+
+        throw new AppError(
+
+            "Company is not verified",
+
+            403
+
+        );
+
+    }
+
+    const {
+
+        title,
+
+        description,
+
+        location,
+
+        workMode,
+
+        internshipType,
+
+        stipend,
+
+        duration,
+
+        skills,
+
+        category,
+
+        openings,
+
+        experience,
+
+        lastDate,
+
+        status,
+
+        isFeatured
+
+    } = req.body;
+
+    // Last date validation
+    if (
+
+        lastDate &&
+
+        new Date(lastDate) < new Date()
+
+    ) {
+
+        throw new AppError(
+
+            "Last application date cannot be in the past",
+
+            400
+
+        );
+
+    }
+
+    internship.title = title ?? internship.title;
+
+    internship.description =
+
+        description ?? internship.description;
+
+    internship.location =
+
+        location ?? internship.location;
+
+    internship.workMode =
+
+        workMode ?? internship.workMode;
+
+    internship.internshipType =
+
+        internshipType ?? internship.internshipType;
+
+    internship.stipend =
+
+        stipend ?? internship.stipend;
+
+    internship.duration =
+
+        duration ?? internship.duration;
+
+    internship.skills =
+
+        skills ??
+
+        internship.skills;
+
+    internship.category =
+
+        category ??
+
+        internship.category;
+
+    internship.openings =
+
+        openings ??
+
+        internship.openings;
+
+    internship.experience =
+
+        experience ??
+
+        internship.experience;
+
+    internship.lastDate =
+
+        lastDate ??
+
+        internship.lastDate;
+
+    internship.status =
+
+        status ??
+
+        internship.status;
+
+    internship.isFeatured = isFeatured ?? internship.isFeatured;
+
+    if (
+
+        skills &&
+
+        typeof skills === "string"
+
+    ) {
+
+        internship.skills = skills
+
+            .split(",")
+
+            .map(
+
+                skill => skill.trim()
+
+            );
+
+    }
+
+    if (
+
+        internship.lastDate < new Date()
+
+    ) {
+
+        internship.status = "Closed";
+
+    }
+
+    if (
+
+        internship.openings === 0
+
+    ) {
+
+        internship.status = "Closed";
+
+    }
+
+    await internship.save();
+
+    await logActivity(
+
+        req,
+
+        req.user._id,
+
+        "UPDATE_INTERNSHIP",
+
+        "Internship",
+
+        `Updated internship: ${internship.title}`
+
+    );
+
+    return res.status(200).json({
+
+        success: true,
+
+        message: "Internship updated successfully",
+
+        internship
+
+    });
+
+});
+
+export const deleteInternship = asyncHandler(async (req, res) => {
+
+    const internship = await Internship.findById(
+
+        req.params.id
+
+    );
+
+    if (!internship) {
+
+        throw new AppError(
+
+            "Internship not found",
+
+            404
+
+        );
+
+    }
+
+    // Owner Check
+    if (
+
+        internship.createdBy.toString() !==
+
+        req.user._id.toString()
+
+    ) {
+
+        throw new AppError(
+
+            "You are not authorized to delete this internship",
+
+            403
+
+        );
+
+    }
+
+    // Applications Check
+    const totalApplications = await Application.countDocuments({
+
+        internship: internship._id
+
+    });
+
+    if (totalApplications > 0) {
+
+        throw new AppError(
+
+            "Cannot delete internship because applications already exist",
+
+            400
+
+        );
+
+    }
+
+    await Notification.deleteMany({
+
+        internship: internship._id
+
+    });
+
+    await Bookmark.deleteMany({
+
+        internship: internship._id
+
+    });
+
+    await ActivityLog.deleteMany({
+
+        target: internship._id
+
+    });
+
+    internship.isDeleted = true;
+
+    await internship.save();
+
+    await logActivity(
+
+        req,
+
+        req.user._id,
+
+        "DELETE_INTERNSHIP",
+
+        "Internship",
+
+        `Deleted internship: ${internship.title}`
+
+    );
+
+    return res.status(200).json({
+
+        success: true,
+
+        message: "Internship deleted successfully"
+
+    });
+
+});
 
 
-export const getRecommendedInternships = async (req, res) => {
+export const getPopularInternships = asyncHandler(async (req, res) => {
 
-    try {
+    const limit = Number(req.query.limit) || 10;
 
-        const user = req.user;
+    const internships = await Internship.find({
+
+        status: "Open",
+
+        isDeleted: false,
+
+        lastDate: {
+
+            $gte: new Date()
+
+        },
+        createdAt: {
+
+            $gte: new Date(
+
+                Date.now() - 30 * 24 * 60 * 60 * 1000
+
+            )
+
+        }
+
+    })
+
+        .populate(
+
+            "company",
+
+            "companyName companyLogo location"
+
+        )
+
+        .sort({
+
+            isFeatured: -1,
+
+            applicationsCount: -1,
+
+            views: -1,
+
+            createdAt: -1
+
+        })
+
+        .limit(limit);
+
+    return res.status(200).json({
+
+        success: true,
+
+        total: internships.length,
+
+        internships
+
+    });
+
+});
+
+
+export const getRecommendedInternships = asyncHandler(async (req, res) => {
+
+    // Logged in user
+    const user = req.user;
+
+    if (!user) {
+
+        throw new AppError(
+
+            "User not found",
+
+            404
+
+        );
+
+    }
+
+    // User skills (avoid undefined/null)
+    const userSkills = user.skills || [];
+
+    // If user has no skills, return latest featured internships
+    if (userSkills.length === 0) {
 
         const internships = await Internship.find({
 
             status: "Open",
 
-            skills: {
-
-                $in: user.skills || []
-
-            },
+            isDeleted: false,
 
             lastDate: {
 
@@ -492,7 +1082,7 @@ export const getRecommendedInternships = async (req, res) => {
 
             "company",
 
-            "companyName companyLogo"
+            "companyName companyLogo location"
 
         )
 
@@ -500,9 +1090,7 @@ export const getRecommendedInternships = async (req, res) => {
 
             isFeatured: -1,
 
-            applicationsCount: -1,
-
-            views: -1
+            createdAt: -1
 
         })
 
@@ -512,22 +1100,129 @@ export const getRecommendedInternships = async (req, res) => {
 
             success: true,
 
+            recommendedBasedOn: "latest",
+
             internships
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
 
         });
 
     }
 
-};
+    // Recommended internships based on skills
+    const internships = await Internship.find({
+
+        status: "Open",
+
+        isDeleted: false,
+
+        lastDate: {
+
+            $gte: new Date()
+
+        },
+
+        skills: {
+
+            $in: userSkills
+
+        }
+
+    })
+
+    .populate(
+
+        "company",
+
+        "companyName companyLogo location"
+
+    )
+
+    .sort({
+
+        // Featured internships first
+        isFeatured: -1,
+
+        // More applications means more trusted
+        applicationsCount: -1,
+
+        // More views means more popular
+        views: -1,
+
+        // Latest internships
+        createdAt: -1
+
+    })
+
+    .limit(10);
+
+    return res.status(200).json({
+
+        success: true,
+
+        recommendedBasedOn: "skills",
+
+        total: internships.length,
+
+        internships
+
+    });
+
+});
+
+export const restoreInternship = asyncHandler(
+
+    async (req, res) => {
+
+        const internship = await Internship.findById(
+
+            req.params.id
+
+        );
+
+        if (!internship) {
+
+            throw new AppError(
+
+                "Internship not found",
+
+                404
+
+            );
+
+        }
+
+        if (
+
+            internship.createdBy.toString() !==
+
+            req.user._id.toString()
+
+        ) {
+
+            throw new AppError(
+
+                "Unauthorized",
+
+                403
+
+            );
+
+        }
+
+        internship.isDeleted = false;
+
+        await internship.save();
+
+        return res.status(200).json({
+
+            success: true,
+
+            message: "Internship restored successfully",
+
+            internship
+
+        });
+
+    }
+
+);

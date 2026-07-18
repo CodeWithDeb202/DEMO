@@ -1,162 +1,172 @@
 import Bookmark from "../models/Bookmark.js";
 import Internship from "../models/Internship.js";
 
-
-export const addBookmark = async (req, res) => {
-
-    try {
-
-        const { internshipId } = req.body;
-
-        const internship = await Internship.findById(
-
-            internshipId
-
-        );
-
-        if (!internship) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Internship not found"
-
-            });
-
-        }
-
-        const exists = await Bookmark.findOne({
-
-            student: req.user._id,
-
-            internship: internshipId
-
-        });
-
-        if (exists) {
-
-            return res.status(409).json({
-
-                success: false,
-
-                message: "Internship already bookmarked"
-
-            });
-
-        }
-
-        const bookmark = await Bookmark.create({
-
-            student: req.user._id,
-
-            internship: internshipId
-
-        });
-
-        return res.status(201).json({
-
-            success: true,
-
-            message: "Internship bookmarked successfully",
-
-            bookmark
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
-    }
-
-};
+import asyncHandler from "../utils/asyncHandler.js";
+import AppError from "../utils/AppError.js";
+import logActivity from "../utils/logActivity.js";
 
 
-export const removeBookmark = async (req, res) => {
+export const addBookmark = asyncHandler(async (req, res) => {
 
-    try {
+    const { internshipId } = req.body;
 
-        const { internshipId } = req.params;
+    if (!internshipId) {
 
-        const bookmark = await Bookmark.findOne({
+        throw new AppError(
 
-            student: req.user._id,
+            "Internship ID is required",
 
-            internship: internshipId
-
-        });
-
-        if (!bookmark) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Bookmark not found"
-
-            });
-
-        }
-
-        await Bookmark.findByIdAndDelete(
-
-            bookmark._id
+            400
 
         );
 
-        return res.status(200).json({
+    }
 
-            success: true,
+    const internship = await Internship.findById(
 
-            message: "Bookmark removed successfully"
+        internshipId
 
-        });
+    );
 
-    } catch (error) {
+    if (!internship) {
 
-        console.log(error);
+        throw new AppError(
 
-        return res.status(500).json({
+            "Internship not found",
 
-            success: false,
+            404
 
-            message: "Internal Server Error"
-
-        });
+        );
 
     }
 
-};
+    const exists = await Bookmark.findOne({
+
+        student: req.user._id,
+
+        internship: internshipId
+
+    });
+
+    if (exists) {
+
+        throw new AppError(
+
+            "Internship already bookmarked",
+
+            409
+
+        );
+
+    }
+
+    const bookmark = await Bookmark.create({
+
+        student: req.user._id,
+
+        internship: internshipId
+
+    });
+
+    await logActivity(
+
+        req,
+
+        req.user._id,
+
+        "BOOKMARK_INTERNSHIP",
+
+        "Bookmark",
+
+        `Bookmarked internship: ${internship.title}`
+
+    );
+
+    return res.status(201).json({
+
+        success: true,
+
+        message: "Internship bookmarked successfully",
+
+        bookmark
+
+    });
+
+});
 
 
-export const getMyBookmarks = async (req, res) => {
+export const removeBookmark = asyncHandler(async (req, res) => {
 
-    try {
+    const { internshipId } = req.params;
 
-        const page = Number(req.query.page) || 1;
+    const bookmark = await Bookmark.findOne({
 
-        const limit = Number(req.query.limit) || 10;
+        student: req.user._id,
 
-        const totalBookmarks = await Bookmark.countDocuments({
+        internship: internshipId
 
-            student: req.user._id
+    });
 
-        });
+    if (!bookmark) {
 
-        const bookmarks = await Bookmark.find({
+        throw new AppError(
 
-            student: req.user._id
+            "Bookmark not found",
 
-        })
+            404
+
+        );
+
+    }
+
+    await Bookmark.findByIdAndDelete(
+
+        bookmark._id
+
+    );
+
+    await logActivity(
+
+        req,
+
+        req.user._id,
+
+        "REMOVE_BOOKMARK",
+
+        "Bookmark",
+
+        "Removed bookmarked internship"
+
+    );
+
+    return res.status(200).json({
+
+        success: true,
+
+        message: "Bookmark removed successfully"
+
+    });
+
+});
+
+
+export const getMyBookmarks = asyncHandler(async (req, res) => {
+
+    const page = Number(req.query.page) || 1;
+
+    const limit = Number(req.query.limit) || 10;
+
+    const totalBookmarks = await Bookmark.countDocuments({
+
+        student: req.user._id
+
+    });
+
+    const bookmarks = await Bookmark.find({
+
+        student: req.user._id
+
+    })
 
         .populate({
 
@@ -182,71 +192,41 @@ export const getMyBookmarks = async (req, res) => {
 
         .limit(limit);
 
-        return res.status(200).json({
+    return res.status(200).json({
 
-            success: true,
+        success: true,
 
-            currentPage: page,
+        currentPage: page,
 
-            totalPages: Math.ceil(totalBookmarks / limit),
+        totalPages: Math.ceil(totalBookmarks / limit),
 
-            totalBookmarks,
+        totalBookmarks,
 
-            bookmarks
+        bookmarks
 
-        });
+    });
 
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
-    }
-
-};
+});
 
 
-export const checkBookmark = async (req, res) => {
+export const checkBookmark = asyncHandler(async (req, res) => {
 
-    try {
+    const { internshipId } = req.params;
 
-        const { internshipId } = req.params;
+    const bookmark = await Bookmark.findOne({
 
-        const bookmark = await Bookmark.findOne({
+        student: req.user._id,
 
-            student: req.user._id,
+        internship: internshipId
 
-            internship: internshipId
+    });
 
-        });
+    return res.status(200).json({
 
-        return res.status(200).json({
+        success: true,
 
-            success: true,
+        bookmarked: Boolean(bookmark)
 
-            bookmarked: !!bookmark
+    });
 
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
-    }
-
-};
+});

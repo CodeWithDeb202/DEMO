@@ -7,11 +7,11 @@ import { generateOfferPDF } from "../utils/generateOfferPDF.js";
 import { sendOfferLetter } from "../services/offerPdf.service.js";
 import logActivity from "../utils/logActivity.js";
 
+import asyncHandler from "../utils/asyncHandler.js";
+import AppError from "../utils/AppError.js";
 
-export const createOffer = async (req, res) => {
 
-    try {
-
+export const createOffer = asyncHandler(  async (req, res) => {
         const {
 
             application,
@@ -27,13 +27,10 @@ export const createOffer = async (req, res) => {
 
         if (!applicationData) {
 
-            return res.status(404).json({
-
-                success: false,
-                message: "Application not found"
-
-            });
-
+            throw new AppError(
+                "Application not found",
+                404
+            )
         }
 
         const offer = await Offer.create({
@@ -101,6 +98,12 @@ export const createOffer = async (req, res) => {
 
             );
 
+            offer.offerLetterUrl = pdfPath.url;
+
+            offer.offerLetterPublicId = pdfPath.public_id;
+
+            await offer.save();
+
             await sendOfferLetter(
 
                 student.email,
@@ -129,10 +132,6 @@ export const createOffer = async (req, res) => {
 
         });
 
-    } catch (error) {
-
-        console.log(error);
-
         return res.status(500).json({
 
             success: false,
@@ -141,14 +140,9 @@ export const createOffer = async (req, res) => {
 
         });
 
-    }
+});
 
-};
-
-export const getStudentOffers = async (req, res) => {
-
-    try {
-
+export const getStudentOffers = asyncHandler( async (req, res) => {
         const offers = await Offer.find({
 
             student: req.user._id
@@ -171,10 +165,6 @@ export const getStudentOffers = async (req, res) => {
 
         });
 
-    } catch (error) {
-
-        console.log(error);
-
         res.status(500).json({
 
             success: false,
@@ -183,13 +173,9 @@ export const getStudentOffers = async (req, res) => {
 
         });
 
-    }
+});
 
-};
-
-export const getEmployerOffers = async (req, res) => {
-
-    try {
+export const getEmployerOffers = asyncHandler( async (req, res) => {
 
         const offers = await Offer.find({
 
@@ -221,10 +207,6 @@ export const getEmployerOffers = async (req, res) => {
 
         });
 
-    } catch (error) {
-
-        console.log(error);
-
         res.status(500).json({
 
             success: false,
@@ -233,25 +215,18 @@ export const getEmployerOffers = async (req, res) => {
 
         });
 
-    }
+});
 
-};
-
-export const acceptOffer = async (req, res) => {
-
-    try {
+export const acceptOffer = asyncHandler( async (req, res) => {
 
         const offer = await Offer.findById(req.params.id);
 
         if (!offer) {
 
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Offer not found"
-
-            });
+            throw new AppError(
+                "Offer not found",
+                404
+            )
 
         }
 
@@ -269,10 +244,6 @@ export const acceptOffer = async (req, res) => {
 
         });
 
-    } catch (error) {
-
-        console.log(error);
-
         res.status(500).json({
 
             success: false,
@@ -281,25 +252,18 @@ export const acceptOffer = async (req, res) => {
 
         });
 
-    }
+});
 
-};
-
-export const rejectOffer = async (req, res) => {
-
-    try {
+export const rejectOffer = asyncHandler( async (req, res) => {
 
         const offer = await Offer.findById(req.params.id);
 
         if (!offer) {
 
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Offer not found"
-
-            });
+            throw new AppError(
+                "Offer not found",
+                404
+            )
 
         }
 
@@ -317,10 +281,6 @@ export const rejectOffer = async (req, res) => {
 
         });
 
-    } catch (error) {
-
-        console.log(error);
-
         res.status(500).json({
 
             success: false,
@@ -329,6 +289,4 @@ export const rejectOffer = async (req, res) => {
 
         });
 
-    }
-
-};
+});

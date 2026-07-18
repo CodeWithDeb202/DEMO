@@ -2,16 +2,19 @@ import bcrypt from "bcrypt";
 import OTP from "../models/OTP.js";
 import User from "../models/User.js";
 
-export const getCurrentUser = async (req, res) => {
-  try {
+import asyncHandler from "../utils/asyncHandler.js";
+import AppError from "../utils/AppError.js";
+
+export const getCurrentUser = asyncHandler( async (req, res) => {
 
     const user = req.user;
 
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
+
+        throw new AppError(
+            "User not found",
+            404
+        )
     }
 
     return res.status(200).json({
@@ -20,22 +23,15 @@ export const getCurrentUser = async (req, res) => {
       user: user,
     });
 
-  } catch (error) {
-
-    console.error(error);
-
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",
     });
 
-  }
-};
+});
 
 
-export const updateProfile = async (req, res) => {
-
-    try {
+export const updateProfile = asyncHandler( async (req, res) => {
 
         const {
             firstName,
@@ -82,10 +78,6 @@ export const updateProfile = async (req, res) => {
 
         });
 
-    } catch (error) {
-
-        console.error(error);
-
         return res.status(500).json({
 
             success: false,
@@ -93,15 +85,10 @@ export const updateProfile = async (req, res) => {
             message: "Internal Server Error"
 
         });
-
-    }
-
-};
+});
 
 
-export const changePassword = async (req, res) => {
-
-    try {
+export const changePassword = asyncHandler( async (req, res) => {
 
         const {
 
@@ -113,13 +100,10 @@ export const changePassword = async (req, res) => {
 
         if (!currentPassword || !newPassword) {
 
-            return res.status(400).json({
-
-                success: false,
-
-                message: "All fields are required"
-
-            });
+            throw new AppError(
+                "All fields are required",
+                400
+            )
 
         }
 
@@ -135,13 +119,10 @@ export const changePassword = async (req, res) => {
 
         if (!isMatch) {
 
-            return res.status(400).json({
-
-                success: false,
-
-                message: "Current password is incorrect"
-
-            });
+            throw new AppError(
+                "Current password is incorrect",
+                400
+            )
 
         }
 
@@ -157,10 +138,6 @@ export const changePassword = async (req, res) => {
 
         });
 
-    } catch (error) {
-
-        console.error(error);
-
         return res.status(500).json({
 
             success: false,
@@ -169,14 +146,10 @@ export const changePassword = async (req, res) => {
 
         });
 
-    }
-
-};
+});
 
 
-export const deleteAccount = async (req, res) => {
-
-    try {
+export const deleteAccount = asyncHandler( async (req, res) => {
 
         await OTP.deleteMany({
 
@@ -198,10 +171,6 @@ export const deleteAccount = async (req, res) => {
 
         });
 
-    } catch (error) {
-
-        console.error(error);
-
         return res.status(500).json({
 
             success: false,
@@ -210,6 +179,4 @@ export const deleteAccount = async (req, res) => {
 
         });
 
-    }
-
-};
+});

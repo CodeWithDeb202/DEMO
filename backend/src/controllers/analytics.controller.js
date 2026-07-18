@@ -5,12 +5,41 @@ import Application from "../models/Application.js";
 import Meeting from "../models/Meeting.js";
 import Offer from "../models/Offer.js";
 
+import asyncHandler from "../utils/asyncHandler.js";
 
-export const getDashboardAnalytics = async (req, res) => {
 
-    try {
+export const getDashboardAnalytics = asyncHandler(async (req, res) => {
 
-        const [
+    const [
+
+        totalUsers,
+        totalCompanies,
+        totalInternships,
+        totalApplications,
+        totalInterviews,
+        totalOffers
+
+    ] = await Promise.all([
+
+        User.countDocuments(),
+
+        Company.countDocuments(),
+
+        Internship.countDocuments(),
+
+        Application.countDocuments(),
+
+        Meeting.countDocuments(),
+
+        Offer.countDocuments()
+
+    ]);
+
+    return res.status(200).json({
+
+        success: true,
+
+        analytics: {
 
             totalUsers,
 
@@ -24,66 +53,32 @@ export const getDashboardAnalytics = async (req, res) => {
 
             totalOffers
 
-        ] = await Promise.all([
+        }
 
-            User.countDocuments(),
+    });
 
-            Company.countDocuments(),
-
-            Internship.countDocuments(),
-
-            Application.countDocuments(),
-
-            Meeting.countDocuments(),
-
-            Offer.countDocuments()
-
-        ]);
-
-        return res.status(200).json({
-
-            success: true,
-
-            analytics: {
-
-                totalUsers,
-
-                totalCompanies,
-
-                totalInternships,
-
-                totalApplications,
-
-                totalInterviews,
-
-                totalOffers
-
-            }
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
-    }
-
-};
+});
 
 
-export const getMonthlyAnalytics = async (req, res) => {
+export const getMonthlyAnalytics = asyncHandler(async (req, res) => {
 
-    try {
+    const [
 
-        const users = await User.aggregate([
+        users,
+
+        companies,
+
+        internships,
+
+        applications,
+
+        interviews,
+
+        offers
+
+    ] = await Promise.all([
+
+        User.aggregate([
 
             {
 
@@ -109,15 +104,15 @@ export const getMonthlyAnalytics = async (req, res) => {
 
                 $sort: {
 
-                    "_id": 1
+                    _id: 1
 
                 }
 
             }
 
-        ]);
+        ]),
 
-        const companies = await Company.aggregate([
+        Company.aggregate([
 
             {
 
@@ -143,15 +138,15 @@ export const getMonthlyAnalytics = async (req, res) => {
 
                 $sort: {
 
-                    "_id": 1
+                    _id: 1
 
                 }
 
             }
 
-        ]);
+        ]),
 
-        const internships = await Internship.aggregate([
+        Internship.aggregate([
 
             {
 
@@ -177,15 +172,15 @@ export const getMonthlyAnalytics = async (req, res) => {
 
                 $sort: {
 
-                    "_id": 1
+                    _id: 1
 
                 }
 
             }
 
-        ]);
+        ]),
 
-        const applications = await Application.aggregate([
+        Application.aggregate([
 
             {
 
@@ -211,15 +206,15 @@ export const getMonthlyAnalytics = async (req, res) => {
 
                 $sort: {
 
-                    "_id": 1
+                    _id: 1
 
                 }
 
             }
 
-        ]);
+        ]),
 
-        const interviews = await Meeting.aggregate([
+        Meeting.aggregate([
 
             {
 
@@ -245,15 +240,15 @@ export const getMonthlyAnalytics = async (req, res) => {
 
                 $sort: {
 
-                    "_id": 1
+                    _id: 1
 
                 }
 
             }
 
-        ]);
+        ]),
 
-        const offers = await Offer.aggregate([
+        Offer.aggregate([
 
             {
 
@@ -279,48 +274,36 @@ export const getMonthlyAnalytics = async (req, res) => {
 
                 $sort: {
 
-                    "_id": 1
+                    _id: 1
 
                 }
 
             }
 
-        ]);
+        ])
 
-        return res.status(200).json({
+    ]);
 
-            success: true,
+    return res.status(200).json({
 
-            analytics: {
+        success: true,
 
-                users,
+        analytics: {
 
-                companies,
+            users,
 
-                internships,
+            companies,
 
-                applications,
+            internships,
 
-                interviews,
+            applications,
 
-                offers
+            interviews,
 
-            }
+            offers
 
-        });
+        }
 
-    } catch (error) {
+    });
 
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
-    }
-
-};
+});

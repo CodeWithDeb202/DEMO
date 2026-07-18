@@ -78,6 +78,22 @@ const certificateSchema = new mongoose.Schema(
 
 );
 
+certificateSchema.index(
+
+    {
+
+        offer: 1
+
+    },
+
+    {
+
+        unique: true
+
+    }
+
+);
+
 export default mongoose.model(
 
     "Certificate",

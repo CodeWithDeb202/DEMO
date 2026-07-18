@@ -1,25 +1,25 @@
 import ActivityLog from "../models/ActivityLog.js";
 
+import asyncHandler from "../utils/asyncHandler.js";
 
-export const getMyActivities = async (req, res) => {
 
-    try {
+export const getMyActivities = asyncHandler(async (req, res) => {
 
-        const page = Number(req.query.page) || 1;
+    const page = Number(req.query.page) || 1;
 
-        const limit = Number(req.query.limit) || 10;
+    const limit = Number(req.query.limit) || 10;
 
-        const totalActivities = await ActivityLog.countDocuments({
+    const totalActivities = await ActivityLog.countDocuments({
 
-            user: req.user._id
+        user: req.user._id
 
-        });
+    });
 
-        const activities = await ActivityLog.find({
+    const activities = await ActivityLog.find({
 
-            user: req.user._id
+        user: req.user._id
 
-        })
+    })
 
         .sort({
 
@@ -31,93 +31,63 @@ export const getMyActivities = async (req, res) => {
 
         .limit(limit);
 
-        return res.status(200).json({
+    return res.status(200).json({
 
-            success: true,
+        success: true,
 
-            currentPage: page,
+        currentPage: page,
 
-            totalPages: Math.ceil(totalActivities / limit),
+        totalPages: Math.ceil(totalActivities / limit),
 
-            totalActivities,
+        totalActivities,
 
-            activities
+        activities
 
-        });
+    });
 
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
-    }
-
-};
+});
 
 
-export const getAllActivities = async (req, res) => {
+export const getAllActivities = asyncHandler(async (req, res) => {
 
-    try {
+    const page = Number(req.query.page) || 1;
 
-        const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 20;
 
-        const limit = Number(req.query.limit) || 20;
+    const totalActivities = await ActivityLog.countDocuments();
 
-        const totalActivities = await ActivityLog.countDocuments();
+    const activities = await ActivityLog.find()
 
-        const activities = await ActivityLog.find()
+        .populate(
 
-            .populate(
+            "user",
 
-                "user",
+            "firstName lastName email role"
 
-                "firstName lastName email role"
+        )
 
-            )
+        .sort({
 
-            .sort({
+            createdAt: -1
 
-                createdAt: -1
+        })
 
-            })
+        .skip((page - 1) * limit)
 
-            .skip((page - 1) * limit)
+        .limit(limit);
 
-            .limit(limit);
+    return res.status(200).json({
 
-        return res.status(200).json({
+        success: true,
 
-            success: true,
+        currentPage: page,
 
-            currentPage: page,
+        totalPages: Math.ceil(totalActivities / limit),
 
-            totalPages: Math.ceil(totalActivities / limit),
+        totalActivities,
 
-            totalActivities,
+        activities
 
-            activities
+    });
 
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
-    }
-
-};
+});

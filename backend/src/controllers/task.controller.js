@@ -1,8 +1,9 @@
 import Task from "../models/Task.js";
 
-export const createTask = async (req, res) => {
+import asyncHandler from "../utils/asyncHandler.js";
+import AppError from "../utils/AppError.js";
 
-    try {
+export const createTask = asyncHandler( async (req, res) => {
 
         const {
 
@@ -44,10 +45,6 @@ export const createTask = async (req, res) => {
 
         });
 
-    } catch (error) {
-
-        console.log(error);
-
         return res.status(500).json({
 
             success: false,
@@ -56,14 +53,9 @@ export const createTask = async (req, res) => {
 
         });
 
-    }
+});
 
-};
-
-export const getMyTasks = async (req, res) => {
-
-    try {
-
+export const getMyTasks = asyncHandler( async (req, res) => {
         const tasks = await Task.find({
 
             assignedTo: req.user._id
@@ -86,10 +78,6 @@ export const getMyTasks = async (req, res) => {
 
         });
 
-    } catch (error) {
-
-        console.log(error);
-
         return res.status(500).json({
 
             success: false,
@@ -98,14 +86,10 @@ export const getMyTasks = async (req, res) => {
 
         });
 
-    }
-
-};
+});
 
 
-export const updateTask = async (req, res) => {
-
-    try {
+export const updateTask = asyncHandler( async (req, res) => {
 
         const task = await Task.findByIdAndUpdate(
 
@@ -123,13 +107,10 @@ export const updateTask = async (req, res) => {
 
         if (!task) {
 
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Task not found"
-
-            });
+            throw new AppError(
+                "Task not found",
+                404
+            )
 
         }
 
@@ -143,10 +124,6 @@ export const updateTask = async (req, res) => {
 
         });
 
-    } catch (error) {
-
-        console.log(error);
-
         return res.status(500).json({
 
             success: false,
@@ -155,25 +132,18 @@ export const updateTask = async (req, res) => {
 
         });
 
-    }
+});
 
-};
-
-export const deleteTask = async (req, res) => {
-
-    try {
+export const deleteTask = asyncHandler( async (req, res) => {
 
         const task = await Task.findById(req.params.id);
 
         if (!task) {
 
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Task not found"
-
-            });
+            throw new AppError(
+                "Task not found",
+                404
+            )
 
         }
 
@@ -187,10 +157,6 @@ export const deleteTask = async (req, res) => {
 
         });
 
-    } catch (error) {
-
-        console.log(error);
-
         return res.status(500).json({
 
             success: false,
@@ -199,14 +165,11 @@ export const deleteTask = async (req, res) => {
 
         });
 
-    }
 
-};
+});
 
 
-export const updateTaskStatus = async (req, res) => {
-
-    try {
+export const updateTaskStatus = asyncHandler( async (req, res) => {
 
         const { status } = req.body;
 
@@ -214,13 +177,10 @@ export const updateTaskStatus = async (req, res) => {
 
         if (!task) {
 
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Task not found"
-
-            });
+            throw new AppError(
+                "Task not found",
+                404
+            )
 
         }
 
@@ -238,10 +198,6 @@ export const updateTaskStatus = async (req, res) => {
 
         });
 
-    } catch (error) {
-
-        console.log(error);
-
         return res.status(500).json({
 
             success: false,
@@ -250,6 +206,4 @@ export const updateTaskStatus = async (req, res) => {
 
         });
 
-    }
-
-};
+});

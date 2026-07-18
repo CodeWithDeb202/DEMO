@@ -1,14 +1,43 @@
 import express from "express";
 import { signup, login, verifyOTP, resendOTP, forgotPassword, verifyResetOTP, resetPassword, logoutUser } from "../controllers/auth.controller.js";
+import { loginLimiter, registerLimiter, forgotPasswordLimiter, otpLimiter } from "../middleware/rateLimiter.middleware.js";
+import validate from "../middleware/validate.middleware.js";
+
+import {registerSchema, loginSchema } from "../../validations/auth.validation.js";
 
 
 const router = express.Router();
 
-router.post("/signup", signup);
-router.post("/login", login);
+router.post("/register", registerLimiter, validate(registerSchema), signup);
+router.post(
+
+    "/login",
+
+    loginLimiter,
+    validate(loginSchema),
+
+    login
+
+);
 router.post("/verify-otp", verifyOTP);
-router.post("/resend-otp", resendOTP);
-router.post("/forgot-password", forgotPassword);
+router.post(
+
+    "/resend-otp",
+
+    otpLimiter,
+
+    resendOTP
+
+);
+router.post(
+
+    "/forgot-password",
+
+    forgotPasswordLimiter,
+
+    forgotPassword
+
+);
 router.post("/verify-reset-otp", verifyResetOTP);
 router.post("/reset-password", resetPassword);
 router.post("/logout", logoutUser);

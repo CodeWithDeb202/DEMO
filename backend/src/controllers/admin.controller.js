@@ -7,821 +7,684 @@ import Meeting from "../models/Meeting.js";
 import Offer from "../models/Offer.js";
 import Certificate from "../models/Certificate.js";
 import Notification from "../models/Notification.js";
+
 import logActivity from "../utils/logActivity.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import AppError from "../utils/AppError.js";
 
 
-export const getDashboardStats = async (req, res) => {
+export const getDashboardStats = asyncHandler(async (req, res) => {
 
-    try {
+    const totalUsers = await User.countDocuments();
 
-        const totalUsers = await User.countDocuments();
+    const totalStudents = await User.countDocuments({
+        role: "student"
+    });
 
-        const totalStudents = await User.countDocuments({
+    const totalEmployers = await User.countDocuments({
+        role: "employer"
+    });
 
-            role: "student"
+    const totalAdmins = await User.countDocuments({
+        role: "admin"
+    });
 
-        });
+    const totalCompanies = await Company.countDocuments();
 
-        const totalEmployers = await User.countDocuments({
+    const verifiedCompanies = await Company.countDocuments({
+        isVerified: true
+    });
 
-            role: "employer"
+    const totalInternships = await Internship.countDocuments();
 
-        });
+    const activeInternships = await Internship.countDocuments({
+        status: "Active"
+    });
 
-        const totalAdmins = await User.countDocuments({
+    const totalApplications = await Application.countDocuments();
 
-            role: "admin"
+    return res.status(200).json({
 
-        });
+        success: true,
 
-        const totalCompanies = await Company.countDocuments();
+        stats: {
 
-        const verifiedCompanies = await Company.countDocuments({
+            totalUsers,
+            totalStudents,
+            totalEmployers,
+            totalAdmins,
+            totalCompanies,
+            verifiedCompanies,
+            totalInternships,
+            activeInternships,
+            totalApplications
 
-            isVerified: true
+        }
 
-        });
+    });
 
-        const totalInternships = await Internship.countDocuments();
+});
 
-        const activeInternships = await Internship.countDocuments({
 
-            status: "Active"
+export const getAllUsers = asyncHandler(async (req, res) => {
 
-        });
+    const page = Number(req.query.page) || 1;
 
-        const totalApplications = await Application.countDocuments();
+    const limit = Number(req.query.limit) || 10;
 
-        return res.status(200).json({
+    const search = req.query.search || "";
 
-            success: true,
+    const role = req.query.role || "";
 
-            stats: {
+    const query = {};
 
-                totalUsers,
+    if (search) {
 
-                totalStudents,
+        query.$or = [
 
-                totalEmployers,
+            {
 
-                totalAdmins,
+                firstName: {
 
-                totalCompanies,
+                    $regex: search,
 
-                verifiedCompanies,
+                    $options: "i"
 
-                totalInternships,
+                }
 
-                activeInternships,
+            },
 
-                totalApplications
+            {
+
+                lastName: {
+
+                    $regex: search,
+
+                    $options: "i"
+
+                }
+
+            },
+
+            {
+
+                email: {
+
+                    $regex: search,
+
+                    $options: "i"
+
+                }
 
             }
 
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
+        ];
 
     }
 
-};
+    if (role) {
 
-
-export const getAllUsers = async (req, res) => {
-
-    try {
-
-        const page = Number(req.query.page) || 1;
-
-        const limit = Number(req.query.limit) || 10;
-
-        const search = req.query.search || "";
-
-        const role = req.query.role || "";
-
-        const query = {};
-
-        if (search) {
-
-            query.$or = [
-
-                {
-
-                    firstName: {
-
-                        $regex: search,
-
-                        $options: "i"
-
-                    }
-
-                },
-
-                {
-
-                    lastName: {
-
-                        $regex: search,
-
-                        $options: "i"
-
-                    }
-
-                },
-
-                {
-
-                    email: {
-
-                        $regex: search,
-
-                        $options: "i"
-
-                    }
-
-                }
-
-            ];
-
-        }
-
-        if (role) {
-
-            query.role = role;
-
-        }
-
-        const totalUsers = await User.countDocuments(query);
-
-        const users = await User.find(query)
-
-            .select("-password")
-
-            .sort({
-
-                createdAt: -1
-
-            })
-
-            .skip((page - 1) * limit)
-
-            .limit(limit);
-
-        return res.status(200).json({
-
-            success: true,
-
-            currentPage: page,
-
-            totalPages: Math.ceil(totalUsers / limit),
-
-            totalUsers,
-
-            users
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
+        query.role = role;
 
     }
 
-};
+    const totalUsers = await User.countDocuments(query);
+
+    const users = await User.find(query)
+
+        .select("-password")
+
+        .sort({
+
+            createdAt: -1
+
+        })
+
+        .skip((page - 1) * limit)
+
+        .limit(limit);
+
+    return res.status(200).json({
+
+        success: true,
+
+        currentPage: page,
+
+        totalPages: Math.ceil(totalUsers / limit),
+
+        totalUsers,
+
+        users
+
+    });
+
+});
 
 
-export const getAllCompanies = async (req, res) => {
+export const getAllInternships = asyncHandler(async (req, res) => {
 
-    try {
+    const page = Number(req.query.page) || 1;
 
-        const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
 
-        const limit = Number(req.query.limit) || 10;
+    const search = req.query.search || "";
 
-        const search = req.query.search || "";
+    const query = {};
 
-        const query = {};
+    if (search) {
 
-        if (search) {
+        query.title = {
 
-            query.companyName = {
+            $regex: search,
 
-                $regex: search,
+            $options: "i"
 
-                $options: "i"
-
-            };
-
-        }
-
-        const totalCompanies = await Company.countDocuments(query);
-
-        const companies = await Company.find(query)
-
-            .populate(
-
-                "createdBy",
-
-                "firstName lastName email"
-
-            )
-
-            .sort({
-
-                createdAt: -1
-
-            })
-
-            .skip((page - 1) * limit)
-
-            .limit(limit);
-
-        return res.status(200).json({
-
-            success: true,
-
-            currentPage: page,
-
-            totalPages: Math.ceil(totalCompanies / limit),
-
-            totalCompanies,
-
-            companies
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
+        };
 
     }
 
-};
+    const totalInternships = await Internship.countDocuments(query);
 
+    const internships = await Internship.find(query)
 
-export const getAllInternships = async (req, res) => {
+        .populate(
 
-    try {
+            "company",
 
-        const page = Number(req.query.page) || 1;
+            "companyName"
 
-        const limit = Number(req.query.limit) || 10;
+        )
 
-        const search = req.query.search || "";
+        .populate(
 
-        const query = {};
+            "createdBy",
 
-        if (search) {
+            "firstName lastName email"
 
-            query.title = {
+        )
 
-                $regex: search,
+        .sort({
 
-                $options: "i"
+            createdAt: -1
 
-            };
+        })
 
-        }
+        .skip((page - 1) * limit)
 
-        const totalInternships = await Internship.countDocuments(query);
+        .limit(limit);
 
-        const internships = await Internship.find(query)
+    return res.status(200).json({
 
-            .populate(
+        success: true,
 
-                "company",
+        currentPage: page,
 
-                "companyName"
+        totalPages: Math.ceil(totalInternships / limit),
 
-            )
+        totalInternships,
 
-            .populate(
+        internships
 
-                "createdBy",
+    });
 
-                "firstName lastName email"
+});
 
-            )
+export const getAllCompanies = asyncHandler(async (req, res) => {
 
-            .sort({
+    const page = Number(req.query.page) || 1;
 
-                createdAt: -1
+    const limit = Number(req.query.limit) || 10;
 
-            })
+    const search = req.query.search || "";
 
-            .skip((page - 1) * limit)
+    const query = {};
 
-            .limit(limit);
+    if (search) {
 
-        return res.status(200).json({
+        query.companyName = {
 
-            success: true,
+            $regex: search,
 
-            currentPage: page,
+            $options: "i"
 
-            totalPages: Math.ceil(totalInternships / limit),
-
-            totalInternships,
-
-            internships
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
+        };
 
     }
 
-};
+    const totalCompanies = await Company.countDocuments(query);
 
-export const getAllApplications = async (req, res) => {
+    const companies = await Company.find(query)
 
-    try {
+        .populate(
 
-        const page = Number(req.query.page) || 1;
+            "createdBy",
 
-        const limit = Number(req.query.limit) || 10;
+            "firstName lastName email"
 
-        const totalApplications = await Application.countDocuments();
+        )
 
-        const applications = await Application.find()
+        .sort({
 
-            .populate(
+            createdAt: -1
 
-                "applicant",
+        })
 
-                "firstName lastName email"
+        .skip((page - 1) * limit)
 
-            )
+        .limit(limit);
 
-            .populate(
+    return res.status(200).json({
 
-                "internship",
+        success: true,
 
-                "title"
+        currentPage: page,
 
-            )
+        totalPages: Math.ceil(totalCompanies / limit),
 
-            .sort({
+        totalCompanies,
 
-                createdAt: -1
+        companies
 
-            })
+    });
 
-            .skip((page - 1) * limit)
+});
 
-            .limit(limit);
+export const getAllApplications = asyncHandler(async (req, res) => {
 
-        return res.status(200).json({
+    const page = Number(req.query.page) || 1;
 
-            success: true,
+    const limit = Number(req.query.limit) || 10;
 
-            currentPage: page,
+    const totalApplications = await Application.countDocuments();
 
-            totalPages: Math.ceil(totalApplications / limit),
+    const applications = await Application.find()
 
-            totalApplications,
+        .populate(
 
-            applications
+            "applicant",
 
-        });
+            "firstName lastName email"
 
-    } catch (error) {
+        )
 
-        console.log(error);
+        .populate(
 
-        return res.status(500).json({
+            "internship",
 
-            success: false,
+            "title"
 
-            message: "Internal Server Error"
+        )
 
-        });
+        .sort({
 
-    }
+            createdAt: -1
 
-};
+        })
+
+        .skip((page - 1) * limit)
+
+        .limit(limit);
+
+    return res.status(200).json({
+
+        success: true,
+
+        currentPage: page,
+
+        totalPages: Math.ceil(totalApplications / limit),
+
+        totalApplications,
+
+        applications
+
+    });
+
+});
 
 
 
-export const blockUser = async (req, res) => {
+export const blockUser = asyncHandler(async (req, res) => {
 
-    try {
+    const user = await User.findById(req.params.id);
 
-        const user = await User.findById(req.params.id);
+    if (!user) {
 
-        if (!user) {
+        throw new AppError(
 
-            return res.status(404).json({
+            "User not found",
 
-                success: false,
-
-                message: "User not found"
-
-            });
-
-        }
-
-        if (user.role === "admin") {
-
-            return res.status(403).json({
-
-                success: false,
-
-                message: "Admin account cannot be blocked"
-
-            });
-
-        }
-
-        user.isBlocked = true;
-
-        await user.save();
-
-        await logActivity(
-
-            req,
-
-            req.user._id,
-
-            "BLOCK_USER",
-
-            "Admin",
-
-            `Blocked user: ${user.email}`
+            404
 
         );
 
-        return res.status(200).json({
-
-            success: true,
-
-            message: "User blocked successfully",
-
-            user
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
     }
 
-};
+    if (user.role === "admin") {
 
+        throw new AppError(
 
-export const unblockUser = async (req, res) => {
+            "Admin account cannot be blocked",
 
-    try {
-
-        const user = await User.findById(req.params.id);
-
-        if (!user) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message: "User not found"
-
-            });
-
-        }
-
-        user.isBlocked = false;
-
-        await user.save();
-
-        return res.status(200).json({
-
-            success: true,
-
-            message: "User unblocked successfully",
-
-            user
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
-    }
-
-};
-
-
-export const deleteUser = async (req, res) => {
-
-    try {
-
-        const user = await User.findById(req.params.id);
-
-        if (!user) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message: "User not found"
-
-            });
-
-        }
-
-        if (user.role === "admin") {
-
-            return res.status(403).json({
-
-                success: false,
-
-                message: "Admin account cannot be deleted"
-
-            });
-
-        }
-
-        await Application.deleteMany({
-
-            applicant: user._id
-
-        });
-
-        await Message.deleteMany({
-
-            $or: [
-
-                {
-
-                    sender: user._id
-
-                },
-
-                {
-
-                    receiver: user._id
-
-                }
-
-            ]
-
-        });
-
-        await Meeting.deleteMany({
-
-            $or: [
-
-                {
-
-                    student: user._id
-
-                },
-
-                {
-
-                    employer: user._id
-
-                }
-
-            ]
-
-        });
-
-        await Offer.deleteMany({
-
-            student: user._id
-
-        });
-
-        await Certificate.deleteMany({
-
-            student: user._id
-
-        });
-
-        await User.findByIdAndDelete(
-
-            user._id
+            403
 
         );
 
+    }
 
-        await logActivity(
+    user.isBlocked = true;
 
-            req,
+    await user.save();
 
-            req.user._id,
+    await logActivity(
 
-            "DELETE_USER",
+        req,
 
-            "Admin",
+        req.user._id,
 
-            `Deleted user: ${user.email}`
+        "BLOCK_USER",
+
+        "Admin",
+
+        `Blocked user: ${user.email}`
+
+    );
+
+    return res.status(200).json({
+
+        success: true,
+
+        message: "User blocked successfully",
+
+        user
+
+    });
+
+});
+
+
+export const unblockUser = asyncHandler(async (req, res) => {
+
+    const user = await User.findById(
+
+        req.params.id
+
+    );
+
+    if (!user) {
+
+        throw new AppError(
+
+            "User not found",
+
+            404
 
         );
-
-        return res.status(200).json({
-
-            success: true,
-
-            message: "User deleted successfully"
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
 
     }
 
-};
+    user.isBlocked = false;
+
+    await user.save();
+
+    await logActivity(
+
+        req,
+
+        req.user._id,
+
+        "UNBLOCK_USER",
+
+        "Admin",
+
+        `Unblocked user: ${user.email}`
+
+    );
+
+    return res.status(200).json({
+
+        success: true,
+
+        message: "User unblocked successfully",
+
+        user
+
+    });
+
+});
 
 
-export const verifyCompany = async (req, res) => {
+export const deleteUser = asyncHandler(async (req, res) => {
 
-    try {
+    const user = await User.findById(
 
-        const company = await Company.findById(
+        req.params.id
 
-            req.params.id
+    );
+
+    if (!user) {
+
+        throw new AppError(
+
+            "User not found",
+
+            404
 
         );
-
-        if (!company) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Company not found"
-
-            });
-
-        }
-
-        company.isVerified = true;
-
-        await company.save();
-
-        await logActivity(
-
-            req,
-
-            req.user._id,
-
-            "VERIFY_COMPANY",
-
-            "Admin",
-
-            `Verified company: ${company.companyName}`
-
-        );
-
-        await Notification.create({
-
-            user: company.createdBy,
-
-            title: "Company Verified",
-
-            message: "Your company has been verified successfully.",
-
-            type: "company"
-
-        });
-
-        return res.status(200).json({
-
-            success: true,
-
-            message: "Company verified successfully",
-
-            company
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
 
     }
 
-};
+    if (user.role === "admin") {
 
+        throw new AppError(
 
-export const featureInternship = async (req, res) => {
+            "Admin account cannot be deleted",
 
-    try {
-
-        const internship = await Internship.findById(
-
-            req.params.id
+            403
 
         );
 
-        if (!internship) {
+    }
 
-            return res.status(404).json({
+    await Application.deleteMany({
 
-                success:false,
+        applicant: user._id
 
-                message:"Internship not found"
+    });
 
-            });
+    await Message.deleteMany({
 
-        }
+        $or: [
 
-        internship.isFeatured = !internship.isFeatured;
+            {
 
-        await internship.save();
+                sender: user._id
 
-        return res.status(200).json({
+            },
 
-            success:true,
+            {
 
-            internship
+                receiver: user._id
 
-        });
+            }
 
-    } catch (error) {
+        ]
 
-        console.log(error);
+    });
 
-        return res.status(500).json({
+    await Meeting.deleteMany({
 
-            success:false,
+        $or: [
 
-            message:"Internal Server Error"
+            {
 
-        });
+                student: user._id
+
+            },
+
+            {
+
+                employer: user._id
+
+            }
+
+        ]
+
+    });
+
+    await Offer.deleteMany({
+
+        student: user._id
+
+    });
+
+    await Certificate.deleteMany({
+
+        student: user._id
+
+    });
+
+    await User.findByIdAndDelete(
+
+        user._id
+
+    );
+
+    await logActivity(
+
+        req,
+
+        req.user._id,
+
+        "DELETE_USER",
+
+        "Admin",
+
+        `Deleted user: ${user.email}`
+
+    );
+
+    return res.status(200).json({
+
+        success: true,
+
+        message: "User deleted successfully"
+
+    });
+
+});
+
+
+export const verifyCompany = asyncHandler(async (req, res) => {
+
+    const company = await Company.findById(
+
+        req.params.id
+
+    );
+
+    if (!company) {
+
+        throw new AppError(
+
+            "Company not found",
+
+            404
+
+        );
 
     }
 
-};
+    company.isVerified = true;
+
+    await company.save();
+
+    await logActivity(
+
+        req,
+
+        req.user._id,
+
+        "VERIFY_COMPANY",
+
+        "Admin",
+
+        `Verified company: ${company.companyName}`
+
+    );
+
+    await Notification.create({
+
+        user: company.createdBy,
+
+        title: "Company Verified",
+
+        message: "Your company has been verified successfully.",
+
+        type: "company"
+
+    });
+
+    return res.status(200).json({
+
+        success: true,
+
+        message: "Company verified successfully",
+
+        company
+
+    });
+
+});
+
+
+export const featureInternship = asyncHandler(async (req, res) => {
+
+    const internship = await Internship.findById(
+
+        req.params.id
+
+    );
+
+    if (!internship) {
+
+        throw new AppError(
+
+            "Internship not found",
+
+            404
+
+        );
+
+    }
+
+    internship.isFeatured = !internship.isFeatured;
+
+    await internship.save();
+
+    await logActivity(
+
+        req,
+
+        req.user._id,
+
+        "FEATURE_INTERNSHIP",
+
+        "Admin",
+
+        `${internship.isFeatured ? "Featured" : "Unfeatured"} internship: ${internship.title}`
+
+    );
+
+    return res.status(200).json({
+
+        success: true,
+
+        message: internship.isFeatured
+            ? "Internship marked as featured"
+            : "Internship removed from featured",
+
+        internship
+
+    });
+
+});

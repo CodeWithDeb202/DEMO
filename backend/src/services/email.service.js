@@ -342,3 +342,142 @@ export const sendCertificateEmail = async (
   }
 
 };
+
+
+// ==========================================================
+// Send Interview Cancelled Email
+// ==========================================================
+
+export const sendInterviewCancelledEmail = async (
+
+    email,
+
+    interview
+
+) => {
+
+    try {
+
+        await transporter.sendMail({
+
+            from: process.env.EMAIL_USER,
+
+            to: email,
+
+            subject: "Interview Cancelled | Tech Monster",
+
+            html: `
+
+            <div style="font-family:Arial,sans-serif;padding:30px;background:#f8f9fa;">
+
+                <div style="max-width:650px;margin:auto;background:#ffffff;border-radius:10px;padding:30px;box-shadow:0 5px 15px rgba(0,0,0,0.08);">
+
+                    <h2 style="color:#dc3545;text-align:center;">
+
+                        Interview Cancelled
+
+                    </h2>
+
+                    <p>
+
+                        Hello,
+
+                    </p>
+
+                    <p>
+
+                        We regret to inform you that your scheduled interview has been cancelled by the employer.
+
+                    </p>
+
+                    <table style="width:100%;border-collapse:collapse;margin-top:20px;">
+
+                        <tr>
+
+                            <td style="padding:8px;font-weight:bold;">
+
+                                Interview Date
+
+                            </td>
+
+                            <td>
+
+                                ${new Date(
+
+                                    interview.interviewDate
+
+                                ).toLocaleString()}
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td style="padding:8px;font-weight:bold;">
+
+                                Interview Mode
+
+                            </td>
+
+                            <td>
+
+                                ${interview.interviewMode}
+
+                            </td>
+
+                        </tr>
+
+                        <tr>
+
+                            <td style="padding:8px;font-weight:bold;">
+
+                                Status
+
+                            </td>
+
+                            <td style="color:red;font-weight:bold;">
+
+                                Cancelled
+
+                            </td>
+
+                        </tr>
+
+                    </table>
+
+                    <p style="margin-top:25px;">
+
+                        You may receive another interview invitation if the employer decides to reschedule.
+
+                    </p>
+
+                    <hr>
+
+                    <p style="font-size:12px;color:#777;text-align:center;">
+
+                        © ${new Date().getFullYear()} Tech Monster Pvt. Ltd.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+            `
+
+        });
+
+    } catch (error) {
+
+        console.log(
+
+            "Interview Cancel Email Error:",
+
+            error
+
+        );
+
+    }
+
+};

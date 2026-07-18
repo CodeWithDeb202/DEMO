@@ -1,382 +1,359 @@
 import Application from "../models/Application.js";
 import Internship from "../models/Internship.js";
 import Notification from "../models/Notification.js";
+import User from "../models/User.js";
+
 import { sendApplicationStatusEmail } from "../services/email.service.js";
+
 import logActivity from "../utils/logActivity.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import AppError from "../utils/AppError.js";
 
 
-export const applyInternship = async (req, res) => {
+export const applyInternship = asyncHandler(async (req, res) => {
 
-    try {
+    const {
 
-        const {
+        internship,
 
-            internship,
+        coverLetter
 
-            resume,
+    } = req.body;
 
-            coverLetter
+    if (!internship) {
 
-        } = req.body;
+        throw new AppError(
 
-        if (!internship) {
+            "Internship is required",
 
-            return res.status(400).json({
-
-                success: false,
-
-                message: "Internship is required"
-
-            });
-
-        }
-
-        const internshipExists = await Internship.findById(internship);
-
-        if (!internshipExists) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Internship not found"
-
-            });
-
-        }
-
-        const alreadyApplied = await Application.findOne({
-
-            internship,
-
-            applicant: req.user._id
-
-        });
-
-        if (alreadyApplied) {
-
-            return res.status(409).json({
-
-                success: false,
-
-                message: "You already applied"
-
-            });
-
-        }
-
-        const application = await Application.create({
-
-            internship,
-
-            applicant: req.user._id,
-
-            resume: req.user.resume,
-
-            coverLetter,
-
-        });
-
-        internship.applicationsCount += 1;
-
-        await internship.save();
-
-        await logActivity(
-
-            req,
-
-            req.user._id,
-
-            "APPLY_INTERNSHIP",
-
-            "Application",
-
-            `Applied for ${internship.title}`
+            400
 
         );
 
-        await Notification.create({
+    }
 
-            user: internship.createdBy,
+    const internshipExists = await Internship.findById(
 
-            title: "New Application",
+        internship
 
-            message: `${req.user.firstName} applied for your internship.`,
+    );
 
-            type: "application"
+    if (!internshipExists) {
 
-        });
+        throw new AppError(
 
-        return res.status(201).json({
+            "Internship not found",
 
-            success: true,
+            404
 
-            message: "Application submitted successfully",
-
-            application
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
+        );
 
     }
 
-};
+    const alreadyApplied = await Application.findOne({
 
-export const getMyApplications = async (req, res) => {
+        internship,
 
-    try {
+        applicant: req.user._id
 
-        const applications = await Application.find({
+    });
 
-            applicant: req.user._id
+    if (alreadyApplied) {
 
-        })
+        throw new AppError(
 
-            .populate({
+            "You already applied",
 
-                path: "internship",
+            409
 
-                populate: {
-
-                    path: "company"
-
-                }
-
-            })
-
-            .sort({
-
-                createdAt: -1
-
-            });
-
-        return res.status(200).json({
-
-            success: true,
-
-            applications
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
+        );
 
     }
 
-};
+    const application = await Application.create({
 
-export const getInternshipApplications = async (req, res) => {
+        internship,
 
-    try {
+        applicant: req.user._id,
 
-        const applications = await Application.find({
+        resume: req.user.resume,
 
-            internship: req.params.id
+        coverLetter
 
-        })
+    });
 
-            .populate(
+    internshipExists.applicationsCount += 1;
 
-                "applicant",
+    await internshipExists.save();
 
-                "firstName lastName email profileImage"
+    await logActivity(
 
-            )
+        req,
 
-            .sort({
+        req.user._id,
 
-                createdAt: -1
+        "APPLY_INTERNSHIP",
 
-            });
+        "Application",
 
-        return res.status(200).json({
+        `Applied for ${internshipExists.title}`
 
-            success: true,
+    );
 
-            applications
+    await Notification.create({
 
-        });
+        user: internshipExists.createdBy,
 
-    } catch (error) {
+        title: "New Application",
 
-        console.log(error);
+        message: `${req.user.firstName} applied for your internship.`,
 
-        return res.status(500).json({
+        type: "application"
 
-            success: false,
+    });
 
-            message: "Internal Server Error"
+    return res.status(201).json({
 
-        });
+        success: true,
+
+        message: "Application submitted successfully",
+
+        application
+
+    });
+
+});
+
+export const getMyApplications = asyncHandler(async (req, res) => {
+
+    const applications = await Application.find({
+
+        applicant: req.user._id
+
+    })
+
+    .populate({
+
+        path: "internship",
+
+        populate: {
+
+            path: "company"
+
+        }
+
+    })
+
+    .sort({
+
+        createdAt: -1
+
+    });
+
+    return res.status(200).json({
+
+        success: true,
+
+        applications
+
+    });
+
+});
+
+export const getInternshipApplications = asyncHandler(async (req, res) => {
+
+    const applications = await Application.find({
+
+        internship: req.params.id
+
+    })
+
+    .populate(
+
+        "applicant",
+
+        "firstName lastName email profileImage"
+
+    )
+
+    .sort({
+
+        createdAt: -1
+
+    });
+
+    return res.status(200).json({
+
+        success: true,
+
+        applications
+
+    });
+
+});
+
+export const updateApplicationStatus = asyncHandler(async (req, res) => {
+
+    const { status } = req.body;
+
+    const application = await Application.findById(
+
+        req.params.id
+
+    );
+
+    if (!application) {
+
+        throw new AppError(
+
+            "Application not found",
+
+            404
+
+        );
 
     }
 
-};
+    application.status = status;
 
-export const updateApplicationStatus = async (req, res) => {
+    await application.save();
 
-    try {
+    const student = await User.findById(
 
-        const {
+        application.applicant
+
+    );
+
+    if (student) {
+
+        await sendApplicationStatusEmail(
+
+            student.email,
 
             status
 
-        } = req.body;
-
-        const application = await Application.findById(
-
-            req.params.id
-
         );
-
-        if (!application) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Application not found"
-
-            });
-
-        }
-
-        application.status = status;
-
-        await application.save();
-
-        const student = await User.findById(application.applicant);
-        if (student) {
-            await sendApplicationStatusEmail(
-                student.email,
-                status
-            );
-        }
-
-        await Notification.create({
-
-            user: application.applicant,
-
-            title: "Application Updated",
-
-            message: `Your application has been ${status}.`,
-
-            type: "application"
-
-        });
-
-        return res.status(200).json({
-
-            success: true,
-
-            message: "Status updated",
-
-            application
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
 
     }
 
-};
+    await Notification.create({
 
-export const deleteApplication = async (req, res) => {
+        user: application.applicant,
 
-    try {
+        title: "Application Updated",
 
-        const application = await Application.findById(
+        message: `Your application has been ${status}.`,
 
-            req.params.id
+        type: "application"
+
+    });
+
+    await logActivity(
+
+        req,
+
+        req.user._id,
+
+        "UPDATE_APPLICATION_STATUS",
+
+        "Application",
+
+        `Changed application status to ${status}`
+
+    );
+
+    return res.status(200).json({
+
+        success: true,
+
+        message: "Status updated successfully",
+
+        application
+
+    });
+
+});
+
+export const deleteApplication = asyncHandler(async (req, res) => {
+
+    const application = await Application.findById(
+
+        req.params.id
+
+    );
+
+    if (!application) {
+
+        throw new AppError(
+
+            "Application not found",
+
+            404
 
         );
-
-        if (!application) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Application not found"
-
-            });
-
-        }
-
-        if (
-
-            application.applicant.toString() !==
-
-            req.user._id.toString()
-
-        ) {
-
-            return res.status(403).json({
-
-                success: false,
-
-                message: "Unauthorized"
-
-            });
-
-        }
-
-        await Application.findByIdAndDelete(
-
-            req.params.id
-
-        );
-
-        return res.status(200).json({
-
-            success: true,
-
-            message: "Application deleted"
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
 
     }
 
-};
+    if (
+
+        application.applicant.toString() !==
+
+        req.user._id.toString()
+
+    ) {
+
+        throw new AppError(
+
+            "Unauthorized",
+
+            403
+
+        );
+
+    }
+
+    await Application.findByIdAndDelete(
+
+        req.params.id
+
+    );
+
+    await Internship.findByIdAndUpdate(
+
+        application.internship,
+
+        {
+
+            $inc: {
+
+                applicationsCount: -1
+
+            }
+
+        }
+
+    );
+
+    await logActivity(
+
+        req,
+
+        req.user._id,
+
+        "DELETE_APPLICATION",
+
+        "Application",
+
+        "Deleted internship application"
+
+    );
+
+    return res.status(200).json({
+
+        success: true,
+
+        message: "Application deleted successfully"
+
+    });
+
+});

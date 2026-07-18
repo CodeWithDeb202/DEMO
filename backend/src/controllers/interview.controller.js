@@ -1,306 +1,894 @@
 import Interview from "../models/Interview.js";
 import Application from "../models/Application.js";
 import User from "../models/User.js";
-import { sendInterviewEmail } from "../services/email.service.js";
+import Notification from "../models/Notification.js";
 
-export const scheduleInterview = async (req, res) => {
+import asyncHandler from "../utils/asyncHandler.js";
+import AppError from "../utils/AppError.js";
+import logActivity from "../utils/logActivity.js";
 
-    try {
+import { sendInterviewEmail, sendInterviewCancelledEmail } from "../services/email.service.js";
 
-        const {
+export const scheduleInterview = asyncHandler(async (req, res) => {
 
-            application,
+    const {
 
-            interviewDate,
+        application,
+        interviewDate,
+        interviewMode,
+        meetingLink,
+        location
 
-            interviewMode,
+    } = req.body;
 
-            meetingLink,
+    // ==========================================================
+    // Required Field Validation
+    // ==========================================================
 
-            location
+    if (
 
-        } = req.body;
+        !application ||
+        !interviewDate ||
+        !interviewMode
 
-        const applicationData = await Application.findById(application)
-            .populate("internship");
+    ) {
 
-        if (!applicationData) {
+        throw new AppError(
 
-            return res.status(404).json({
+            "Application, interview date and interview mode are required.",
 
-                success: false,
+            400
 
-                message: "Application not found"
-
-            });
-
-        }
-
-        const interview = await Interview.create({
-
-            internship: applicationData.internship._id,
-
-            application,
-
-            student: applicationData.applicant,
-
-            employer: req.user._id,
-
-            interviewDate,
-
-            interviewMode,
-
-            meetingLink,
-
-            location
-
-        });
-
-        const student = await User.findById(applicationData.applicant);
-
-        if (student) {
-
-            await sendInterviewEmail(
-
-                student.email,
-
-                interview
-
-            );
-
-        }
-
-        return res.status(201).json({
-
-            success: true,
-
-            message: "Interview scheduled successfully",
-
-            interview
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        return res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
+        );
 
     }
 
-};
+    // ==========================================================
+    // Interview Date Validation
+    // ==========================================================
 
-export const getStudentInterviews = async (req, res) => {
+    if (
 
-    try {
+        new Date(interviewDate) <= new Date()
 
-        const interviews = await Interview.find({
+    ) {
 
-            student: req.user._id
+        throw new AppError(
 
-        })
+            "Interview date must be in the future.",
 
-        .populate("internship", "title")
+            400
 
-        .sort({
-
-            interviewDate: 1
-
-        });
-
-        return res.status(200).json({
-
-            success: true,
-
-            interviews
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
+        );
 
     }
 
-};
+    // ==========================================================
+    // Find Application
+    // ==========================================================
 
+    const applicationData = await Application.findById(application)
 
-export const getEmployerInterviews = async (req, res) => {
+        .populate("internship")
 
-    try {
+        .populate("applicant");
 
-        const interviews = await Interview.find({
+    if (!applicationData) {
 
-            employer: req.user._id
+        throw new AppError(
+
+            "Application not found.",
+
+            404
+
+        );
+
+    }
+
+    // ==========================================================
+    // Employer Authorization
+    // ==========================================================
+
+    if (
+
+        applicationData.internship.createdBy.toString()
+
+        !==
+
+        req.user._id.toString()
+
+    ) {
+
+        throw new AppError(
+
+            "You are not authorized to schedule this interview.",
+
+            403
+
+        );
+
+    }
+
+    // ==========================================================
+    // Prevent Duplicate Interview
+    // ==========================================================
+
+    const alreadyScheduled = await Interview.findOne({
+
+        application
+
+    });
+
+    if (alreadyScheduled) {
+
+        throw new AppError(
+
+            "Interview already scheduled for this application.",
+
+            409
+
+        );
+
+    }
+
+    // ==========================================================
+    // Online Interview Validation
+    // ==========================================================
+
+    if (
+
+        interviewMode === "Online" &&
+
+        !meetingLink
+
+    ) {
+
+        throw new AppError(
+
+            "Meeting link is required for online interview.",
+
+            400
+
+        );
+
+    }
+
+    // ==========================================================
+    // Offline Interview Validation
+    // ==========================================================
+
+    if (
+
+        interviewMode === "Offline" &&
+
+        !location
+
+    ) {
+
+        throw new AppError(
+
+            "Interview location is required for offline interview.",
+
+            400
+
+        );
+
+    }
+
+    // ==========================================================
+    // Create Interview
+    // ==========================================================
+
+    const interview = await Interview.create({
+
+        internship: applicationData.internship._id,
+
+        application,
+
+        student: applicationData.applicant._id,
+
+        employer: req.user._id,
+
+        interviewDate,
+
+        interviewMode,
+
+        meetingLink,
+
+        location,
+
+        status: "Scheduled"
+
+    });
+
+    // ==========================================================
+    // Update Application Status
+    // ==========================================================
+
+    applicationData.status = "Interview Scheduled";
+
+    await applicationData.save();
+
+    // ==========================================================
+    // Create Notification
+    // ==========================================================
+
+    await Notification.create({
+
+        user: applicationData.applicant._id,
+
+        title: "Interview Scheduled",
+
+        message: `Your interview has been scheduled on ${new Date(interviewDate).toLocaleString()}.`,
+
+        type: "interview"
+
+    });
+
+    // ==========================================================
+    // Send Email
+    // ==========================================================
+
+    await sendInterviewEmail(
+
+        applicationData.applicant.email,
+
+        interview
+
+    );
+
+    // ==========================================================
+    // Save Activity Log
+    // ==========================================================
+
+    await logActivity(
+
+        req,
+
+        req.user._id,
+
+        "SCHEDULE_INTERVIEW",
+
+        "Interview",
+
+        `Interview scheduled for ${applicationData.applicant.firstName}`
+
+    );
+
+    // ==========================================================
+    // Success Response
+    // ==========================================================
+
+    return res.status(201).json({
+
+        success: true,
+
+        message: "Interview scheduled successfully.",
+
+        interview
+
+    });
+
+});
+
+export const getStudentInterviews = asyncHandler(async (req, res) => {
+
+    // ==========================================================
+    // Pagination
+    // ==========================================================
+
+    const page = Number(req.query.page) || 1;
+
+    const limit = Number(req.query.limit) || 10;
+
+    const skip = (page - 1) * limit;
+
+    // ==========================================================
+    // Filters
+    // ==========================================================
+
+    const status = req.query.status || "";
+
+    const query = {
+
+        student: req.user._id
+
+    };
+
+    if (status) {
+
+        query.status = status;
+
+    }
+
+    // ==========================================================
+    // Total Interviews
+    // ==========================================================
+
+    const totalInterviews = await Interview.countDocuments(query);
+
+    // ==========================================================
+    // Fetch Interviews
+    // ==========================================================
+
+    const interviews = await Interview.find(query)
+
+        .populate({
+
+            path: "internship",
+
+            select: "title company location workMode",
+
+            populate: {
+
+                path: "company",
+
+                select: "companyName companyLogo"
+
+            }
 
         })
 
         .populate(
 
-            "student",
+            "employer",
 
             "firstName lastName email"
 
         )
 
-        .populate(
+        .sort({
 
-            "internship",
+            interviewDate: 1
 
-            "title"
+        })
 
-        )
+        .skip(skip)
+
+        .limit(limit);
+
+    // ==========================================================
+    // Response
+    // ==========================================================
+
+    return res.status(200).json({
+
+        success: true,
+
+        currentPage: page,
+
+        totalPages: Math.ceil(totalInterviews / limit),
+
+        totalInterviews,
+
+        interviews
+
+    });
+
+});
+
+
+
+export const getEmployerInterviews = asyncHandler(async (req, res) => {
+
+    // ==========================================================
+    // Pagination
+    // ==========================================================
+
+    const page = Number(req.query.page) || 1;
+
+    const limit = Number(req.query.limit) || 10;
+
+    const skip = (page - 1) * limit;
+
+    // ==========================================================
+    // Filters
+    // ==========================================================
+
+    const status = req.query.status || "";
+
+    const interviewMode = req.query.interviewMode || "";
+
+    const search = req.query.search || "";
+
+    const query = {
+
+        employer: req.user._id
+
+    };
+
+    if (status) {
+
+        query.status = status;
+
+    }
+
+    if (interviewMode) {
+
+        query.interviewMode = interviewMode;
+
+    }
+
+    // ==========================================================
+    // Total Interviews
+    // ==========================================================
+
+    const totalInterviews = await Interview.countDocuments(query);
+
+    // ==========================================================
+    // Fetch Interviews
+    // ==========================================================
+
+    let interviews = await Interview.find(query)
+
+        .populate({
+
+            path: "student",
+
+            select: "firstName lastName email profileImage"
+
+        })
+
+        .populate({
+
+            path: "internship",
+
+            select: "title company location workMode",
+
+            populate: {
+
+                path: "company",
+
+                select: "companyName companyLogo"
+
+            }
+
+        })
 
         .sort({
 
             interviewDate: 1
 
-        });
+        })
 
-        return res.status(200).json({
+        .skip(skip)
 
-            success: true,
+        .limit(limit);
 
-            interviews
+    // ==========================================================
+    // Search by Student Name
+    // ==========================================================
 
-        });
+    if (search) {
 
-    } catch (error) {
+        interviews = interviews.filter((item) => {
 
-        console.log(error);
+            const fullName =
 
-        res.status(500).json({
+                `${item.student.firstName} ${item.student.lastName}`
 
-            success: false,
+                    .toLowerCase();
 
-            message: "Internal Server Error"
+            return fullName.includes(
+
+                search.toLowerCase()
+
+            );
 
         });
 
     }
 
-};
+    // ==========================================================
+    // Response
+    // ==========================================================
+
+    return res.status(200).json({
+
+        success: true,
+
+        currentPage: page,
+
+        totalPages: Math.ceil(totalInterviews / limit),
+
+        totalInterviews,
+
+        interviews
+
+    });
+
+});
 
 
-export const updateInterview = async (req, res) => {
+export const updateInterview = asyncHandler(async (req, res) => {
 
-    try {
+    // ==========================================================
+    // Get Interview
+    // ==========================================================
 
-        const interview = await Interview.findByIdAndUpdate(
+    const interview = await Interview.findById(req.params.id);
 
-            req.params.id,
+    if (!interview) {
 
-            req.body,
+        throw new AppError(
 
-            {
+            "Interview not found.",
 
-                new: true
-
-            }
+            404
 
         );
 
-        if (!interview) {
-
-            return res.status(404).json({
-
-                success: false,
-
-                message: "Interview not found"
-
-            });
-
-        }
-
-        return res.status(200).json({
-
-            success: true,
-
-            message: "Interview updated",
-
-            interview
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
-
     }
 
-};
+    // ==========================================================
+    // Authorization
+    // Only Interview Creator (Employer)
+    // ==========================================================
 
+    if (
 
-export const cancelInterview = async (req, res) => {
+        interview.employer.toString() !==
 
-    try {
+        req.user._id.toString()
 
-        const interview = await Interview.findById(
+    ) {
 
-            req.params.id
+        throw new AppError(
+
+            "You are not authorized to update this interview.",
+
+            403
 
         );
 
-        if (!interview) {
+    }
 
-            return res.status(404).json({
+    // ==========================================================
+    // Prevent Editing Cancelled Interview
+    // ==========================================================
 
-                success: false,
+    if (
 
-                message: "Interview not found"
+        interview.status === "Cancelled"
 
-            });
+    ) {
 
-        }
+        throw new AppError(
 
-        interview.status = "Cancelled";
+            "Cancelled interview cannot be updated.",
 
-        await interview.save();
+            400
 
-        return res.status(200).json({
-
-            success: true,
-
-            message: "Interview cancelled",
-
-            interview
-
-        });
-
-    } catch (error) {
-
-        console.log(error);
-
-        res.status(500).json({
-
-            success: false,
-
-            message: "Internal Server Error"
-
-        });
+        );
 
     }
 
-};
+    // ==========================================================
+    // Request Data
+    // ==========================================================
+
+    const {
+
+        interviewDate,
+
+        interviewMode,
+
+        meetingLink,
+
+        location,
+
+        status
+
+    } = req.body;
+
+    // ==========================================================
+    // Validate Interview Date
+    // ==========================================================
+
+    if (
+
+        interviewDate &&
+
+        new Date(interviewDate) <= new Date()
+
+    ) {
+
+        throw new AppError(
+
+            "Interview date must be in the future.",
+
+            400
+
+        );
+
+    }
+
+    // ==========================================================
+    // Online Interview Validation
+    // ==========================================================
+
+    if (
+
+        interviewMode === "Online" &&
+
+        !meetingLink
+
+    ) {
+
+        throw new AppError(
+
+            "Meeting link is required for online interview.",
+
+            400
+
+        );
+
+    }
+
+    // ==========================================================
+    // Offline Interview Validation
+    // ==========================================================
+
+    if (
+
+        interviewMode === "Offline" &&
+
+        !location
+
+    ) {
+
+        throw new AppError(
+
+            "Interview location is required for offline interview.",
+
+            400
+
+        );
+
+    }
+
+    // ==========================================================
+    // Update Fields
+    // ==========================================================
+
+    interview.interviewDate = interviewDate ?? interview.interviewDate;
+
+    interview.interviewMode = interviewMode ?? interview.interviewMode;
+
+    interview.meetingLink = meetingLink ?? interview.meetingLink;
+
+    interview.location = location ?? interview.location;
+
+    interview.status = status ?? interview.status;
+
+    await interview.save();
+
+    // ==========================================================
+    // Notification
+    // ==========================================================
+
+    await Notification.create({
+
+        user: interview.student,
+
+        title: "Interview Updated",
+
+        message: "Your interview details have been updated.",
+
+        type: "interview"
+
+    });
+
+    // ==========================================================
+    // Activity Log
+    // ==========================================================
+
+    await logActivity(
+
+        req,
+
+        req.user._id,
+
+        "UPDATE_INTERVIEW",
+
+        "Interview",
+
+        `Updated interview ${interview._id}`
+
+    );
+
+    // ==========================================================
+    // Send Updated Email
+    // ==========================================================
+
+    const student = await User.findById(interview.student);
+
+    if (student) {
+
+        await sendInterviewEmail(
+
+            student.email,
+
+            interview
+
+        );
+
+    }
+
+    // ==========================================================
+    // Response
+    // ==========================================================
+
+    return res.status(200).json({
+
+        success: true,
+
+        message: "Interview updated successfully.",
+
+        interview
+
+    });
+
+});
+
+
+
+export const cancelInterview = asyncHandler(async (req, res) => {
+
+    // ==========================================================
+    // Find Interview
+    // ==========================================================
+
+    const interview = await Interview.findById(req.params.id);
+
+    if (!interview) {
+
+        throw new AppError(
+
+            "Interview not found.",
+
+            404
+
+        );
+
+    }
+
+    // ==========================================================
+    // Authorization
+    // ==========================================================
+
+    if (
+
+        interview.employer.toString() !==
+
+        req.user._id.toString()
+
+    ) {
+
+        throw new AppError(
+
+            "You are not authorized to cancel this interview.",
+
+            403
+
+        );
+
+    }
+
+    // ==========================================================
+    // Already Cancelled
+    // ==========================================================
+
+    if (
+
+        interview.status === "Cancelled"
+
+    ) {
+
+        throw new AppError(
+
+            "Interview is already cancelled.",
+
+            400
+
+        );
+
+    }
+
+    // ==========================================================
+    // Cancel Interview
+    // ==========================================================
+
+    interview.status = "Cancelled";
+
+    await interview.save();
+
+    // ==========================================================
+    // Restore Application Status
+    // ==========================================================
+
+    const application = await Application.findById(
+
+        interview.application
+
+    );
+
+    if (application) {
+
+        application.status = "Pending";
+
+        await application.save();
+
+    }
+
+    // ==========================================================
+    // Notify Student
+    // ==========================================================
+
+    await Notification.create({
+
+        user: interview.student,
+
+        title: "Interview Cancelled",
+
+        message: "Your interview has been cancelled by the employer.",
+
+        type: "interview"
+
+    });
+
+    // ==========================================================
+    // Send Cancellation Email
+    // ==========================================================
+
+    const student = await User.findById(
+
+        interview.student
+
+    );
+
+    if (student) {
+
+        await sendInterviewCancelledEmail(
+
+            student.email,
+
+            interview
+
+        );
+
+    }
+
+    // ==========================================================
+    // Save Activity Log
+    // ==========================================================
+
+    await logActivity(
+
+        req,
+
+        req.user._id,
+
+        "CANCEL_INTERVIEW",
+
+        "Interview",
+
+        `Cancelled interview ${interview._id}`
+
+    );
+
+    // ==========================================================
+    // Response
+    // ==========================================================
+
+    return res.status(200).json({
+
+        success: true,
+
+        message: "Interview cancelled successfully.",
+
+        interview
+
+    });
+
+});

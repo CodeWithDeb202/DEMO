@@ -2,22 +2,31 @@ import express from "express";
 
 import authMiddleware from "../middleware/auth.middleware.js";
 import authorizeRoles from "../middleware/role.middleware.js";
+import validate from "../middleware/validate.middleware.js";
 
 import {
 
-createInternship,
+    internshipSchema
 
-getInternships,
+} from "../../validations/internship.validation.js";
 
-getInternshipById,
+import {
 
-updateInternship,
+    createInternship,
 
-deleteInternship,
+    getInternships,
 
-getPopularInternships,
+    getInternshipById,
 
-getRecommendedInternships
+    updateInternship,
+
+    deleteInternship,
+
+    getPopularInternships,
+
+    getRecommendedInternships,
+
+    restoreInternship
 
 } from "../controllers/internship.controller.js";
 
@@ -26,6 +35,7 @@ const router = express.Router();
 router.post(
     "/",
     authMiddleware,
+    validate(internshipSchema),
     createInternship
 );
 
@@ -68,6 +78,18 @@ router.get(
     authorizeRoles("student"),
 
     getRecommendedInternships
+
+);
+
+router.patch(
+
+    "/restore/:id",
+
+    authMiddleware,
+
+    authorizeRoles("employer"),
+
+    restoreInternship
 
 );
 

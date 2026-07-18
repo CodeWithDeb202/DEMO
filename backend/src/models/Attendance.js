@@ -36,6 +36,19 @@ const attendanceSchema = new mongoose.Schema(
 
         },
 
+        workingHours: {
+            type: Number,
+            default: 0
+        },
+
+        workingMinutes: {
+
+            type: Number,
+
+            default: 0
+
+        },
+
         status: {
 
             type: String,
