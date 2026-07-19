@@ -3,10 +3,9 @@ import "./StudentDashboard.css";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-import WelcomeCard from "../../components/Common/Profile/WelcomeCard";
-import ProfileProgress from "../../components/Common/CommonProfilePage/ProfileProgress";
-import NotificationsWidget from "../../components/Common/CommonProfilePage/NotificationsWidget";
-
+import WelcomeCard from "../../components/Dashboard/WelcomeCard";
+import ProfileProgress from "../../components/Dashboard/ProfileProgress";
+import NotificationsWidget from "../../components/Dashboard/NotificationsWidget";
 import StatsCards from "../../components/Dashboard/StatsCards";
 import QuickActions from "../../components/Dashboard/QuickActions";
 import RecentApplications from "../../components/Dashboard/RecentApplications";

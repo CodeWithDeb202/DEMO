@@ -3,8 +3,8 @@ import "./EmployerDashboard.css";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-import WelcomeCard from "../../components/Common/CommonProfilePage/WelcomeCard";
-import NotificationsWidget from "../../components/Common/CommonProfilePage/NotificationsWidget";
+import WelcomeCard from "../../components/EmployerDashboard/WelcomeCard";
+import NotificationsWidget from "../../components/EmployerDashboard/NotificationsWidget";
 
 import CompanyProfileCard from "../../components/EmployerDashboard/CompanyProfileCard";
 import StatsCards from "../../components/EmployerDashboard/StatsCards";
