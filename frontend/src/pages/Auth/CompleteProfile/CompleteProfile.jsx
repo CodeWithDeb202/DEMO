@@ -1,24 +1,29 @@
 import "./CompleteProfile.css";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import WelcomeCard from "../../../components/Common/CommonProfilePage/WelcomeCard";
+import ProfileProgress from "../../../components/Common/CommonProfilePage/ProfileProgress";
+
 import BasicInfoSection from "../../../components/Common/Profile/BasicInfo";
 import EducationSection from "../../../components/Common/Profile/EducationSection";
-import ExperienceSection from "../../../components/common/Profile/ExperienceSection";
-import SkillsSection from "../../../components/common/Profile/SkillsSection";
-import SocialLinksSection from "../../../components/common/Profile/SocialLinksSection";
-import ResumeUpload from "../../../components/Common/Profile/ResumeUpload";
+import ExperienceSection from "../../../components/Common/Profile/ExperienceSection";
+import SkillsSection from "../../../components/Common/Profile/SkillsSection";
+import SocialLinksSection from "../../../components/Common/Profile/SocialLinksSection";
+import ResumeUpload from "../../../components/Common";
 import AvatarUpload from "../../../components/Common/Profile/AvatarUpload";
 
 import profileSchema from "../../../validations/auth/completeProfileSchema";
 
-import {getProfile, updateProfile } from "../../../services/api/profileService";
+import { getProfile, updateProfile } from "../../../services/api/profileService";
 
 import toast from "react-hot-toast";
 
 const CompleteProfile = () => {
+
+    const [user, setUser] = useState({});
 
     const {
 
@@ -60,7 +65,7 @@ const CompleteProfile = () => {
         // eslint-disable-next-line react-hooks/immutability
         fetchProfile();
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const fetchProfile = async () => {
@@ -68,6 +73,8 @@ const CompleteProfile = () => {
         try {
 
             const res = await getProfile();
+
+            setUser(res.user);
 
             reset(res.user);
 
@@ -106,6 +113,17 @@ const CompleteProfile = () => {
     return (
 
         <div className="complete-profile-page">
+
+            <WelcomeCard
+                user={user}
+                completion={user?.profileCompletion || 0}
+            />
+
+            <ProfileProgress
+
+                user={user}
+
+            />
 
             <form onSubmit={handleSubmit(onSubmit)}>
 

@@ -2,7 +2,7 @@ import "./FAQ.css";
 import { faqData } from "./FAQData";
 
 import SectionHeader from "../../../components/Common/SectionHeader";
-import Accordion from "../../../components/Common/Accordion";
+import Accordion from "../../../components/Common/CardComponent/Accordion";
 
 
 function FAQ() {
