@@ -4,18 +4,18 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import WelcomeCard from "../../../components/Common/CommonProfilePage/WelcomeCard";
-import ProfileProgress from "../../../components/Common/CommonProfilePage/ProfileProgress";
+import WelcomeCard from "../../../components/Dashboard/WelcomeCard";
+import ProfileProgress from "../../../components/Dashboard/ProfileProgress";
 
 import BasicInfoSection from "../../../components/Common/Profile/BasicInfo";
 import EducationSection from "../../../components/Common/Profile/EducationSection";
 import ExperienceSection from "../../../components/Common/Profile/ExperienceSection";
 import SkillsSection from "../../../components/Common/Profile/SkillsSection";
 import SocialLinksSection from "../../../components/Common/Profile/SocialLinksSection";
-import ResumeUpload from "../../../components/Common";
+import ResumeUpload from "../../../components/Common/Profile/ResumeUpload";
 import AvatarUpload from "../../../components/Common/Profile/AvatarUpload";
 
-import profileSchema from "../../../validations/auth/completeProfileSchema";
+import profileSchema from "../../../validations/auth/profileSchema";
 
 import { getProfile, updateProfile } from "../../../services/api/profileService";
 
@@ -136,11 +136,9 @@ const CompleteProfile = () => {
                 />
 
                 <BasicInfoSection
-
+                    control={control}
                     register={register}
-
                     errors={errors}
-
                 />
 
                 <EducationSection

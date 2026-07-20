@@ -41,6 +41,8 @@ const ApplicantDetails = () => {
             setApplicant(response.applicant);
 
         } catch (error) {
+            console.log(error);
+            
 
             toast.error("Failed to load applicant");
 

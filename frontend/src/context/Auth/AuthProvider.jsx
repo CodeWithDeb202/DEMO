@@ -1,81 +1,45 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AuthContext from "./AuthContext";
+import { tokenStorage } from "../../services/auth/tokenStorage";
 
 function AuthProvider({ children }) {
 
-    const [user, setUser] = useState(null);
+    const [token, setToken] = useState(tokenStorage.getToken());
 
-    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(tokenStorage.getUser());
 
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const login = ({ token, user }) => {
 
-    useEffect(() => {
+        tokenStorage.setToken(token);
+        tokenStorage.setUser(user);
 
-        const storedUser = localStorage.getItem("user");
-
-        if (storedUser) {
-
-            setUser(JSON.parse(storedUser));
-
-            setIsAuthenticated(true);
-
-        }
-
-        setLoading(false);
-
-    }, []);
-
-    const login = (userData) => {
-
-        localStorage.setItem(
-            "user",
-            JSON.stringify(userData)
-        );
-
-        setUser(userData);
-
-        setIsAuthenticated(true);
+        setToken(token);
+        setUser(user);
 
     };
 
     const logout = () => {
 
-        localStorage.removeItem("user");
+        tokenStorage.clear();
 
+        setToken(null);
         setUser(null);
-
-        setIsAuthenticated(false);
 
     };
 
     return (
-
         <AuthContext.Provider
-
             value={{
-
+                token,
                 user,
-
-                setUser,
-
-                loading,
-
-                isAuthenticated,
-
+                isAuthenticated: !!token,
                 login,
-
                 logout
-
             }}
-
         >
-
             {children}
-
         </AuthContext.Provider>
-
     );
-
 }
 
-export default AuthProvider;
+export { AuthProvider };

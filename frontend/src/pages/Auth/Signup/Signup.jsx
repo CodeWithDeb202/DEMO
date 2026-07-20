@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { motion } from "framer-motion";
 
+import { useState } from "react";
+
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,44 +18,69 @@ import Select from "../../../components/Common/Form/Select";
 import Button from "../../../components/common/Form/Button";
 import PasswordStrength from "../../../components/common/Form/PasswordStrength";
 
+import { signup as signupService } from "../../../services/api/authService";
+
 import { signupSchema } from "../../../validations/auth/signupSchema";
 
-import { signup } from "../../../services/api/authService";
 
 
 
 function Signup() {
+  const [error, setError] = useState("");
+
   const {
 
     register,
-
     handleSubmit,
     watch,
-
     formState: { errors }
 
   } = useForm({
 
-    resolver: zodResolver(signupSchema)
+    resolver: zodResolver(signupSchema),
 
-  })
+    defaultValues: {
+
+      role: "student",
+
+      terms: false
+
+    }
+
+  });
 
 
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
 
+    setError("")
+
     try {
 
-      await signup(data);
+      await signupService(data);
 
-      navigate("/verify-otp");
+      navigate("/verify-signup-otp", {
+
+        state: {
+
+          email: data.email
+
+        }
+
+      });
 
     }
 
     catch (err) {
 
-      console.log(err);
+      setError(
+
+        err.response?.data?.message ||
+
+        "Sign up failed"
+
+      );
 
     }
 
@@ -74,12 +101,28 @@ function Signup() {
           onSubmit={handleSubmit(onSubmit)}
         >
           <Input
-            label="Full Name"
-            placeholder="Enter Full Name"
-            {
-            ...register("fullName")
-            }
-            error={errors.fullName?.message}
+
+            label="First Name"
+
+            placeholder="Enter First Name"
+
+            {...register("firstName")}
+
+            error={errors.firstName?.message}
+
+          />
+
+
+          <Input
+
+            label="Last Name"
+
+            placeholder="Enter Last Name"
+
+            {...register("lastName")}
+
+            error={errors.lastName?.message}
+
           />
 
           <Input
@@ -183,6 +226,31 @@ function Signup() {
 
           />
 
+          <Select
+
+            label="Role"
+
+            options={[
+
+              {
+                value: "student",
+                label: "Student"
+              },
+
+              {
+                value: "employer",
+                label: "Employer"
+              }
+
+            ]}
+
+
+            {...register("role")}
+
+            error={errors.role?.message}
+
+          />
+
           <PasswordInput
 
             label="Password"
@@ -213,7 +281,21 @@ function Signup() {
 
           />
 
-          <PasswordStrength password={watch("password")}/>
+          // eslint-disable-next-line react-hooks/incompatible-library
+          <PasswordStrength password={watch("password")} />
+
+          {
+
+            error &&
+
+            <p className="signup-error">
+
+              {error}
+
+            </p>
+
+
+          }
 
           <label className="terms">
 

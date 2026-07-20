@@ -1,42 +1,37 @@
-import "./EmployerDashboard.css";
+import "./StudentDashboard.css";
 
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-import WelcomeCard from "../../components/EmployerDashboard/WelcomeCard";
-import NotificationsWidget from "../../components/EmployerDashboard/NotificationsWidget";
-
-import CompanyProfileCard from "../../components/EmployerDashboard/CompanyProfileCard";
-import StatsCards from "../../components/EmployerDashboard/StatsCards";
-import QuickActions from "../../components/EmployerDashboard/QuickActions";
-import RecentInternships from "../../components/EmployerDashboard/RecentInternships";
-import RecentApplications from "../../components/EmployerDashboard/RecentApplications";
-import UpcomingInterviews from "../../components/EmployerDashboard/UpcomingInterviews";
-import DashboardCalendar from "../../components/EmployerDashboard/DashboardCalendar";
-import DashboardChart from "../../components/EmployerDashboard/DashboardChart";
-import RecentActivities from "../../components/EmployerDashboard/RecentActivities";
+import WelcomeCard from "../../../components/Dashboard/WelcomeCard";
+import ProfileProgress from "../../../components/Dashboard/ProfileProgress";
+import NotificationsWidget from "../../../components/Dashboard/NotificationsWidget";
+import StatsCards from "../../../components/Dashboard/StatsCards";
+import QuickActions from "../../../components/Dashboard/QuickActions";
+import RecentApplications from "../../../components/Dashboard/RecentApplications";
+import RecommendedInternships from "../../../components/Dashboard/RecommendedInternships";
+import UpcomingInterviews from "../../../components/Dashboard/UpcomingInterviews";
+import RecentActivities from "../../../components/Dashboard/RecentActivities";
+import DashboardCalendar from "../../../components/Dashboard/DashboardCalendar";
+import DashboardChart from "../../../components/Dashboard/DashboardChart";
 
 import {
+    getStudentDashboard
+} from "../../../services/api/dashboardService";
 
-    getEmployerDashboard
-
-} from "../../services/api/dashboardService";
-
-const EmployerDashboard = () => {
+const StudentDashboard = () => {
 
     const [loading, setLoading] = useState(true);
 
     const [dashboard, setDashboard] = useState({
 
-        employer: {},
-
-        company: {},
+        user: {},
 
         stats: {},
 
-        internships: [],
-
         applications: [],
+
+        recommendedInternships: [],
 
         interviews: [],
 
@@ -65,7 +60,7 @@ const EmployerDashboard = () => {
 
             setLoading(true);
 
-            const res = await getEmployerDashboard();
+            const res = await getStudentDashboard();
 
             setDashboard(res.dashboard);
 
@@ -93,7 +88,7 @@ const EmployerDashboard = () => {
 
             <div className="dashboard-loading">
 
-                Loading Employer Dashboard...
+                Loading Dashboard...
 
             </div>
 
@@ -103,17 +98,11 @@ const EmployerDashboard = () => {
 
     return (
 
-        <div className="employer-dashboard">
+        <div className="student-dashboard">
 
             <WelcomeCard
 
-                user={dashboard.employer}
-
-            />
-
-            <CompanyProfileCard
-
-                company={dashboard.company}
+                user={dashboard.user}
 
             />
 
@@ -123,21 +112,27 @@ const EmployerDashboard = () => {
 
             />
 
+            <ProfileProgress
+
+                user={dashboard.user}
+
+            />
+
             <QuickActions />
 
             <div className="dashboard-grid">
 
                 <div className="dashboard-left">
 
-                    <RecentInternships
-
-                        internships={dashboard.internships}
-
-                    />
-
                     <RecentApplications
 
                         applications={dashboard.applications}
+
+                    />
+
+                    <RecommendedInternships
+
+                        internships={dashboard.recommendedInternships}
 
                     />
 
@@ -187,4 +182,4 @@ const EmployerDashboard = () => {
 
 };
 
-export default EmployerDashboard;
+export default StudentDashboard;

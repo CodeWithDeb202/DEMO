@@ -2,25 +2,21 @@ import "./AdminDashboard.css";
 
 import { useEffect, useState } from "react";
 
-import WelcomeCard from "../../components/AdminDashboard/WelcomeCard";
-import StatsCards from "../../components/AdminDashboard/StatsCards";
-import QuickActions from "../../components/AdminDashboard/QuickActions";
-import RecentUsers from "../../components/AdminDashboard/RecentUsers";
-import RecentCompanies from "../../components/AdminDashboard/RecentCompanies";
-import PendingVerifications from "../../components/AdminDashboard/PendingVerifications";
-import RecentInternships from "../../components/AdminDashboard/RecentInternships";
-import ReportsWidget from "../../components/AdminDashboard/ReportsWidget";
-import DashboardChart from "../../components/AdminDashboard/DashboardChart";
-import DashboardCalendar from "../../components/AdminDashboard/DashboardCalendar";
-import NotificationsWidget from "../../components/AdminDashboard/NotificationsWidget";
-import RecentActivities from "../../components/AdminDashboard/RecentActivities";
-import SystemHealth from "../../components/AdminDashboard/SystemHealth";
+import WelcomeCard from "../../../components/AdminDashboard/WelcomeCard";
+import StatsCards from "../../../components/AdminDashboard/StatsCards";
+import QuickActions from "../../../components/AdminDashboard/QuickActions";
+import RecentUsers from "../../../components/AdminDashboard/RecentUsers";
+import RecentCompanies from "../../../components/AdminDashboard/RecentCompanies";
+import PendingVerifications from "../../../components/AdminDashboard/PendingVerifications";
+import RecentInternships from "../../../components/AdminDashboard/RecentInternships";
+import ReportsWidget from "../../../components/AdminDashboard/ReportsWidget";
+import DashboardChart from "../../../components/AdminDashboard/DashboardChart";
+import DashboardCalendar from "../../../components/AdminDashboard/DashboardCalendar";
+import NotificationsWidget from "../../../components/AdminDashboard/NotificationsWidget";
+import RecentActivities from "../../../components/AdminDashboard/RecentActivities";
+import SystemHealth from "../../../components/AdminDashboard/SystemHealth";
 
-import {
-
-    getAdminDashboard
-
-} from "../../services/api/dashboardService";
+import {getAdminDashboard} from "../../../services/api/dashboardService";
 
 const AdminDashboard = () => {
 
@@ -42,6 +38,7 @@ const AdminDashboard = () => {
 
     useEffect(() => {
 
+        // eslint-disable-next-line react-hooks/immutability
         fetchDashboard();
 
     }, []);

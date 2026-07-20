@@ -61,7 +61,7 @@ export const signup = asyncHandler(async (req, res) => {
         "User account created"
 
     );
-
+    
     // ==============================
     // OTP Generate
     // ==============================
@@ -88,7 +88,7 @@ export const signup = asyncHandler(async (req, res) => {
         message: "Account created. OTP sent to your email."
     });
 
-    
+
 });
 
 
@@ -230,18 +230,47 @@ export const login = asyncHandler(async (req, res) => {
 
 export const verifyOTP = asyncHandler(async (req, res) => {
 
-    const { email, otp } = req.body;
 
-    if (!email || !otp) {
+    const {
+        email,
+        otp,
+        purpose
+    } = req.body;
+
+
+
+    // ==========================================
+    // Validation
+    // ==========================================
+
+    if (!email || !otp || !purpose) {
+
         return res.status(400).json({
+
             success: false,
-            message: "Email and OTP are required"
+
+            message: "Email, OTP and purpose are required"
+
         });
+
     }
 
-    const otpRecord = await OTP.findOne({ email });
+
+
+    // ==========================================
+    // Find OTP
+    // ==========================================
+
+    const otpRecord = await OTP.findOne({
+
+        email
+
+    });
+
+
 
     if (!otpRecord) {
+
         throw new AppError(
 
             "Invalid OTP",
@@ -249,11 +278,25 @@ export const verifyOTP = asyncHandler(async (req, res) => {
             400
 
         );
+
     }
+
+
+
+
+    // ==========================================
+    // OTP Expiry Check
+    // ==========================================
 
     if (otpRecord.expiresAt < new Date()) {
 
-        await OTP.deleteOne({ _id: otpRecord._id });
+
+        await OTP.deleteOne({
+
+            _id: otpRecord._id
+
+        });
+
 
         throw new AppError(
 
@@ -265,7 +308,15 @@ export const verifyOTP = asyncHandler(async (req, res) => {
 
     }
 
+
+
+
+    // ==========================================
+    // OTP Match
+    // ==========================================
+
     if (otpRecord.otp !== otp) {
+
 
         throw new AppError(
 
@@ -277,26 +328,207 @@ export const verifyOTP = asyncHandler(async (req, res) => {
 
     }
 
-    await User.updateOne(
-        { email },
-        {
-            isVerified: true
+
+
+
+    // =================================================
+    // SIGNUP OTP VERIFICATION
+    // =================================================
+
+    if (purpose === "signup") {
+
+
+        const user = await User.findOne({
+
+            email
+
+        });
+
+
+
+        if (!user) {
+
+
+            throw new AppError(
+
+                "User not found",
+
+                404
+
+            );
+
+
         }
+
+
+
+        user.isVerified = true;
+
+
+        await user.save();
+
+
+
+        await OTP.deleteOne({
+
+            _id: otpRecord._id
+
+        });
+
+
+
+        // Generate JWT Token
+
+        const accessToken = generateToken(
+
+            user._id
+
+        );
+
+
+
+        const refreshToken = generateRefreshToken(
+
+            user._id
+
+        );
+
+
+
+        await RefreshToken.create({
+
+            user: user._id,
+
+            token: refreshToken,
+
+            expiresAt: new Date(
+
+                Date.now() +
+                7 * 24 * 60 * 60 * 1000
+
+            )
+
+        });
+
+
+
+
+        await logActivity(
+
+            req,
+
+            user._id,
+
+            "VERIFY_EMAIL",
+
+            "Auth",
+
+            "Email verified successfully"
+
+        );
+
+
+
+
+        return res.status(200).json({
+
+
+            success: true,
+
+
+            message: "Email verified successfully",
+
+
+
+            accessToken,
+
+
+            refreshToken,
+
+
+
+            user: {
+
+
+                id: user._id,
+
+
+                firstName: user.firstName,
+
+
+                lastName: user.lastName,
+
+
+                email: user.email,
+
+
+                role: user.role
+
+
+            }
+
+
+
+        });
+
+
+
+    }
+
+
+
+
+
+    // =================================================
+    // FORGOT PASSWORD OTP VERIFICATION
+    // =================================================
+
+    if (purpose === "forgot-password") {
+
+
+
+        await OTP.deleteOne({
+
+            _id: otpRecord._id
+
+        });
+
+
+
+        return res.status(200).json({
+
+
+            success: true,
+
+
+            message: "OTP verified successfully",
+
+
+            email
+
+
+        });
+
+
+    }
+
+
+
+
+
+    // =================================================
+    // INVALID PURPOSE
+    // =================================================
+
+
+    throw new AppError(
+
+        "Invalid OTP purpose",
+
+        400
+
     );
 
-    await OTP.deleteOne({
-        _id: otpRecord._id
-    });
-
-    return res.status(200).json({
-        success: true,
-        message: "Email verified successfully"
-    });
-
-    return res.status(500).json({
-        success: false,
-        message: "Internal Server Error"
-    });
 
 });
 

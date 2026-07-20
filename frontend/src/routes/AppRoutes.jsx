@@ -8,11 +8,21 @@ import Contact from '../pages/LandingPages/Contact';
 import Login from '../pages/Auth/Login';
 import Signup from '../pages/Auth/Signup';
 import ForgotPassword from '../pages/Auth/ForgotPassword';
-import VerifyOTP from '../pages/Auth/VerifyOTP';
 import ResetPassword from '../pages/Auth/ResetPassword';
 
 import ProtectedRoute from './ProtectedRoute';
 
+
+import VerifySignupOTP from '../pages/Auth/VerifySignupOTP';
+import VerifyResetOTP from '../pages/Auth/VerifyResetOTP';
+
+
+// Dashboards
+
+import StudentDashboard from "../pages/Dashboard/StudentDashboard";
+import EmployerDashboard from "../pages/Dashboard/EmployerDashboard";
+import AdminDashboard from "../pages/Dashboard/AdminDashboard";
+import CompleteProfile from '../pages/Auth/CompleteProfile/CompleteProfile';
 
 
 
@@ -33,18 +43,54 @@ function AppRoutes() {
 
                 <Route path='/forgot-password' element={<ForgotPassword />} />
 
-                <Route path='/verify-otp' element={<VerifyOTP />} />
+                <Route path="/verify-signup-otp" element={<VerifySignupOTP />} />
 
                 <Route path='/reset-password' element={<ResetPassword />} />
 
+                <Route path="/verify-reset-otp" element={<VerifyResetOTP />} />
+
                 <Route
-                    path="/dashboard"
+                    path="/student/dashboard"
                     element={
-                        <ProtectedRoute>
-                            
+                        <ProtectedRoute role="student">
+                            <StudentDashboard />
                         </ProtectedRoute>
                     }
                 />
+
+                <Route
+
+                    path="/employer/dashboard"
+
+                    element={
+
+                        <ProtectedRoute role="employer">
+
+                            <EmployerDashboard />
+
+                        </ProtectedRoute>
+
+                    }
+
+                />
+
+                <Route
+
+                    path="/admin/dashboard"
+
+                    element={
+
+                        <ProtectedRoute role="admin">
+
+                            <AdminDashboard />
+
+                        </ProtectedRoute>
+
+                    }
+
+                />
+
+                <Route path='/complete-profile' element={<CompleteProfile />} />
 
 
             </Routes>

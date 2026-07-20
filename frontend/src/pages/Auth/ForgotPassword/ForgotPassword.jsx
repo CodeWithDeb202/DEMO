@@ -44,27 +44,17 @@ function ForgotPassword() {
 
             setServerError("");
 
-            await forgotPassword(data.email);
+            await forgotPassword(data);
 
-            navigate(
+            navigate("/verify-reset-otp", {
 
-                "/verify-otp",
+                state: {
 
-                {
-
-                    replace: true,
-
-                    state: {
-
-                        email: data.email,
-
-                        purpose: "reset-password"
-
-                    }
+                    email:data.email
 
                 }
 
-            )
+            });
 
         }
 

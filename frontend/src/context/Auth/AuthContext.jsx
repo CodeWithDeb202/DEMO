@@ -1,8 +1,8 @@
-import { createContext, useMemo, useState } from "react";
+import { createContext, useCallback, useMemo, useState } from "react";
 
 import { tokenStorage } from "../../services/auth/tokenStorage";
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
 
@@ -18,9 +18,16 @@ export function AuthProvider({ children }) {
 
     );
 
-    const login = ({ token, user }) => {
+    const login = useCallback(({ token, user }) => {
+
+        console.log("LOGIN TOKEN =", token);
 
         tokenStorage.setToken(token);
+
+        console.log(
+            "AFTER SAVE =",
+            localStorage.getItem("accessToken")
+        );
 
         tokenStorage.setUser(user);
 
@@ -28,9 +35,9 @@ export function AuthProvider({ children }) {
 
         setUser(user);
 
-    };
+    }, []);
 
-    const logout = () => {
+    const logout = useCallback(() => {
 
         tokenStorage.clear();
 
@@ -38,7 +45,7 @@ export function AuthProvider({ children }) {
 
         setUser(null);
 
-    };
+    }, []);
 
     const value = useMemo(() => ({
 
@@ -52,7 +59,7 @@ export function AuthProvider({ children }) {
 
         logout
 
-    }), [token, user]);
+    }), [token, user, login, logout]);
 
     return (
 

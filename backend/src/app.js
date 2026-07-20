@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
-app.use(morganMiddleware);
 
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
@@ -26,51 +25,125 @@ import activityRoutes from "./routes/activity.routes.js";
 import analyticsRoutes from "./routes/analytics.routes.js";
 import searchRoutes from "./routes/search.routes.js";
 
+
 import errorMiddleware from "./middleware/error.middleware.js";
 import morganMiddleware from "./middleware/logger.middleware.js";
 import errorHandler from "./middleware/errorHandlre.js";
+
 
 import { swaggerUi, swaggerSpec } from "./config/swagger.js";
 
 
 
 
+
 const app = express();
 
-// Middlewares
+
+
+// ==========================================
+// Global Middlewares
+// ==========================================
+
+
 app.use(
+
   cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true,
+
+    origin: process.env.CLIENT_URL || "http://localhost:5199",
+
+    credentials: true
+
   })
+
 );
 
+
+
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+
+app.use(
+
+  express.urlencoded({
+
+    extended: true
+
+  })
+
+);
+
+
 app.use(cookieParser());
 
 
+
+
+// ==========================================
+// Logger Middleware
+// FIRST
+// ==========================================
+
+
+app.use(morganMiddleware);
+
+
+
+
+// ==========================================
+// API Routes
+// ==========================================
+
+
 app.use("/api/auth", authRoutes);
+
 app.use("/api/profile", profileRoutes);
+
 app.use("/api/users", userRoutes);
+
 app.use("/api/companies", companyRoutes);
+
 app.use("/api/internships", internshipRoutes);
+
 app.use("/api/applications", applicationRoutes);
+
 app.use("/api/dashboard", dashboardRoutes);
+
 app.use("/api/tasks", taskRoutes);
+
 app.use("/api/attendance", attendanceRoutes);
+
 app.use("/api/interviews", interviewRoutes);
+
 app.use("/api/offers", offerRoutes);
+
 app.use("/api/download", downloadRoutes);
+
 app.use("/api/certificates", certificateRoutes);
+
 app.use("/api/messages", messageRoutes);
+
 app.use("/api/meetings", meetingRoutes);
+
 app.use("/api/admin", adminRoutes);
+
 app.use("/api/notifications", notificationRoutes);
+
 app.use("/api/bookmarks", bookmarkRoutes);
+
 app.use("/api/activities", activityRoutes);
+
 app.use("/api/analytics", analyticsRoutes);
+
 app.use("/api/search", searchRoutes);
+
+
+
+
+
+// ==========================================
+// Swagger Documentation
+// ==========================================
 
 
 app.use(
@@ -93,15 +166,40 @@ app.use(
 
 );
 
-app.use(errorMiddleware);
+
+
+
+
+// ==========================================
+// Health Check
+// MUST BE BEFORE 404
+// ==========================================
+
+
+app.get("/", (req, res) => {
+
+
+  res.status(200).json({
+
+    success: true,
+
+    message: "Tech Monster Backend Running 🚀"
+
+  });
+
+
+});
+
+
+
+
 
 // ==========================================
 // 404 Handler
 // ==========================================
 
-app.use(
 
-  "*",
+app.use(
 
   (req, res) => {
 
@@ -114,23 +212,25 @@ app.use(
     });
 
   }
-
 );
 
+
+
+
+
 // ==========================================
-// Global Error Handler
+// Error Middleware
+// ALWAYS LAST
 // ==========================================
+
+
+app.use(errorMiddleware);
+
 
 app.use(errorHandler);
 
 
 
-// Health Check Route
-app.get("/", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Tech Monster Backend Running 🚀",
-  });
-});
+
 
 export default app;
