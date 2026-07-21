@@ -12,7 +12,7 @@ function About() {
 
   return (
     <>
-      <section className="about">
+      <section className="section">
         <div className="about-container">
           <motion.div className='about-image' initial={{ opacity: 0, x: -50 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: .8 }}>
             <img src={AboutImage} alt="About" />

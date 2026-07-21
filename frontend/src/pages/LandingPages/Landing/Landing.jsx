@@ -1,28 +1,39 @@
 import Navbar from "../../../components/Navbar";
 import Hero from "../Hero";
 import About from "../About";
-import Features from "../Features";
-import Programs from '../Programs';
-import Mentors from '../Mentors';
+// import Features from "../Features";
+// import Programs from '../Programs';
+// import Mentors from '../Mentors';
+// import FAQ from '../FAQ';
+// import Testimonials from "../Testimonials";
 import Contact from "../Contact";
-import FAQ from '../FAQ';
-import Testimonials from "../Testimonials";
 
-function Landing(){
+function Landing() {
 
   return (
     <>
-      <Navbar />
-      <Hero />
-      <About />
-      <Features />
-      <Programs />
-      <Testimonials />
-      <Mentors />
-      <FAQ />
-      <Contact />
+      <div className="cyber-page">
 
-      
+        <div className="cyber-bg">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <Navbar />
+        <Hero />
+        <About />
+        {/* <Features />
+        <Programs />
+        <Testimonials />
+        <Mentors />
+        <FAQ /> */}
+        <Contact />
+      </div>
+
+
     </>
   )
 

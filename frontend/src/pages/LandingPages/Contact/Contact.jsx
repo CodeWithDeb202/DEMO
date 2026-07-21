@@ -13,7 +13,7 @@ function Contact() {
 
   return (
 
-    <section className="contact">
+    <section className="section">
 
       <SectionHeader
         badge="CONTACT US"

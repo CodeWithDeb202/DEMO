@@ -2,13 +2,6 @@
    ABOUT SECTION
 ========================================== */
 
-.about {
-  padding: 100px 0;
-  background: var(--background);
-  color: var(--text);
-  overflow: hidden;
-}
-
 .about-container {
   width: 90%;
   max-width: 1300px;

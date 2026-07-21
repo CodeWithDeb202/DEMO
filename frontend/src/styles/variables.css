@@ -1,10 +1,8 @@
 :root{
     --primary: #2563EB;
     --secondary: #38BDF8;
-    --dark: #0F172A;
     --background: #020617;
     --surface: rgba(255,255,255,.05);
-    --white: #ffffff;
     --gray: #94A3B8;
     --border: #1E293B;
     --success: #22C55E;
@@ -12,4 +10,22 @@
     --muted: #cbd5e1;
     --radius: 12px;
     --transition: 0.3s ease;
+    /* Main Neon Color */
+
+    --neon: #00eaff;
+
+
+    /* Dark Background */
+
+    --dark: #020617;
+
+
+    /* Secondary Glow */
+
+    --glow: #0066ff;
+
+
+    /* Text Color */
+
+    --text: #ffffff;
 }

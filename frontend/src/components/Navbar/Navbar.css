@@ -4,7 +4,22 @@
 
 /* NAVBAR */
 .navbar{
-    position: sticky;
+    height: 80px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 50px;
+    background:rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--neon);
+    box-shadow: 0 0 20px var(--glow);
+    transition: 0.3s ease;
+
+    /* position: sticky;
     top: 0;
     z-index: 1000;
     width: 100%;
@@ -12,7 +27,7 @@
     background: rgba(15, 23, 42, 0.85);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.8);
-    transition: 0.3s ease;
+    transition: 0.3s ease; */
 }
 
 
