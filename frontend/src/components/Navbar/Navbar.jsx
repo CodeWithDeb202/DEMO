@@ -2,58 +2,70 @@ import './Navbar.css';
 
 import { Link, NavLink } from 'react-router-dom';
 import { FaBars, FaTimes } from 'react-icons/fa';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { navLinks } from './Navbardata';
+import { navLinks } from './Navbardata.js';
+
+import logo from "../../assets/logo/logo.png"
 
 function Navbar() {
 
     const [isOpen, setIsOpen] = useState(false);
+    const [activeLink, setActiveLink] = useState("#");
 
-    const toggleMenu = () => {
-        setIsOpen(!isOpen);
-    }
+    useEffect(() => {
+    const sections = document.querySelectorAll("section");
 
-    const closeMenu = () => {
-        setIsOpen(false);
-    }
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    setActiveLink(`#${entry.target.id}`);
+                }
+            });
+        },
+        {
+            threshold: 0.6,
+        }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+
+    return () => observer.disconnect();
+}, []);
 
 
     return (
         <>
 
-            <motion.nav className='navbar' initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
-                <div navbar-container >
-                    <Link to={'/'} className='logo'>
-                        {/* Add Logo */}
-                        <img src="/assets/logo/logo.png" alt="Tech monster Logo" />
+            <motion.nav id='navbar' initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
+                <div id='navbar-container' >
+                    <a href={'#home'} onClick={() => setActiveLink('#')} id='logo'>
+                        
+                        <img src={logo} alt="Tech monster Logo" />
 
-                        <div className='logo-text'>
-                            <h2>Tech Monster</h2>
-                            <span>Pvt. Ltd.</span>
+                        <div id='logo-text'>
+                            <h2>Tech <span>Monster</span></h2>
                         </div>
-                    </Link>
-                    <div className="toggleBar">
+                    </a>
+                    <div id="toggleBar">
                         <button onClick={() => setIsOpen(true)}>
-                            <i class="fa-solid fa-bars"></i>
+                            <FaBars />
                         </button>
                     </div>
 
-                    <div>
-                        <ul className="navlink">
-                            <li>
-                                <NavLink to={'/'} end>Home</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to={'/about'}>About</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to={'/contact'}>Contact</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to={'/signup'}>Sign Up</NavLink>
-                            </li>
-                        </ul>
+                    <div id="navlink">
+                        {navLinks.map((link) => (
+                            <a id='navlinkPageBtn' className={activeLink === link.path ? 'active' : ''} key={link.id} href={link.path} onClick={() => setActiveLink(link.path)}>{link.title}</a>
+                        ))}
+
+                        <div id="auth-buttons">
+
+                            <Link to={'/login'} id='login-btn'>Login</Link>
+
+                            <Link to={'/signup'} id='signup-btn'>Sign Up</Link>
+
+                        </div>
                     </div>
 
                 </div>
@@ -61,10 +73,10 @@ function Navbar() {
             </motion.nav>
 
             <AnimatePresence>
-                {open && (
+                {isOpen && (
                     <>
                         <motion.div
-                            className="sideOverlay"
+                            id="sideOverlay"
                             onClick={() => setIsOpen(false)}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
@@ -72,69 +84,26 @@ function Navbar() {
                         />
 
                         <motion.div
-                            className="navSidebar"
+                            id="navSidebar"
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ duration: 0.35, ease: 'easeInOut' }}
                         >
-                            <button className="closeBtn" onClick={() => setIsOpen(false)}>
-                                <i className="fa-solid fa-xmark"></i>
+                            <button id="closeBtn" onClick={() => setIsOpen(false)}>
+                                <FaTimes />
                             </button>
 
-                            <NavLink onClick={() => setIsOpen(false)} to="/">Home</NavLink>
-                            <NavLink onClick={() => setIsOpen(false)} to="/about">About</NavLink>
-                            <NavLink onClick={() => setIsOpen(false)} to="/contact">Contact</NavLink>
-                            <NavLink onClick={() => setIsOpen(false)} to="/signup">Sign Up</NavLink>
+                            {navLinks.map((link) => (
+                                <NavLink key={link.id} onClick={() => setIsOpen(false)} to={link.path}>{link.title}</NavLink>
+                            ))}
+
+                            <Link to={'/signup'} id='signup-btn' onClick={() => setIsOpen(false)}>Sign Up</Link>
 
                         </motion.div>
                     </>
                 )}
             </AnimatePresence>
-
-
-
-
-            <motion.header initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
-                <div className="navbar-container">
-
-                    {/* <Link to={'/'} className='logo'> */}
-                        {/* Add Logo */}
-                        {/* <img src="/logo.png" alt="Tech monster Logo" />
-
-                        <div className='logo-text'>
-                            <h2>Tech Monster</h2>
-                            <span>Pvt. Ltd.</span>
-                        </div>
-                    </Link> */}
-
-                    <nav className={isOpen ? 'nav-menu active' : 'nav-menu'}>
-
-                        {navLinks.map((item) => {
-                            <NavLink key={item.id} to={item.path} onClick={closeMenu} className={({ isActive }) =>
-                                isActive ? "nav-link active-link" : "nav-link"
-                            }>
-                                {item.title}
-                            </NavLink>
-                        })}
-
-                        <div className="auth-buttons">
-
-                            <Link to={'/login'} className='login-btn' onClick={closeMenu}>Login</Link>
-
-                            <Link to={'/signup'} className='signup-btn' onClick={closeMenu}>Sign Up</Link>
-
-                        </div>
-
-                    </nav>
-
-                    <button className='menu-btn' onClick={toggleMenu}>
-                        {isOpen ? <FaTimes /> : <FaBars />}
-                    </button>
-
-
-                </div>
-            </motion.header>
         </>
     )
 

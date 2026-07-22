@@ -1,8 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 
 import Landing from "../pages/LandingPages/Landing";
-import About from '../pages/LandingPages/About';
-import Contact from '../pages/LandingPages/Contact';
 
 
 import Login from '../pages/Auth/Login';
@@ -32,10 +30,6 @@ function AppRoutes() {
             <Routes>
 
                 <Route path='/' element={<Landing />} />
-
-                <Route path='/about' element={<About />} />
-
-                <Route path='/contact' element={<Contact />} />
 
                 <Route path='/login' element={<Login />} />
 

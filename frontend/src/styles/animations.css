@@ -1,0 +1,48 @@
+@keyframes blueNeon {
+
+    0% {
+
+        box-shadow:
+            0 0 10px #009dff,
+            0 0 25px #009dff66,
+            0 0 50px #009dff33;
+
+    }
+
+    25% {
+
+        box-shadow:
+            0 0 10px #00c8ff,
+            0 0 25px #00c8ff66,
+            0 0 50px #00c8ff33;
+
+    }
+
+    50% {
+
+        box-shadow:
+            0 0 10px #00ffff,
+            0 0 25px #00ffff66,
+            0 0 50px #00ffff33;
+
+    }
+
+    75% {
+
+        box-shadow:
+            0 0 10px #4facfe,
+            0 0 25px #4facfe66,
+            0 0 50px #4facfe33;
+
+    }
+
+    100% {
+
+        box-shadow:
+            0 0 10px #009dff,
+            0 0 25px #009dff66,
+            0 0 50px #009dff33;
+
+    }
+
+}

@@ -12,6 +12,7 @@
     position: relative;
     z-index: 9;
     overflow: hidden;
+    margin-top: 3rem;
 }
 .hero::before {
     content: "";
@@ -34,7 +35,7 @@
     }
 }
 
-.hero-container {
+#hero-container {
     width: 90%;
     max-width: 1300px;
     margin: auto;
@@ -49,43 +50,38 @@
    LEFT
 ========================================== */
 
-.hero-left {
+#hero-left {
     flex: 1;
     position: relative;
     text-align: center;
     z-index: 1;
 }
 
-.hero-badge {
+#hero-badge {
     display: inline-block;
     padding: 0.7rem 1.2rem;
     border-radius: 2rem;
     background: rgba(37, 99, 235, 0.2);
-    color: #60a5fa;
+    color: var(--neon);
     border: 1px solid rgba(96, 165, 250, 0.3);
-    margin-bottom: 25px;
-    font-size: 15px;
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
     font-weight: 600;
 }
-.hero-badge:hover{
-    background-color: var(--neon);
-    color: black;
-    box-shadow: 0 0 10px var(--glow);
-}
 
-.hero-title {
+#hero-title {
     font-size: 58px;
     font-weight: 700;
     line-height: 1.2;
     margin-bottom: 25px;
 }
 
-.hero-title span {
+#hero-title span {
     color: var(--neon);
     text-shadow: 0 0 20px var(--neon), 0 0 40px var(--glow);
 }
 
-.hero-description {
+#hero-description {
     color: #cbd5e1;
     line-height: 1.5;
     font-size: 1rem;
@@ -96,7 +92,7 @@
    BUTTONS
 ========================================== */
 
-.hero-buttons {
+#hero-buttons {
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
@@ -145,13 +141,13 @@
    RIGHT
 ========================================== */
 
-.hero-right {
+#hero-right {
     flex: 1;
     display: flex;
     justify-content: center;
 }
 
-.hero-right img {
+#hero-right img {
     width: 60%;
     max-width: 520px;
     user-select: none;
@@ -160,7 +156,7 @@
     transition: 0.5s all;
 }
 
-.hero-right img:hover{
+#hero-right img:hover{
     border-radius: 50%;
     box-shadow: 0 0 50px var(--neon);
     transform: scale(1.5);

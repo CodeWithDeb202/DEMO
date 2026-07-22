@@ -1,11 +1,6 @@
 import Navbar from "../../../components/Navbar";
 import Hero from "../Hero";
 import About from "../About";
-// import Features from "../Features";
-// import Programs from '../Programs';
-// import Mentors from '../Mentors';
-// import FAQ from '../FAQ';
-// import Testimonials from "../Testimonials";
 import Contact from "../Contact";
 
 function Landing() {
@@ -25,11 +20,6 @@ function Landing() {
         <Navbar />
         <Hero />
         <About />
-        {/* <Features />
-        <Programs />
-        <Testimonials />
-        <Mentors />
-        <FAQ /> */}
         <Contact />
       </div>
 
