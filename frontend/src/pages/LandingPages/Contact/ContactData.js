@@ -1,8 +1,7 @@
 import {
   FaEnvelope,
-  FaPhoneAlt,
   FaMapMarkerAlt,
-  FaClock
+  FaWhatsapp
 } from "react-icons/fa";
 
 export const contactInfo = [
@@ -10,24 +9,21 @@ export const contactInfo = [
     id: 1,
     icon: FaEnvelope,
     title: "Email",
-    value: "support@techmonster.com"
+    value: "techmonsterx6@gmail.com",
+    action: "https://mail.google.com/mail/?view=cm&fs=1&to=techmonsterx6@gmail.com"
   },
   {
     id: 2,
-    icon: FaPhoneAlt,
-    title: "Phone",
-    value: "+91 9876543210"
+    icon: FaWhatsapp,
+    title: "Whatsapp",
+    value: "+91 8984457601",
+    action: "https://wa.me/918984457601?text=Hello%20Tech%20Monster"
   },
   {
     id: 3,
     icon: FaMapMarkerAlt,
     title: "Address",
-    value: "Bhubaneswar, Odisha"
-  },
-  {
-    id: 4,
-    icon: FaClock,
-    title: "Working Hours",
-    value: "Mon - Sat | 9:00 AM - 6:00 PM"
+    value: "Bhubaneswar, Odisha",
+    action: "https://www.google.com/maps/search/?api=1&query=Bhubaneswar+Odisha"
   }
 ];

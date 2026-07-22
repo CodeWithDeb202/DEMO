@@ -3,11 +3,13 @@ import { BrowserRouter } from 'react-router-dom';
 import './styles/global.css';
 import './styles/variables.css';
 import './styles/animations.css';
+import './styles/error.css';
 
 import { AuthProvider } from './context/Auth/AuthProvider.jsx';
 import App from './App.jsx';
 
-import { Toaster } from "react-hot-toast";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
@@ -16,29 +18,15 @@ createRoot(document.getElementById('root')).render(
 
       <App />
 
-      <Toaster
+      <ToastContainer
         position="bottom-left"
-        reverseOrder={false}
-        toastOptions={{
-          duration: 3000,
-          style: {
-            borderRadius: "12px",
-            background: "#1f2937",
-            color: "#fff"
-          },
-          success: {
-            iconTheme: {
-              primary: "#22c55e",
-              secondary: "#fff"
-            }
-          },
-          error: {
-            iconTheme: {
-              primary: "#ef4444",
-              secondary: "#fff"
-            }
-          }
-        }}
+        autoClose={2500}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="dark"
       />
 
     </AuthProvider>

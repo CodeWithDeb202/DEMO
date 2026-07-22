@@ -1,91 +1,43 @@
 import "./Input.css";
 
 function Input({
-
     label,
-
     type = "text",
-
     name,
-
     value,
-
     placeholder,
-
     onChange,
-
     error,
-
-    icon,
-
-    required = false,
-
     ...props
-
 }) {
 
     return (
 
         <div className="input-group">
-
             {label && (
-
-                <label className="input-label">
-
+                <label className="input-label" htmlFor={name}>
                     {label}
-
-                    {required && <span>*</span>}
-
+                    <span className={value.trim() ? 'labelSpanGreen' : 'labelSpanRed'}>*</span>
                 </label>
-
             )}
 
             <div className="input-wrapper">
 
-                {icon &&
-
-                    <span className="input-icon">
-
-                        {icon}
-
-                    </span>
-
-                }
-
                 <input
-
+                    id={name}
                     type={type}
-
                     name={name}
-
                     value={value}
-
                     placeholder={placeholder}
-
                     onChange={onChange}
-
-                    className={error ? "input error" : "input"}
-
+                    className={error ? "inputError" : ""}
                     {...props}
-
                 />
-
             </div>
 
-            {error &&
-
-                <small className="input-error">
-
-                    {error}
-
-                </small>
-
-            }
-
+            {error && <small className="errorText">{error} </small> }
         </div>
-
     );
-
 }
 
 export default Input;

@@ -10,6 +10,7 @@
   border-radius: 1rem;
   animation: blueNeon 6s linear infinite;
   transition: .3s;
+  margin: 1rem 0;
 }
 
 #about-container {
@@ -149,6 +150,12 @@
   font-size: 2rem;
   color: var(--golden);
   margin-bottom: 18px;
+  transition: 0.3s ease;
+}
+
+.value-card:hover svg {
+  filter: drop-shadow(0 0 10px var(--golden));
+  transform: scale(1.1);
 }
 
 .value-card h3 {

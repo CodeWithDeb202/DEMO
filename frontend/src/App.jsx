@@ -5,8 +5,9 @@ import AppRoutes from "./routes/AppRoutes";
 
 
 function App(){
-
   const [loading, setLoading] = useState(true);
+
+  
 
 
   return (

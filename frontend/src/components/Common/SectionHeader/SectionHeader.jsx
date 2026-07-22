@@ -8,7 +8,7 @@ function SectionHeader({
 
     return (
 
-        <div className="section-header">
+        <div id="section-header">
 
             <span>{badge}</span>
 

@@ -27,7 +27,7 @@ function Loading({ finish }) {
             if (messageIndex < messages.length)
                 setText(messages[messageIndex]);
 
-        }, 1000);
+        }, 800);
 
         const timer = setInterval(() => {
 

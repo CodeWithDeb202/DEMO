@@ -8,21 +8,21 @@ function Textarea({
   onChange,
   rows = 5,
   error,
-  required = false,
   ...props
 }) {
   return (
     <div className="textarea-group">
 
       {label && (
-        <label className="textarea-label">
+        <label className="textarea-label" htmlFor={name}>
           {label}
-          {required && <span>*</span>}
+          <span className={value.trim() ? "labelSpanGreen" : "labelSpanRed"}>*</span>
         </label>
       )}
 
       <textarea
-        className={`textarea ${error ? "textarea-error" : ""}`}
+        id={name}
+        className={`textarea ${error ? "inputError" : ""}`}
         name={name}
         value={value}
         placeholder={placeholder}
@@ -32,7 +32,7 @@ function Textarea({
       />
 
       {error && (
-        <small className="textarea-error-message">
+        <small className="errorText">
           {error}
         </small>
       )}
