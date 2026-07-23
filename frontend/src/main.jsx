@@ -1,9 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom';
 import './styles/global.css';
-import './styles/variables.css';
-import './styles/animations.css';
-import './styles/error.css';
+
 
 import { AuthProvider } from './context/Auth/AuthProvider.jsx';
 import App from './App.jsx';

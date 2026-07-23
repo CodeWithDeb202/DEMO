@@ -15,10 +15,11 @@ import AppError from "../utils/AppError.js";
 
 export const signup = asyncHandler(async (req, res) => {
 
-    const { firstName, lastName, email, password, role } = req.body;
+
+    const { username, email, password } = req.body;
 
     // Validation
-    if (!firstName || !lastName || !email || !password) {
+    if (!username || !email || !password) {
         return res.status(400).json({
             success: false,
             message: "All fields are required"
@@ -40,11 +41,9 @@ export const signup = asyncHandler(async (req, res) => {
 
     // ✅ User create
     const user = await User.create({
-        firstName,
-        lastName,
+        username,
         email,
         password,
-        role
     });
 
 
@@ -61,7 +60,7 @@ export const signup = asyncHandler(async (req, res) => {
         "User account created"
 
     );
-    
+
     // ==============================
     // OTP Generate
     // ==============================

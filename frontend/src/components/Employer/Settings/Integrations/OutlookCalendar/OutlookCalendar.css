@@ -1,282 +1,52 @@
 .outlook-calendar{
 
-background:#fff;
-
-padding:28px;
-
-border-radius:18px;
-
-box-shadow:0 8px 20px rgba(0,0,0,.05);
-
-}
-
-.outlook-header{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-gap:20px;
-
-margin-bottom:28px;
-
-}
-
-.outlook-title{
-
-display:flex;
-
-align-items:center;
-
-gap:18px;
-
-}
-
-.outlook-icon{
-
-width:64px;
-
-height:64px;
-
-display:flex;
-
-align-items:center;
-
-justify-content:center;
-
-background:#eff6ff;
-
-color:#0078d4;
-
-border-radius:16px;
-
-font-size:30px;
-
-}
-
-.outlook-title h2{
-
-margin:0;
-
-font-size:24px;
-
-}
-
-.outlook-title p{
-
-margin-top:8px;
-
-color:#6b7280;
-
-}
-
-.connection-status{
-
-padding:8px 16px;
-
-border-radius:30px;
-
-font-weight:600;
-
-display:flex;
-
-align-items:center;
-
-gap:8px;
-
-}
-
-.connected{
-
-background:#dcfce7;
-
-color:#16a34a;
-
-}
-
-.disconnected{
-
-background:#fee2e2;
-
-color:#dc2626;
-
-}
-
-.outlook-grid{
-
-display:grid;
-
-grid-template-columns:repeat(2,1fr);
-
-gap:20px;
-
-margin-bottom:22px;
-
-}
-
-.field{
-
 display:flex;
 
 flex-direction:column;
 
-gap:8px;
+gap:28px;
+
+padding:24px;
 
 }
 
-.field label{
-
-font-weight:600;
-
-}
-
-.field select{
-
-padding:12px;
-
-border:1px solid #d1d5db;
-
-border-radius:12px;
-
-}
-
-.options{
-
-display:grid;
-
-grid-template-columns:repeat(2,1fr);
-
-gap:16px;
-
-margin-bottom:22px;
-
-}
-
-.options label{
-
-display:flex;
-
-gap:10px;
-
-align-items:center;
-
-}
-
-.sync-info{
+.outlook-calendar-header{
 
 display:flex;
 
 justify-content:space-between;
 
-padding:18px;
-
-background:#f9fafb;
-
-border-radius:12px;
-
-margin-bottom:24px;
-
-}
-
-.sync-info div{
-
-display:flex;
-
-gap:10px;
-
 align-items:center;
 
-color:#6b7280;
-
 }
 
-.outlook-footer{
+.outlook-calendar-header h2{
 
-display:flex;
+margin:0;
 
-justify-content:flex-end;
+font-size:28px;
 
-gap:14px;
+font-weight:700;
 
-}
-
-.outlook-footer button{
-
-padding:12px 20px;
-
-border:none;
-
-border-radius:12px;
-
-display:flex;
-
-align-items:center;
-
-gap:10px;
-
-cursor:pointer;
-
-font-weight:600;
-
-}
-
-.connect{
-
-background:#0078d4;
-
-color:#fff;
-
-}
-
-.sync{
-
-background:#f3f4f6;
-
-}
-
-.save{
-
-background:#16a34a;
-
-color:#fff;
+color:#111827;
 
 }
 
 @media(max-width:768px){
 
-.outlook-header,
+.outlook-calendar{
 
-.outlook-footer{
+padding:16px;
+
+}
+
+.outlook-calendar-header{
 
 flex-direction:column;
 
 align-items:flex-start;
 
-}
-
-.outlook-grid,
-
-.options{
-
-grid-template-columns:1fr;
-
-}
-
-.sync-info{
-
-flex-direction:column;
-
-gap:12px;
-
-}
-
-.outlook-footer button{
-
-width:100%;
-
-justify-content:center;
+gap:16px;
 
 }
 

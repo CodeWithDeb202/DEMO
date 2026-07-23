@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 
 
 import authRoutes from "./routes/auth.routes.js";
+
 import userRoutes from "./routes/user.routes.js";
 import profileRoutes from "./routes/profile.routes.js";
 import companyRoutes from "./routes/company.routes.js";
@@ -47,15 +48,15 @@ const app = express();
 
 
 app.use(
-
+  
   cors({
-
+    
     origin: process.env.CLIENT_URL || "http://localhost:5199",
-
+    
     credentials: true
-
+    
   })
-
+  
 );
 
 
@@ -64,13 +65,13 @@ app.use(express.json());
 
 
 app.use(
-
+  
   express.urlencoded({
-
+    
     extended: true
-
+    
   })
-
+  
 );
 
 
@@ -147,23 +148,23 @@ app.use("/api/search", searchRoutes);
 
 
 app.use(
-
+  
   "/api/docs",
-
+  
   swaggerUi.serve,
-
+  
   swaggerUi.setup(
-
+    
     swaggerSpec,
-
+    
     {
-
+      
       explorer: true
-
+      
     }
-
+    
   )
-
+  
 );
 
 
@@ -177,17 +178,17 @@ app.use(
 
 
 app.get("/", (req, res) => {
-
-
+  
+  
   res.status(200).json({
-
+    
     success: true,
-
+    
     message: "Tech Monster Backend Running 🚀"
-
+    
   });
-
-
+  
+  
 });
 
 
@@ -200,17 +201,17 @@ app.get("/", (req, res) => {
 
 
 app.use(
-
+  
   (req, res) => {
-
+    
     res.status(404).json({
-
+      
       success: false,
-
+      
       message: "Route not found"
-
+      
     });
-
+    
   }
 );
 
@@ -228,7 +229,6 @@ app.use(errorMiddleware);
 
 
 app.use(errorHandler);
-
 
 
 

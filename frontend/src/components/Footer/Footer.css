@@ -1,0 +1,163 @@
+#footer {
+    position: relative;
+    z-index: 999;
+    background:rgba(0, 0, 0, 0.45);
+    color: var(--text);
+    padding: 5rem 8% 1.9rem;
+    background:rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(2px);
+    border-top: 1px solid var(--neon);
+    box-shadow: 0 0 20px var(--glow);
+    transition: 0.3s ease;
+    margin-top: 1rem;
+}
+
+#footer-container {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    gap: 3rem;
+}
+
+
+
+
+
+
+
+#footer-brand h2 {
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+#footer-brand span {
+    color: var(--neon);
+    text-shadow: 0 0 15px var(--neon);
+}
+
+
+
+#footer-brand p {
+    color: #94a3b8;
+    line-height: 1.7;
+}
+
+#social {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+
+
+#social a {
+    width: 45px;
+    height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background: #0f172a;
+    border: 1px solid var(--neon);
+    color: var(--neon);
+    font-size: 1.2rem;
+    transition: all .4s ease;
+}
+
+
+
+
+#social a:hover {
+    transform: translateY(-10px) rotate(360deg);
+    box-shadow: 0 0 25px var(--neon);
+}
+
+
+#footer-links h3,
+#footer-news h3 {
+    color: var(--neon);
+    margin-bottom: 1.5rem;
+}
+
+
+
+
+#footer-links a {
+    display: block;
+    margin: 1rem 0;
+    color: var(--muted);
+    cursor: pointer;
+    transition: .3s;
+}
+
+
+
+#footer-links a:hover {
+    color: var(--neon);
+    transform: translateX(10px);
+}
+
+#footer-signup{
+    width: 100%;
+    display: flex;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+#footer-signup a{
+    text-decoration: none;
+    background-color: var(--glow);
+    color: var(--text);
+    width: 100%;
+    padding: 0.65rem 1.15rem;
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+#footer-signup a:hover{
+    transform: translateY(-2px) !important;
+    background: var(--neon);
+    color: var(--dark);
+    box-shadow: 0 5px 10px var(--glow);
+}
+
+
+
+#footer-bottom {
+    position: relative;
+    z-index: 2;
+    margin-top: 4rem;
+    padding-top: 25px;
+    border-top: 1px solid rgba(255, 255, 255, .1);
+    display: flex;
+    justify-content: space-between;
+    color: var(--muted);
+}
+
+
+
+
+
+@media(max-width:900px) {
+
+
+    .footer-container {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .footer-bottom {
+
+
+        flex-direction: column;
+
+        gap: 10px;
+
+
+    }
+
+
+}

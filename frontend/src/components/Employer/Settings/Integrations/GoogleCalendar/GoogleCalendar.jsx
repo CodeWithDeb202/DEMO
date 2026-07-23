@@ -2,331 +2,153 @@ import "./GoogleCalendar.css";
 
 import { useState } from "react";
 
-import {
+import { FaGoogle } from "react-icons/fa";
 
-    FaGoogle,
+import useGoogleCalendar from "../../../../../hooks/useGoogleCalendar";
 
-    FaCalendarAlt,
+import OAuthButton from "../../../../integrations/OAuthButton";
+import ConnectionBadge from "../../../../integrations/ConnectionBadge";
+import IntegrationStatusCard from "../../../../integrations/IntegrationStatusCard";
+import IntegrationSettingsForm from "../../../../integrations/IntegrationSettingsForm";
+import IntegrationHistory from "../../../../integrations/IntegrationHistory";
 
-    FaSyncAlt,
+import googleCalendarFields from "./constants";
 
-    FaUnlink,
+function GoogleCalendar(){
 
-    FaCheckCircle,
+    const{
 
-    FaClock,
+        integration,
 
-    FaSave
+        history,
 
-} from "react-icons/fa";
+        loading,
 
-function GoogleCalendar() {
+        connect,
 
-    const [connected, setConnected] = useState(true);
+        disconnect,
 
-    const [calendar, setCalendar] = useState("HR Interviews");
+        refresh,
 
-    const [frequency, setFrequency] = useState("Every 15 Minutes");
+        saveSettings
 
-    return (
+    }=useGoogleCalendar();
+
+    const[settings,setSettings]=useState(
+
+        integration?.settings||{}
+
+    );
+
+    const[errors]=useState({});
+
+    const updateField=(name,value)=>{
+
+        setSettings(previous=>({
+
+            ...previous,
+
+            [name]:value
+
+        }));
+
+    };
+
+    return(
 
         <div className="google-calendar">
 
-            <div className="gc-header">
+            <div className="google-calendar-header">
 
-                <div className="gc-title">
+                <h2>
 
-                    <div className="gc-icon">
+                    Google Calendar
 
-                        <FaGoogle />
+                </h2>
 
-                    </div>
+                <ConnectionBadge
 
-                    <div>
+                    status={
 
-                        <h2>
-
-                            Google Calendar
-
-                        </h2>
-
-                        <p>
-
-                            Sync interviews and hiring events with Google Calendar.
-
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <span
-
-                    className={
-
-                        connected
+                        integration?.connected
 
                         ?
 
-                        "status connected"
+                        "CONNECTED"
 
                         :
 
-                        "status disconnected"
+                        "DISCONNECTED"
 
                     }
 
-                >
-
-                    <FaCheckCircle />
-
-                    {
-
-                        connected
-
-                        ?
-
-                        "Connected"
-
-                        :
-
-                        "Disconnected"
-
-                    }
-
-                </span>
+                />
 
             </div>
 
-            <div className="gc-grid">
+            <IntegrationStatusCard
 
-                <div className="field">
+                title="Google Calendar"
 
-                    <label>
+                provider="Google"
 
-                        Calendar
+                account={integration?.email}
 
-                    </label>
+                accountType="Google Workspace"
 
-                    <select
+                connected={integration?.connected}
 
-                        value={calendar}
+                lastSync={integration?.lastSync}
 
-                        onChange={(e)=>
+                loading={loading}
 
-                            setCalendar(e.target.value)
+                onConnect={connect}
 
-                        }
+                onDisconnect={disconnect}
 
-                    >
+                onRefresh={refresh}
 
-                        <option>
+            />
 
-                            HR Interviews
+            <OAuthButton
 
-                        </option>
+                provider="Google Calendar"
 
-                        <option>
+                icon={<FaGoogle/>}
 
-                            Company Events
+                connected={integration?.connected}
 
-                        </option>
+                loading={loading}
 
-                        <option>
+                onConnect={connect}
 
-                            Recruitment
+                onDisconnect={disconnect}
 
-                        </option>
+            />
 
-                    </select>
+            <IntegrationSettingsForm
 
-                </div>
+                fields={googleCalendarFields}
 
-                <div className="field">
+                values={settings}
 
-                    <label>
+                errors={errors}
 
-                        Sync Frequency
+                loading={loading}
 
-                    </label>
+                onChange={updateField}
 
-                    <select
+                onSubmit={()=>saveSettings(settings)}
 
-                        value={frequency}
+            />
 
-                        onChange={(e)=>
+            <IntegrationHistory
 
-                            setFrequency(e.target.value)
+                title="Calendar Activity"
 
-                        }
+                data={history}
 
-                    >
-
-                        <option>
-
-                            Real Time
-
-                        </option>
-
-                        <option>
-
-                            Every 5 Minutes
-
-                        </option>
-
-                        <option>
-
-                            Every 15 Minutes
-
-                        </option>
-
-                        <option>
-
-                            Every Hour
-
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-            <div className="gc-options">
-
-                <label>
-
-                    <input
-
-                        type="checkbox"
-
-                        defaultChecked
-
-                    />
-
-                    Two-way Calendar Sync
-
-                </label>
-
-                <label>
-
-                    <input
-
-                        type="checkbox"
-
-                        defaultChecked
-
-                    />
-
-                    Automatically Create Interview Events
-
-                </label>
-
-                <label>
-
-                    <input
-
-                        type="checkbox"
-
-                        defaultChecked
-
-                    />
-
-                    Send Calendar Reminders
-
-                </label>
-
-                <label>
-
-                    <input
-
-                        type="checkbox"
-
-                    />
-
-                    Sync Candidate Availability
-
-                </label>
-
-            </div>
-
-            <div className="gc-info">
-
-                <div>
-
-                    <FaCalendarAlt />
-
-                    <span>
-
-                        Primary Calendar
-
-                    </span>
-
-                </div>
-
-                <div>
-
-                    <FaClock />
-
-                    <span>
-
-                        Last Sync : Today 09:42 AM
-
-                    </span>
-
-                </div>
-
-            </div>
-
-            <div className="gc-footer">
-
-                <button className="sync">
-
-                    <FaSyncAlt />
-
-                    Sync Now
-
-                </button>
-
-                <button
-
-                    className="disconnect"
-
-                    onClick={()=>
-
-                        setConnected(!connected)
-
-                    }
-
-                >
-
-                    <FaUnlink />
-
-                    {
-
-                        connected
-
-                        ?
-
-                        "Disconnect"
-
-                        :
-
-                        "Connect"
-
-                    }
-
-                </button>
-
-                <button className="save">
-
-                    <FaSave />
-
-                    Save Settings
-
-                </button>
-
-            </div>
+            />
 
         </div>
 

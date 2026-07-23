@@ -1,3 +1,5 @@
+
+
 import dotenv from "dotenv";
 dotenv.config({ quiet: true });
 
@@ -11,7 +13,7 @@ import { initSocket } from "./socket/socket.js";
 
 import refreshTokenCleanup from "./jobs/refreshTokenCleanup.job.js";
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 
 const startServer = async () => {
 
@@ -20,6 +22,7 @@ const startServer = async () => {
         await connectDB();
 
         const server = http.createServer(app);
+
 
         initSocket(server);
 
@@ -36,9 +39,8 @@ const startServer = async () => {
         });
 
     } catch (error) {
-
-        console.error(error);
-
+        console.error("Server failed to start");
+        console.error(error.stack);
     }
 
 };

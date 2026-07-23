@@ -17,7 +17,7 @@ function Input({
             {label && (
                 <label className="input-label" htmlFor={name}>
                     {label}
-                    <span className={value.trim() ? 'labelSpanGreen' : 'labelSpanRed'}>*</span>
+                    <span className={value?.trim() ? 'labelSpanGreen' : 'labelSpanRed'}>*</span>
                 </label>
             )}
 

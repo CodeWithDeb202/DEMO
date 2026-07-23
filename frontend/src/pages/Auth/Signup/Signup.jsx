@@ -14,7 +14,6 @@ import AuthLayout from "../../../layouts/AuthLayout";
 
 import Input from "../../../components/Common/Form/Input";
 import PasswordInput from "../../../components/Common/Form/PasswordInput";
-import Select from "../../../components/Common/Form/Select";
 import Button from "../../../components/common/Form/Button";
 import PasswordStrength from "../../../components/common/Form/PasswordStrength";
 
@@ -38,16 +37,22 @@ function Signup() {
   } = useForm({
 
     resolver: zodResolver(signupSchema),
-
     defaultValues: {
-
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      terms: false,
       role: "student",
-
-      terms: false
-
     }
 
   });
+
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const username = watch("username") || "";
+  const email = watch("email")  || "";
+  const password = watch("password")  || "";
+  const confirmPassword = watch("confirmPassword")  || "";
 
 
   const navigate = useNavigate();
@@ -89,261 +94,71 @@ function Signup() {
   return (
     <>
       <AuthLayout
-
         title="Create Account"
-
         subtitle="Join Tech Monster Pvt. Ltd."
-
       >
-
         <motion.form
-          className="signup-form"
+          id="signup-form"
           onSubmit={handleSubmit(onSubmit)}
         >
           <Input
-
-            label="First Name"
-
-            placeholder="Enter First Name"
-
-            {...register("firstName")}
-
-            error={errors.firstName?.message}
-
-          />
-
-
-          <Input
-
-            label="Last Name"
-
-            placeholder="Enter Last Name"
-
-            {...register("lastName")}
-
-            error={errors.lastName?.message}
-
+            label="Username"
+            placeholder="@Username"
+            value={username}
+            {...register("username")}
+            error={errors.username?.message}
           />
 
           <Input
             label="Email"
             type="email"
-            {
-            ...register("email")
-            }
+            placeholder="Enter your email"
+            value={email}
+            {...register("email")}
             error={errors.email?.message}
           />
 
-          <Input
-
-            label="Phone"
-
-            {
-
-            ...register("phone")
-
-            }
-
-            error={errors.phone?.message}
-
-          />
-
-          <Input
-
-            label="College"
-
-            {
-
-            ...register("college")
-
-            }
-
-            error={errors.college?.message}
-
-          />
-
-          <Input
-
-            label="Branch"
-
-            {
-
-            ...register("branch")
-
-            }
-
-            error={errors.branch?.message}
-
-          />
-
-          <Select
-
-            label="Year"
-
-            options={[
-
-              {
-
-                value: "1st",
-
-                label: "1st Year"
-
-              },
-
-              {
-
-                value: "2nd",
-
-                label: "2nd Year"
-
-              },
-
-              {
-
-                value: "3rd",
-
-                label: "3rd Year"
-
-              },
-
-              {
-
-                value: "4th",
-
-                label: "4th Year"
-
-              }
-
-            ]}
-
-            {
-
-            ...register("year")
-
-            }
-
-            error={errors.year?.message}
-
-          />
-
-          <Select
-
-            label="Role"
-
-            options={[
-
-              {
-                value: "student",
-                label: "Student"
-              },
-
-              {
-                value: "employer",
-                label: "Employer"
-              }
-
-            ]}
-
-
-            {...register("role")}
-
-            error={errors.role?.message}
-
-          />
 
           <PasswordInput
-
             label="Password"
-
             showStrength
-
-            {
-
-            ...register("password")
-
-            }
-
+            value={password}
+            {...register("password")}
             error={errors.password?.message}
-
           />
 
           <PasswordInput
-
             label="Confirm Password"
-
-            {
-
-            ...register("confirmPassword")
-
-            }
-
+            value={confirmPassword}
+            {...register("confirmPassword")}
             error={errors.confirmPassword?.message}
-
           />
 
-          // eslint-disable-next-line react-hooks/incompatible-library
+
           <PasswordStrength password={watch("password")} />
 
-          {
+          {error && <p className="signup-error">{error}</p>}
 
-            error &&
-
-            <p className="signup-error">
-
-              {error}
-
-            </p>
-
-
-          }
-
-          <label className="terms">
+          <label id="terms">
 
             <input
-
               type="checkbox"
-
-              {
-
-              ...register("terms")
-
-              }
-
+              {...register("terms")}
             />
-
             I accept Terms & Conditions
-
           </label>
+          <p id="terms-error">{errors.terms?.message}</p>
 
-          <p>
+          <Button type="submit" fullWidth>Create Account</Button>
 
-            {errors.terms?.message}
-
-          </p>
-
-          <Button
-
-            type="submit"
-
-            fullWidth
-
-          >
-
-            Create Account
-
-          </Button>
-
-          <p>
-
+          <p id="login-link">
             Already have an account?
-
             <Link to="/login">
-
               Login
-
             </Link>
-
           </p>
+
+
         </motion.form>
 
       </AuthLayout>

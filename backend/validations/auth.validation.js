@@ -2,23 +2,29 @@ import { z } from "zod";
 
 export const registerSchema = z.object({
 
-    firstName: z.string().min(2),
+    username: z
+        .string()
+        .trim()
+        .min(3, "Username must be at least 3 characters")
+        .max(30, "Username is too long"),
 
-    lastName: z.string().min(2),
+    email: z
+        .string()
+        .trim()
+        .email("Invalid email address"),
 
-    email: z.email(),
+    password: z
+        .string()
+        .min(8, "Password must be at least 8 characters")
+        .regex(/[A-Z]/, "At least one uppercase letter")
+        .regex(/[a-z]/, "At least one lowercase letter")
+        .regex(/[0-9]/, "At least one number")
+        .regex(/[^A-Za-z0-9]/, "At least one special character"),
 
-    password: z.string().min(8),
-
-    role: z.enum([
-
-        "student",
-
-        "employer",
-
-        "admin"
-
-    ])
+    role: z
+        .enum(["student", "admin"])
+        .optional()
+        .default("student")
 
 });
 

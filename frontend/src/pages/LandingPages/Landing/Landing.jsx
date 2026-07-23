@@ -2,26 +2,18 @@ import Navbar from "../../../components/Navbar";
 import Hero from "../Hero";
 import About from "../About";
 import Contact from "../Contact";
+import Footer from "../../../components/Footer";
 
 function Landing() {
 
   return (
     <>
-      <div className="cyber-page">
-
-        <div className="cyber-bg">
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
 
         <Navbar />
         <Hero />
         <About />
         <Contact />
-      </div>
+        <Footer />
 
 
     </>

@@ -2,276 +2,153 @@ import "./OutlookCalendar.css";
 
 import { useState } from "react";
 
-import {
+import { FaMicrosoft } from "react-icons/fa";
 
-    FaMicrosoft,
-    FaCalendarAlt,
-    FaSyncAlt,
-    FaLink,
-    FaUnlink,
-    FaClock,
-    FaSave,
-    FaCheckCircle
+import useOutlookCalendar from "../../../../../hooks/useOutlookCalendar";
 
-} from "react-icons/fa";
+import OAuthButton from "../../../../integrations/OAuthButton";
+import ConnectionBadge from "../../../../integrations/ConnectionBadge";
+import IntegrationStatusCard from "../../../../integrations/IntegrationStatusCard";
+import IntegrationSettingsForm from "../../../../integrations/IntegrationSettingsForm";
+import IntegrationHistory from "../../../../integrations/IntegrationHistory";
+
+import outlookCalendarFields from "./constants";
 
 function OutlookCalendar() {
 
-    const [connected, setConnected] = useState(false);
+    const {
 
-    const [calendar, setCalendar] = useState("Recruitment Calendar");
+        integration,
 
-    const [syncMode, setSyncMode] = useState("Two Way");
+        history,
+
+        loading,
+
+        connect,
+
+        disconnect,
+
+        refresh,
+
+        saveSettings
+
+    } = useOutlookCalendar();
+
+    const [settings, setSettings] = useState(
+
+        integration?.settings || {}
+
+    );
+
+    const [errors] = useState({});
+
+    const updateField = (name, value) => {
+
+        setSettings(previous => ({
+
+            ...previous,
+
+            [name]: value
+
+        }));
+
+    };
 
     return (
 
         <div className="outlook-calendar">
 
-            <div className="outlook-header">
+            <div className="outlook-calendar-header">
 
-                <div className="outlook-title">
+                <h2>
 
-                    <div className="outlook-icon">
+                    Outlook Calendar
 
-                        <FaMicrosoft />
+                </h2>
 
-                    </div>
+                <ConnectionBadge
 
-                    <div>
+                    status={
 
-                        <h2>
+                        integration?.connected
 
-                            Microsoft Outlook Calendar
+                            ? "CONNECTED"
 
-                        </h2>
-
-                        <p>
-
-                            Connect Outlook Calendar to automatically manage interview schedules and hiring events.
-
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <span
-
-                    className={`connection-status ${connected ? "connected" : "disconnected"}`}
-
-                >
-
-                    <FaCheckCircle />
-
-                    {connected ? "Connected" : "Disconnected"}
-
-                </span>
-
-            </div>
-
-            <div className="outlook-grid">
-
-                <div className="field">
-
-                    <label>
-
-                        Calendar
-
-                    </label>
-
-                    <select
-
-                        value={calendar}
-
-                        onChange={(e) =>
-
-                            setCalendar(e.target.value)
-
-                        }
-
-                    >
-
-                        <option>
-
-                            Recruitment Calendar
-
-                        </option>
-
-                        <option>
-
-                            HR Calendar
-
-                        </option>
-
-                        <option>
-
-                            Company Calendar
-
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <div className="field">
-
-                    <label>
-
-                        Sync Mode
-
-                    </label>
-
-                    <select
-
-                        value={syncMode}
-
-                        onChange={(e) =>
-
-                            setSyncMode(e.target.value)
-
-                        }
-
-                    >
-
-                        <option>
-
-                            Two Way
-
-                        </option>
-
-                        <option>
-
-                            Outlook → ATS
-
-                        </option>
-
-                        <option>
-
-                            ATS → Outlook
-
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-            <div className="options">
-
-                <label>
-
-                    <input type="checkbox" defaultChecked />
-
-                    Auto-create interview events
-
-                </label>
-
-                <label>
-
-                    <input type="checkbox" defaultChecked />
-
-                    Sync cancelled interviews
-
-                </label>
-
-                <label>
-
-                    <input type="checkbox" defaultChecked />
-
-                    Send Outlook reminders
-
-                </label>
-
-                <label>
-
-                    <input type="checkbox" />
-
-                    Sync recruiter availability
-
-                </label>
-
-            </div>
-
-            <div className="sync-info">
-
-                <div>
-
-                    <FaCalendarAlt />
-
-                    <span>
-
-                        Default Calendar Selected
-
-                    </span>
-
-                </div>
-
-                <div>
-
-                    <FaClock />
-
-                    <span>
-
-                        Last Sync : Today • 10:20 AM
-
-                    </span>
-
-                </div>
-
-            </div>
-
-            <div className="outlook-footer">
-
-                <button className="connect">
-
-                    {
-
-                        connected
-
-                        ?
-
-                        <FaUnlink />
-
-                        :
-
-                        <FaLink />
+                            : "DISCONNECTED"
 
                     }
 
-                    {
-
-                        connected
-
-                        ?
-
-                        "Disconnect"
-
-                        :
-
-                        "Connect Outlook"
-
-                    }
-
-                </button>
-
-                <button className="sync">
-
-                    <FaSyncAlt />
-
-                    Sync Now
-
-                </button>
-
-                <button className="save">
-
-                    <FaSave />
-
-                    Save Changes
-
-                </button>
+                />
 
             </div>
+
+            <IntegrationStatusCard
+
+                title="Outlook Calendar"
+
+                provider="Microsoft"
+
+                account={integration?.email}
+
+                accountType="Microsoft 365"
+
+                connected={integration?.connected}
+
+                lastSync={integration?.lastSync}
+
+                loading={loading}
+
+                onConnect={connect}
+
+                onDisconnect={disconnect}
+
+                onRefresh={refresh}
+
+            />
+
+            <OAuthButton
+
+                provider="Outlook Calendar"
+
+                icon={<FaMicrosoft />}
+
+                connected={integration?.connected}
+
+                loading={loading}
+
+                onConnect={connect}
+
+                onDisconnect={disconnect}
+
+            />
+
+            <IntegrationSettingsForm
+
+                fields={outlookCalendarFields}
+
+                values={settings}
+
+                errors={errors}
+
+                loading={loading}
+
+                onChange={updateField}
+
+                onSubmit={() =>
+
+                    saveSettings(settings)
+
+                }
+
+            />
+
+            <IntegrationHistory
+
+                title="Calendar Activity"
+
+                data={history}
+
+            />
 
         </div>
 

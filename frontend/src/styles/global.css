@@ -1,3 +1,8 @@
+@import './variables.css';
+@import './animations.css';
+@import './error.css';
+
+
 *{
     margin: 0;
     padding: 0;

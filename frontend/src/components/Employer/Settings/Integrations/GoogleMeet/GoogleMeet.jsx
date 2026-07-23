@@ -2,332 +2,153 @@ import "./GoogleMeet.css";
 
 import { useState } from "react";
 
-import {
+import { FaGoogle } from "react-icons/fa";
 
-    FaVideo,
-    FaGoogle,
-    FaLink,
-    FaUnlink,
-    FaHistory,
-    FaSave,
-    FaPlayCircle,
-    FaCheckCircle
+import useGoogleMeet from "../../../../../hooks/useGoogleMeet";
 
-} from "react-icons/fa";
+import OAuthButton from "../../../../integrations/OAuthButton";
+import ConnectionBadge from "../../../../integrations/ConnectionBadge";
+import IntegrationStatusCard from "../../../../integrations/IntegrationStatusCard";
+import IntegrationSettingsForm from "../../../../integrations/IntegrationSettingsForm";
+import IntegrationHistory from "../../../../integrations/IntegrationHistory";
 
-function GoogleMeet() {
+import googleMeetFields from "./constants";
 
-    const [connected, setConnected] = useState(true);
+function GoogleMeet(){
 
-    const [duration, setDuration] = useState("30 Minutes");
+    const{
 
-    const meetings = [
+        integration,
 
-        {
+        history,
 
-            id:1,
+        loading,
 
-            title:"Frontend Interview",
+        connect,
 
-            candidate:"Rahul Sharma",
+        disconnect,
 
-            date:"Today • 11:00 AM"
+        refresh,
 
-        },
+        saveSettings
 
-        {
+    } = useGoogleMeet();
 
-            id:2,
+    const[settings,setSettings] = useState(
 
-            title:"Backend Interview",
+        integration?.settings || {}
 
-            candidate:"Ankit Kumar",
+    );
 
-            date:"Tomorrow • 03:30 PM"
+    const[errors] = useState({});
 
-        },
+    const updateField = (name,value)=>{
 
-        {
+        setSettings(previous=>({
 
-            id:3,
+            ...previous,
 
-            title:"HR Discussion",
+            [name]:value
 
-            candidate:"Priya Das",
+        }));
 
-            date:"24 Jul • 10:00 AM"
+    };
 
-        }
-
-    ];
-
-    return (
+    return(
 
         <div className="google-meet">
 
-            <div className="meet-header">
+            <div className="google-meet-header">
 
-                <div className="meet-title">
+                <h2>
 
-                    <div className="meet-icon">
+                    Google Meet
 
-                        <FaGoogle />
+                </h2>
 
-                    </div>
+                <ConnectionBadge
 
-                    <div>
+                    status={
 
-                        <h2>
-
-                            Google Meet Integration
-
-                        </h2>
-
-                        <p>
-
-                            Automatically generate Google Meet links for interview scheduling.
-
-                        </p>
-
-                    </div>
-
-                </div>
-
-                <span
-
-                    className={connected ? "badge connected" : "badge disconnected"}
-
-                >
-
-                    <FaCheckCircle />
-
-                    {
-
-                        connected
+                        integration?.connected
 
                         ?
 
-                        "Connected"
+                        "CONNECTED"
 
                         :
 
-                        "Disconnected"
+                        "DISCONNECTED"
 
                     }
 
-                </span>
+                />
 
             </div>
 
-            <div className="meet-grid">
+            <IntegrationStatusCard
 
-                <div className="field">
+                title="Google Meet"
 
-                    <label>
+                provider="Google"
 
-                        Default Meeting Duration
+                account={integration?.email}
 
-                    </label>
+                accountType="Google Workspace"
 
-                    <select
+                connected={integration?.connected}
 
-                        value={duration}
+                lastSync={integration?.lastSync}
 
-                        onChange={(e)=>setDuration(e.target.value)}
+                loading={loading}
 
-                    >
+                onConnect={connect}
 
-                        <option>15 Minutes</option>
+                onDisconnect={disconnect}
 
-                        <option>30 Minutes</option>
+                onRefresh={refresh}
 
-                        <option>45 Minutes</option>
+            />
 
-                        <option>60 Minutes</option>
+            <OAuthButton
 
-                    </select>
+                provider="Google Meet"
 
-                </div>
+                icon={<FaGoogle />}
 
-                <div className="field">
+                connected={integration?.connected}
 
-                    <label>
+                loading={loading}
 
-                        Default Permission
+                onConnect={connect}
 
-                    </label>
+                onDisconnect={disconnect}
 
-                    <select>
+            />
 
-                        <option>
+            <IntegrationSettingsForm
 
-                            Only Host Can Admit
+                fields={googleMeetFields}
 
-                        </option>
+                values={settings}
 
-                        <option>
+                errors={errors}
 
-                            Anyone With Link
+                loading={loading}
 
-                        </option>
+                onChange={updateField}
 
-                        <option>
+                onSubmit={()=>saveSettings(settings)}
 
-                            Organization Only
+            />
 
-                        </option>
+            <IntegrationHistory
 
-                    </select>
+                title="Meeting Activity"
 
-                </div>
+                data={history}
 
-            </div>
-
-            <div className="meet-options">
-
-                <label>
-
-                    <input type="checkbox" defaultChecked />
-
-                    Auto Generate Meeting Link
-
-                </label>
-
-                <label>
-
-                    <input type="checkbox" defaultChecked />
-
-                    Enable Waiting Room
-
-                </label>
-
-                <label>
-
-                    <input type="checkbox" defaultChecked />
-
-                    Allow Recording
-
-                </label>
-
-                <label>
-
-                    <input type="checkbox" />
-
-                    Send Reminder Before Meeting
-
-                </label>
-
-            </div>
-
-            <div className="meeting-history">
-
-                <div className="history-title">
-
-                    <FaHistory />
-
-                    Recent Meetings
-
-                </div>
-
-                {
-
-                    meetings.map(item=>(
-
-                        <div
-
-                            key={item.id}
-
-                            className="meeting-card"
-
-                        >
-
-                            <div>
-
-                                <h4>
-
-                                    {item.title}
-
-                                </h4>
-
-                                <p>
-
-                                    {item.candidate}
-
-                                </p>
-
-                            </div>
-
-                            <small>
-
-                                {item.date}
-
-                            </small>
-
-                        </div>
-
-                    ))
-
-                }
-
-            </div>
-
-            <div className="meet-footer">
-
-                <button
-
-                    className="connect"
-
-                    onClick={()=>setConnected(!connected)}
-
-                >
-
-                    {
-
-                        connected
-
-                        ?
-
-                        <FaUnlink />
-
-                        :
-
-                        <FaLink />
-
-                    }
-
-                    {
-
-                        connected
-
-                        ?
-
-                        "Disconnect"
-
-                        :
-
-                        "Connect"
-
-                    }
-
-                </button>
-
-                <button className="test">
-
-                    <FaPlayCircle />
-
-                    Test Meeting
-
-                </button>
-
-                <button className="save">
-
-                    <FaSave />
-
-                    Save Settings
-
-                </button>
-
-            </div>
+            />
 
         </div>
 
