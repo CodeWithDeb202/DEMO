@@ -1,10 +1,9 @@
 #footer {
     position: relative;
     z-index: 999;
-    background:rgba(0, 0, 0, 0.45);
+    background: rgba(0, 0, 0, 0.45);
     color: var(--text);
     padding: 5rem 8% 1.9rem;
-    background:rgba(0, 0, 0, 0.45);
     backdrop-filter: blur(2px);
     border-top: 1px solid var(--neon);
     box-shadow: 0 0 20px var(--glow);
@@ -19,11 +18,6 @@
     grid-template-columns: 2fr 1fr 1fr 1.5fr;
     gap: 3rem;
 }
-
-
-
-
-
 
 
 #footer-brand h2 {
@@ -98,14 +92,14 @@
     transform: translateX(10px);
 }
 
-#footer-signup{
+#footer-signup {
     width: 100%;
     display: flex;
     text-align: center;
     margin-top: 1rem;
 }
 
-#footer-signup a{
+#footer-signup a {
     text-decoration: none;
     background-color: var(--glow);
     color: var(--text);
@@ -115,14 +109,14 @@
     transition: all 0.3s ease;
 }
 
-#footer-signup a:hover{
+#footer-signup a:hover {
     transform: translateY(-2px) !important;
     background: var(--neon);
     color: var(--dark);
     box-shadow: 0 5px 10px var(--glow);
 }
 
-#footerLogo{
+#footerLogo {
     display: flex;
     align-items: center;
     gap: 1.5rem;
@@ -130,13 +124,13 @@
     padding: 0.5rem 1rem;
 }
 
-#footerLogo img{
+#footerLogo img {
     width: 100px;
     border-radius: 50%;
     transition: all 0.3s ease;
 }
 
-#footerLogo img:hover{
+#footerLogo img:hover {
     box-shadow: 0 0 20px var(--neon);
     transform: scale(1.2);
 }
@@ -158,25 +152,82 @@
 
 
 
-@media(max-width:900px) {
+/* ==========================================
+   RESPONSIVE
+========================================== */
 
+/* RESPONSIVE */
+@media(max-width: 439px) {
+    #footer {
+        padding: 3rem 2rem 1rem;
+    }
 
-    .footer-container {
+    #footer-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
 
-        grid-template-columns: 1fr;
+    #footer-brand h2,
+    #footer-brand span {
+        font-size: 1.2rem;
+    }
 
+    #footer-news {
+        display: none;
+    }
+
+    #footer-links {
+        display: none;
     }
 
 
-    .footer-bottom {
 
-
-        flex-direction: column;
-
-        gap: 10px;
-
-
+    #footerLogo {
+        display: none;
     }
 
+}
 
+/* Mobile (Portrait + Small Phones) */
+@media(min-width: 440px) and (max-width: 767px) {
+    #footer {
+        padding: 2.5rem 1.5rem 1rem;
+    }
+
+    #footer-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    #footer-links {
+        display: none;
+    }
+
+    #footer-news {
+        width: 70%;
+    }
+
+    #footerLogo {
+        display: none;
+    }
+}
+
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 991px) {
+    #footer {
+        padding: 3rem 2rem 1.5rem;
+    }
+
+    #footer-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    #footerLogo {
+        display: none;
+    }
 }

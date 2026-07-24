@@ -1,9 +1,9 @@
 import './Hero.css';
 
 import { motion } from 'framer-motion';
-import { FaArrowRight, FaPlayCircle } from 'react-icons/fa';
+import { FaArrowRight, FaPlayCircle, FaShieldAlt } from 'react-icons/fa';
 import { heroContent } from './HeroData';
-import HeroImage from '../../../assets/illustrations/hero.svg';
+import HeroImage from '../../../assets/logo/logo.png';
 
 import Button from '../../../components/Common/Form/Button';
 import Card from '../../../components/Common/CardComponent/Card';
@@ -35,7 +35,7 @@ function Hero() {
                     {/* LEFT */}
                     <div id="hero-left">
                         <motion.span id='hero-badge' variants={fadeUp} initial='hidden' animate='show' custom={0}>{heroContent.badge}</motion.span>
-                        <motion.h1 id='hero-title' variants={fadeUp} initial='hidden' animate='show' custom={0.2}>{heroContent.title}<span>{heroContent.highlight}</span></motion.h1>
+                        <motion.h1 id='hero-title' variants={fadeUp} initial='hidden' animate='show' custom={0.2}>{heroContent.title} <span> <FaShieldAlt /></span> <span>{heroContent.highlight}</span></motion.h1>
                         <motion.p id='hero-description' variants={fadeUp} initial='hidden' animate='show' custom={0.4}>{heroContent.description}</motion.p>
                         <motion.div id='hero-buttons' variants={fadeUp} initial='hidden' animate='show' custom={0.6}>
                             <Button variant="primary" icon={<FaArrowRight />}>

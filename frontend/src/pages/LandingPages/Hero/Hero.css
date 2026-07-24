@@ -169,10 +169,16 @@
 
 /* RESPONSIVE */
 @media(max-width: 439px) {
+    .hero {
+        min-height: auto;
+        padding: 2rem 0;
+    }
+
     #hero-container{
-        padding: 2.5rem 0;
+        padding: 2rem 0;
         align-items: center;
         flex-direction: column;
+        gap: 0;
     }
     #hero-left{
         padding: 0 0.5rem;
@@ -199,6 +205,10 @@
         font-size: 0.8rem;
     }
 
+    #hero-right{
+        display: none;
+    }
+
 }
 /* Mobile (Portrait + Small Phones) */
 @media(min-width: 440px) and (max-width: 767px) {
@@ -208,7 +218,7 @@
         flex-direction: column;
     }
     #hero-left{
-        padding: 0 1rem;
+        padding: 0 1rem 1rem 1rem;
     }
     #hero-title{
         font-size: 2rem;
@@ -229,9 +239,8 @@
         font-size: 1rem;
     }
 
-    #hero-right img{
-        width: 70%;
-        margin-bottom: 0;
+    #hero-right {
+        display: none;
     }
 }
 
@@ -264,9 +273,8 @@
     }
 
 
-    #hero-right img{
-        width: 70%;
-        margin-bottom: 0;
+    #hero-right{
+        display: none;
     }
 }
 @media (min-width: 992px) and (max-width: 1200px){
