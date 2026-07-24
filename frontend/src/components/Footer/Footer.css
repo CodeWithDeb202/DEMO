@@ -145,7 +145,16 @@
     border-top: 1px solid rgba(255, 255, 255, .1);
     display: flex;
     justify-content: space-between;
+    align-items: center;
     color: var(--muted);
+}
+
+#vrLine{
+    background-color: var(--neon);
+    width: 2px;
+    height: 20px;
+    border-radius: 50%;
+    display: none;
 }
 
 
@@ -159,13 +168,17 @@
 /* RESPONSIVE */
 @media(max-width: 439px) {
     #footer {
-        padding: 3rem 2rem 1rem;
+        padding: 3rem 1rem 1.3rem;
+        text-align: center;
     }
 
     #footer-container {
         display: flex;
         align-items: center;
         justify-content: space-around;
+    }
+    #social{
+        justify-content: center;
     }
 
     #footer-brand h2,
@@ -185,6 +198,14 @@
 
     #footerLogo {
         display: none;
+    }
+
+    #footer-bottom{
+        font-size: 0.8rem;
+    }
+
+    #vrLine{
+        display: block;
     }
 
 }
@@ -211,6 +232,10 @@
 
     #footerLogo {
         display: none;
+    }
+
+    #footer-bottom{
+        font-size: 0.9rem;
     }
 }
 

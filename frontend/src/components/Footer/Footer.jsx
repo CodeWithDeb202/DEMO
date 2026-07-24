@@ -73,7 +73,7 @@ function Footer(){
 
             <div id="footer-bottom">
                 <p>© 2026 Tech Monster. All Rights Reserved.</p>
-
+                    <div id="vrLine"></div>
                 <p>Code. Secure. Solve.</p>
             </div>
 
