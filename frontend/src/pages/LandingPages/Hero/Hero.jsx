@@ -1,5 +1,7 @@
 import './Hero.css';
 
+import {Link} from 'react-router-dom';
+
 import { motion } from 'framer-motion';
 import { FaArrowRight, FaPlayCircle, FaShieldAlt } from 'react-icons/fa';
 import { heroContent } from './HeroData';
@@ -38,13 +40,17 @@ function Hero() {
                         <motion.h1 id='hero-title' variants={fadeUp} initial='hidden' animate='show' custom={0.2}>{heroContent.title} <span> <FaShieldAlt /></span> <span>{heroContent.highlight}</span></motion.h1>
                         <motion.p id='hero-description' variants={fadeUp} initial='hidden' animate='show' custom={0.4}>{heroContent.description}</motion.p>
                         <motion.div id='hero-buttons' variants={fadeUp} initial='hidden' animate='show' custom={0.6}>
-                            <Button variant="primary" icon={<FaArrowRight />}>
-                                Apply Internship
-                            </Button>
+                            <Link to={'/signup'}>
+                                <Button variant="primary" icon={<FaArrowRight />}>
+                                    {heroContent.primaryButton}
+                                </Button>
+                            </Link>
 
-                            <Button variant='secondary' icon={<FaPlayCircle />}>
-                                {heroContent.secondaryButton}
-                            </Button>
+                            <Link to={'/learnmore'}>
+                                <Button variant='secondary' icon={<FaPlayCircle />}>
+                                    {heroContent.secondaryButton}
+                                </Button>
+                            </Link>
                         </motion.div>
 
                         <motion.div className='hero-stats' variants={fadeUp} initial='hidden' animate='show' custom={0.8}>

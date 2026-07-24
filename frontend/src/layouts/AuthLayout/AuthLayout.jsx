@@ -1,5 +1,6 @@
 import "./AuthLayout.css";
 
+import SystemBar from "../../components/Common/Navbar/SystemBar";
 import { useEffect, useRef } from "react";
 
 import { motion } from "framer-motion";
@@ -17,25 +18,25 @@ function AuthLayout({
 }) {
 
     const rightRef = useRef(null);
-const cardRef = useRef(null);
+    const cardRef = useRef(null);
 
-useEffect(() => {
-    const check = () => {
-        if (
-            cardRef.current.offsetHeight >
-            rightRef.current.clientHeight
-        ) {
-            cardRef.current.className = "top";
-        } else {
-            cardRef.current.className = "center";
-        }
-    };
+    useEffect(() => {
+        const check = () => {
+            if (
+                cardRef.current.offsetHeight >
+                rightRef.current.clientHeight
+            ) {
+                cardRef.current.className = "top";
+            } else {
+                cardRef.current.className = "center";
+            }
+        };
 
-    check();
-    window.addEventListener("resize", check);
+        check();
+        window.addEventListener("resize", check);
 
-    return () => window.removeEventListener("resize", check);
-}, []);
+        return () => window.removeEventListener("resize", check);
+    }, []);
 
     return (
 
@@ -43,8 +44,11 @@ useEffect(() => {
 
             <img id="auth-layout-bg-img" src={authImage} alt="Auth image" />
 
+            <SystemBar />
+
             {/* LEFT SIDE */}
 
+            <div id="authFullCont">
 
                 <motion.div
                     id="auth-left"
@@ -108,8 +112,9 @@ useEffect(() => {
                     </div>
 
                 </motion.div>
-            
 
+
+            </div>
         </div>
 
     );

@@ -1,10 +1,12 @@
 import './Navbar.css';
 
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { navLinks } from './Navbardata.js';
+
+import Systembar from "../Common/Navbar/SystemBar";
 
 import logo from "../../assets/logo/logo.png"
 
@@ -39,6 +41,7 @@ function Navbar() {
         <>
 
             <motion.nav id='navbar' initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
+                <Systembar />
                 <div id='navbar-container' >
                     <a href={'#home'} onClick={() => setActiveLink('#')} id='navLogo'>
                         

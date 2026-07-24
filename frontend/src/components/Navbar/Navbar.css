@@ -10,9 +10,8 @@
     z-index: 1000;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-
-    height: 100px;
+    flex-direction: column;
+    height: 110px;
     width: 100%;
     padding: 0 3rem;
     background:rgba(0, 0, 0, 0.45);
@@ -229,17 +228,12 @@
 /* Mobile (Portrait + Small Phones) */
 @media (max-width: 439px) {
     #navbar{
-        height: 70px;
+        height: 80px;
         padding: 0 1rem;
     }
     #navLogo img{
         width: 50px;
     }
-}
-
-/* Large Mobile + Small Tablet */
-@media (min-width: 576px) and (max-width: 767px) {
-
 }
 
 /* Tablet */

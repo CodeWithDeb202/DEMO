@@ -187,6 +187,12 @@
     #hero-title{
         font-size: 1.5rem;
     }
+
+    #hero-buttons{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
     #hero-description{
         font-size: 0.65rem;
         margin-bottom: 1rem;
