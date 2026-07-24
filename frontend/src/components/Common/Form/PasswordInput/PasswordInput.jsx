@@ -84,9 +84,10 @@ function PasswordInput({
 
             <button
 
+
                 type="button"
 
-                className="toggle-password"
+                id="toggle-password"
 
                 onClick={() => setShowPassword(prev => !prev)}
 

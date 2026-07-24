@@ -34,7 +34,7 @@
 
 
 /* LOGO */
-#logo{
+#navLogo{
     display: flex;
     align-items: center;
     gap: 1.5rem;
@@ -42,24 +42,24 @@
     padding: 0.5rem 1rem;
 }
 
-#logo img{
+#navLogo img{
     width: 70px;
     border-radius: 50%;
     transition: all 0.3s ease;
 }
 
-#logo img:hover{
+#navLogo img:hover{
     box-shadow: 0 0 20px var(--neon);
     transform: scale(1.2);
 }
 
-#logo-text h2{
+#navLogo-text h2{
     color: var(--text);
     font-size: 1.5rem;
     font-weight: 700;
 }
 
-#logo-text h2 span{
+#navLogo-text h2 span{
     color: var(--neon);
     font-size: 1.5rem;
 }

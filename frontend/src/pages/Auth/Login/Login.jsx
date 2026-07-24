@@ -266,25 +266,12 @@ function Login() {
 
 
         <PasswordInput
-
-
           label="Password"
-
-
           name="password"
-
-
           value={formData.password}
-
-
           onChange={handleChange}
-
-
           placeholder="Enter your password"
-
-
           required
-
 
         />
 

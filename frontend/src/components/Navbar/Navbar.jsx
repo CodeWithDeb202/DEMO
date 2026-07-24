@@ -40,11 +40,11 @@ function Navbar() {
 
             <motion.nav id='navbar' initial={{ y: -80, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }}>
                 <div id='navbar-container' >
-                    <a href={'#home'} onClick={() => setActiveLink('#')} id='logo'>
+                    <a href={'#home'} onClick={() => setActiveLink('#')} id='navLogo'>
                         
                         <img src={logo} alt="Tech monster Logo" />
 
-                        <div id='logo-text'>
+                        <div id='navLogo-text'>
                             <h2>Tech <span>Monster</span></h2>
                         </div>
                     </a>

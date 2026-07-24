@@ -43,7 +43,7 @@
     text-align: center;
 }
 
-#logo {
+#authLogo {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -53,17 +53,24 @@
     color: #fff;
 }
 
-#logo img {
+#authLogo img {
     width: 80px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
 }
 
-#logo h2 {
+#authLogo img:hover{
+    box-shadow: 0 0 20px var(--neon);
+    transform: scale(1.2);
+}
+
+#authLogo h2 {
     margin-left: 1rem;
     font-size: 2rem;
     font-weight: 700;
 }
 
-#logo h2 span {
+#authLogo h2 span {
     color: var(--neon);
     text-shadow: 0 0 10px var(--neon);
 }
@@ -98,8 +105,9 @@
     height: calc(100vh - 4rem);
 
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
 
     padding: 1rem;
     margin: 2rem 2rem 2rem 0;
@@ -112,6 +120,14 @@
     transition: all .3s ease-in;
     /* Scrollbar Hide */
     scrollbar-width: none;    /* Firefox */
+}
+
+#auth-card.center {
+    margin: auto 0;
+}
+
+#auth-card.top {
+    margin: 0;
 }
 
 #auth-right:hover{

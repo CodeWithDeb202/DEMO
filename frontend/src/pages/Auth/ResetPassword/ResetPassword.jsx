@@ -60,7 +60,9 @@ function ResetPassword() {
 
                 email,
 
-                password: data.password
+                newPassword: data.password,
+
+                confirmPassword: data.confirmPassword
 
             });
 
@@ -72,7 +74,7 @@ function ResetPassword() {
 
                     success:
 
-                    "Password changed successfully."
+                        "Password changed successfully."
 
                 }
 
@@ -118,17 +120,17 @@ function ResetPassword() {
 
                 initial={{
 
-                    opacity:0,
+                    opacity: 0,
 
-                    y:20
+                    y: 20
 
                 }}
 
                 animate={{
 
-                    opacity:1,
+                    opacity: 1,
 
-                    y:0
+                    y: 0
 
                 }}
 
@@ -160,7 +162,7 @@ function ResetPassword() {
 
                 />
 
-                <PasswordStrength password={watch("password")}/>
+                <PasswordStrength password={watch("password")} />
 
                 {
 
@@ -188,13 +190,13 @@ function ResetPassword() {
 
                         loading
 
-                        ?
+                            ?
 
-                        "Updating..."
+                            "Updating..."
 
-                        :
+                            :
 
-                        "Update Password"
+                            "Update Password"
 
                     }
 
