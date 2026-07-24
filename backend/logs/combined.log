@@ -1,0 +1,15 @@
+[2026-07-24 13:38:39] info: POST /api/auth/signup 201 4226.084 ms - 69 bytes - ::1
+[2026-07-24 13:39:04] info: POST /api/auth/verify-otp 200 285.410 ms - 554 bytes - ::1
+[2026-07-24 13:39:04] info: GET /api/dashboard/student 200 108.827 ms - 126 bytes - ::1
+[2026-07-24 13:39:50] info: POST /api/auth/login 200 379.177 ms - 543 bytes - ::1
+[2026-07-24 13:39:50] info: GET /api/dashboard/student 304 94.856 ms - - bytes - ::1
+[2026-07-24 13:40:00] info: POST /api/auth/forgot-password 500 4.292 ms - 51 bytes - ::1
+[2026-07-24 13:48:38] info: POST /api/auth/forgot-password 500 10.602 ms - 51 bytes - ::1
+[2026-07-24 13:52:50] info: POST /api/auth/forgot-password 200 7715.695 ms - 52 bytes - ::1
+[2026-07-24 13:53:22] info: POST /api/auth/verify-otp 200 94.729 ms - 88 bytes - ::1
+[2026-07-24 13:53:42] info: POST /api/auth/reset-password 400 1.387 ms - 53 bytes - ::1
+[2026-07-24 14:00:42] info: POST /api/auth/reset-password 200 391.912 ms - 56 bytes - ::1
+[2026-07-24 14:01:00] info: POST /api/auth/login 401 188.399 ms - 55 bytes - ::1
+[2026-07-24 14:01:18] info: POST /api/auth/login 200 460.612 ms - 543 bytes - ::1
+[2026-07-24 14:01:18] info: GET /api/dashboard/student 304 189.584 ms - - bytes - ::1
+[2026-07-24 23:54:20] info: POST /api/auth/signup 201 5247.905 ms - 69 bytes - ::1

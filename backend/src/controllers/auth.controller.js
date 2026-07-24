@@ -622,6 +622,8 @@ export const forgotPassword = async (req, res) => {
 
     try {
 
+        console.log("email: ", req.body)
+
         const { email } = req.body;
 
 
