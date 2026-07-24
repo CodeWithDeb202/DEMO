@@ -2,26 +2,21 @@
    ABOUT SECTION
 ========================================== */
 
-#aboutPage{
+#aboutPage {
   padding: 1.5rem;
   background: transparent;
   backdrop-filter: blur(5px);
-  box-shadow: 0 0 10px var(--neon);
   border-radius: 1rem;
   animation: blueNeon 6s linear infinite;
   transition: .3s;
-  margin: 1rem 0;
 }
 
 #about-container {
   width: 100%;
-  max-width: 1300px;
-  margin: auto;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 70px;
+  gap: 1.5rem;
 }
 
 /* ==========================================
@@ -73,7 +68,7 @@
   margin-bottom: 1.2rem;
 }
 
-#about-content > p {
+#about-content>p {
   color: var(--muted);
   line-height: 1.5;
   margin-bottom: 2rem;
@@ -92,7 +87,7 @@
   margin-bottom: 1rem;
   border-radius: 1rem;
   background: var(--surface);
-  border: 1px solid rgba(255,255,255,.08);
+  border: 1px solid rgba(255, 255, 255, .08);
   transition: all 0.3s ease;
 }
 
@@ -126,17 +121,16 @@
 ========================================== */
 
 .values {
-  width: 90%;
   margin: 3rem auto 0;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1.4rem;
+  gap: 1.5rem;
 }
 
 .value-card {
-  background: var(--surface) !important;
-  border: 1px solid rgba(255,255,255,.08);
   text-align: center;
+  background: var(--surface) !important;
+  border: 1px solid rgba(255, 255, 255, .08);
   transition: all .35s ease;
 }
 
@@ -159,81 +153,151 @@
 }
 
 .value-card h3 {
-  margin-bottom: 12px;
-  font-size: 22px;
+  margin-bottom: 0.8rem;
+  font-size: 1.2rem;
 }
 
 .value-card p {
   color: var(--muted);
-  line-height: 1.7;
+  line-height: 1.5;
 }
 
 /* ==========================================
    RESPONSIVE
 ========================================== */
 
-@media (max-width: 1100px) {
-
-  .about-content h2 {
-    font-size: 38px;
-  }
-
-  .values {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-}
-
-@media (max-width: 992px) {
-
-  .about-container {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .about-content > p {
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .mission,
-  .vision {
-    text-align: left;
-  }
-
-}
-
-@media (max-width: 768px) {
-
-  .about {
-    padding: 70px 0;
-  }
-
-  .about-content h2 {
-    font-size: 32px;
-  }
-
-  .values {
-    grid-template-columns: 1fr;
-  }
-
-}
-
-@media (max-width: 576px) {
-
-  .about-content h2 {
-    font-size: 28px;
-  }
-
-  .mission,
-  .vision {
+/* RESPONSIVE */
+@media(max-width: 439px) {
+  #about-container {
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
 
-  .value-card {
-    padding: 24px;
+  #about-image img {
+    display: none;
+  }
+
+  #about-content h2{
+    font-size: 1.2rem;
+  }
+  #about-content>p{
+    font-size: 0.7rem;
+  }
+
+  .mission,
+  .vision {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .mission p,
+.vision p{
+  font-size: 0.8rem;
+}
+
+  .mission svg,
+  .vision svg {
+    display: none;
+  }
+
+
+  .values {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 0.6rem;
+  }
+
+  .value-card p {
+    display: none;
+  }
+
+}
+
+/* Mobile (Portrait + Small Phones) */
+@media(min-width: 440px) and (max-width: 767px) {
+  #about-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  #about-image img {
+    display: none;
+  }
+
+  .mission,
+  .vision {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .mission svg,
+  .vision svg {
+    display: none;
+  }
+
+
+  .values {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .value-card h3 {
+    font-size: 1rem;
+  }
+
+  .value-card p {
+    display: none;
+  }
+}
+
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 991px) {
+
+  #about-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  #about-image img {
+    display: none;
+  }
+
+  .mission,
+  .vision {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .mission svg,
+  .vision svg {
+    display: none;
+  }
+
+  .values {
+    gap: 1rem;
+  }
+
+  .value-card p {
+    display: none;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1200px) {
+  #about-image img {
+    width: 70%;
+  }
+
+  .value-card p {
+    display: none;
   }
 
 }
