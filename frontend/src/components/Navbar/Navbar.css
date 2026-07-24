@@ -45,6 +45,7 @@
 #navLogo img{
     width: 70px;
     border-radius: 50%;
+    animation: blueNeon 6s linear infinite;
     transition: all 0.3s ease;
 }
 
@@ -104,14 +105,22 @@
     width: 100%;
 }
 
+
+
+
+
+
 #toggleBar{
     display: none;
 }
 #toggleBar button{
-    padding: 0.5rem;
-    border: 1px solid var(--glow);
-    color: var(--text);
-    background-color: transparent;
+    font-size: 1.5rem;
+    margin: 0;
+    padding: 0.7rem 0.7rem 0.3rem 0.7rem;
+    border: 1px solid var(--neon);
+    color: var(--glow);
+    border-radius: 0.3rem;
+    background-color: var(--surface);
 }
 #toggleBar button:hover,
 #toggleBar button.active{
@@ -125,7 +134,7 @@
     position: fixed;
     inset: 0;
     background-color: rgba(255, 255, 255, 0.18);
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(5px);
 }
 
 #navSidebar {
@@ -135,43 +144,43 @@
     width: 75%;
     max-width: 280px;
     height: 100vh;
-    background-color: var(--nav-bg);
-    z-index: 100;
+    background-color: var(--dark);
+    z-index: 999999;
     display: flex;
     flex-direction: column;
     padding: 1.2rem;
     gap: 0.8rem;
-    box-shadow: -8px 0 25px rgba(0, 0, 0, 0.35);
+    box-shadow: -8px 0 15px var(--neon);
 }
 
 #navSidebar a {
     text-decoration: none;
-    color: var(--nav-link);
+    color: var(--neon);
     padding: 0.9rem 0.8rem;
     border-radius: 6px;
+    background-color: var(--surface);
     transition: 0.3s ease;
 }
 
 #navSidebar a:hover,
 #navSidebar a.active {
-    color: var(--hover-color);
-    background-color: rgba(255, 255, 255, 0.08);
-    text-shadow: 0 0 12px rgba(56, 189, 248, 0.55);
+    color: var(--neon);
+    background-color: var(--glow);
+    text-shadow: 0 0 12px var(--neon);
 }
 
 #closeBtn {
     align-self: flex-end;
-    background-color: transparent;
-    border: 1px solid var(--primary-color);
-    color: var(--nav-link);
-    padding: 0.45rem 0.6rem;
+    font-size: 1.5rem;
+    background-color: var(--surface);
+    border: 1px solid var(--neon);
+    border-radius: 0.3rem;
+    color: var(--glow);
+    padding: 0.5rem 0.5rem 0.2rem 0.5rem;
+    margin-right: 1rem;
     cursor: pointer;
+    transition: all 0.3s ease-in-out;
 }
-
-
-
-
-
 
 
 /* AUTH BUTTONS */
@@ -202,7 +211,7 @@
 /* SIGN UP */
 #signup-btn{
     text-decoration: none;
-    background-color: #2563eb;
+    background-color: var(--glow);
     color: white;
     padding: 0.65rem 1.15rem;
     border-radius: 0.5rem;
@@ -217,85 +226,43 @@
 
 
 /* RESPONSIVE */
-
-@media(max-width: 768px){
-
-    .logo-text h2{
-        font-size: 1.25rem;
-    }
-    
-    .logo img{
-        width: 42px;
-    }
-
-    .navbar{
-        height: 72px;
-    }
-
-    .nav-menu{
-        position: fixed;
-        top: 72px;
-        right: -100%;
-        width: 300px;
-        height: calc(100vh - 72px);
-        background: #0f172a;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-        gap: 2.2rem;
-        padding-top: 3rem;
-        transition: 0.3s;
-    }
-    
-    .nav-menu .active{
-        right: 0;
-    }
-    
-    .auth-buttons{
-        display: flex;
-        flex-direction: column;
-        width: 80%;
-    }
-    
-    .login-btn,
-    .signup-btn{
-        text-align: center;
-    }
-    
-    .menu-btn{
-        display: block;
-    }
-
-}
-
-@media(max-width: 480px){
-    .navbar-container{
-        width: 94%;
-    }
-    
-    .logo-text span{
-        display: none;
-    }
-    .nav-menu{
-        width: 100%;
-    }
-}
-
-
-@media(max-width:536px){
-    .navBar{
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
+/* Mobile (Portrait + Small Phones) */
+@media (max-width: 439px) {
+    #navbar{
         height: 70px;
+        padding: 0 1rem;
     }
-    .navlink{
+    #navLogo img{
+        width: 50px;
+    }
+}
+
+/* Large Mobile + Small Tablet */
+@media (min-width: 576px) and (max-width: 767px) {
+
+}
+
+/* Tablet */
+@media(max-width: 991px) {
+    #navlink{
         display: none;
     }
-    .toggleBar{
+    #toggleBar{
         display: block;
-        margin-left: auto;
     }
-    
+    #signup-btn{
+        background-color: var(--glow) !important;
+        color: var(--dark) !important;
+        text-shadow: 0 0 20px var(--neon) !important;
+    }
+}
+
+/* Laptop */
+@media (min-width: 992px) and (max-width: 1199px) {
+
+}
+
+/* Desktop */
+@media (min-width: 1200px) {
+
 }

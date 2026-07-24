@@ -122,6 +122,25 @@
     box-shadow: 0 5px 10px var(--glow);
 }
 
+#footerLogo{
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+}
+
+#footerLogo img{
+    width: 100px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+#footerLogo img:hover{
+    box-shadow: 0 0 20px var(--neon);
+    transform: scale(1.2);
+}
+
 
 
 #footer-bottom {

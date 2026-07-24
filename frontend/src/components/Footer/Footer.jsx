@@ -127,8 +127,8 @@ function Footer(){
                 </div>
 
 
-                <div id="logo" style={{marginLeft: "5rem"}}>
-                    <img src={logoImg} alt="" />
+                <div id="footerLogo" style={{marginLeft: "5rem"}}>
+                    <img src={logoImg} alt="Footer logo" />
                 </div>
 
             </div>

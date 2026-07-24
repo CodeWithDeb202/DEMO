@@ -95,7 +95,7 @@ function Navbar() {
                             </button>
 
                             {navLinks.map((link) => (
-                                <NavLink key={link.id} onClick={() => setIsOpen(false)} to={link.path}>{link.title}</NavLink>
+                                <a key={link.id} onClick={() => setIsOpen(false)} href={link.path}>{link.title}</a>
                             ))}
 
                             <Link to={'/signup'} id='signup-btn' onClick={() => setIsOpen(false)}>Sign Up</Link>
