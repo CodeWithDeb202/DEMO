@@ -178,10 +178,11 @@
     display: none;
   }
 
-  #about-content h2{
+  #about-content h2 {
     font-size: 1.2rem;
   }
-  #about-content>p{
+
+  #about-content>p {
     font-size: 0.7rem;
   }
 
@@ -194,9 +195,9 @@
   }
 
   .mission p,
-.vision p{
-  font-size: 0.8rem;
-}
+  .vision p {
+    font-size: 0.8rem;
+  }
 
   .mission svg,
   .vision svg {
